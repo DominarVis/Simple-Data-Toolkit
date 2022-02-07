@@ -1,0 +1,85 @@
+
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+%\geometry{a4paper}
+\usepackage{graphicx}
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+
+\usepackage{makecell}
+
+%%% END Article customizations
+
+%%% The "real" document content comes below...
+
+\title{Simple Calendar}
+\author{Franklin E. Powers, Jr.}
+%\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\paragraph{Simple Calendar was created to allow for simple manipulation ICS and other calendar related formats.}
+\paragraph{At the moment, there are only two ways to use it:}
+\begin{enumerate}
+    \item As a library, which you can integrate into your own programs
+    \item As a command-line utility
+\end{enumerate}
+\paragraph{This document will cover how to use it as a command-line utility.}
+\paragraph{Starting the tool depends on platform and version as shown in the table below:}
+\begin{center}
+\begin{tabular}{ | c | c | }
+\hline
+C++ & calendar \\
+\hline
+C\# & calendar \\
+\hline
+Java & java -jar calendar.jar \\
+\hline
+JScript Windows Shell & cscript calendar-wsh.js \\
+\hline
+Python & python calendar.py \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Creating an Event}
+\paragraph{First datetime specified is the start datetime.  Second datetime specified is the end datetime.  First non-filename string specified is the summary of the event.}
+\paragraph{When specifying a filename, if not datetime and summary are specified, then it is considered an input file and it's contents are displayed on screen.}
+\paragraph{If a filename, datetime, and summary are specified, then the filename is considered an output file and the date is written to the file.}
+\paragraph{If two filenames are specified, then it considers the first filename to be an input file and the second to be an output file.}
+
+\section{Examples}
+\paragraph{Displays contents of an ics file}
+\begin{verbatim}
+    calendar event.ics
+\end{verbatim}
+\paragraph{Create new event and store in an ics file}
+\begin{verbatim}
+    calendar "2019-07-01 10:00:00 AM" "2019-07-01 11:00:00 AM" "Visiting A Friend's House" event.ics
+\end{verbatim}
+
+\end{document}

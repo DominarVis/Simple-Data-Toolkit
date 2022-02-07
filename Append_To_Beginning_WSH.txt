@@ -1,0 +1,44 @@
+if (!("create" in Object)) {
+	Object["create"] = function(from) {
+		function I() {};
+		I.prototype = from;
+		return new I();
+	}
+}
+
+if (!("defineProperty" in Object)) {
+	Object["defineProperty"] = function () { };
+}
+
+if (!("indexOf" in Array.prototype)) {
+	Array.prototype.indexOf = function (s, i) {
+		if (!i) {
+			i = 0;
+		}
+		while (i < this.length) {
+			if (this[i] == s) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	};
+}
+
+if (!("keys" in Object)) {
+	Object["keys"] = function (o) {
+		var arr = [ ];
+		for (k in o) {
+			switch (k) {
+				case "length":
+					continue;
+				case "prototype":
+					continue;
+			}
+			if (Object.prototype.hasOwnProperty.call(o, k)) {
+				arr.push(k);
+			}
+		}
+		return arr;
+	}
+}

@@ -1,0 +1,15 @@
+package com.sdtk.table;
+
+class SQLiteHandler extends DatabaseHandler {
+  public function open(sFile : String) : Any {
+    return sys.db.Sqlite.open(sFile);
+  }
+
+  public function read(cConnection : Any, sTable : String) : ResultSet {
+
+  }
+
+  public function insert() : Void {
+
+  } 
+}
