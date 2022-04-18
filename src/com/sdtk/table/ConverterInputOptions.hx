@@ -21,7 +21,9 @@
 */
 
 package com.sdtk.table;
-/*
+
+import com.sdtk.table.ConverterInputOperationsOptions;
+
 @:expose
 @:nativeGen
 class ConverterInputOptions {
@@ -42,16 +44,29 @@ class ConverterInputOptions {
         return setSource(value, "string");
     }
 
+    public function readDatabase(value : Dynamic) : ConverterInputOperationsOptions {
+        _values.set("source", value);
+        _values.set("sourceType", "db");
+        _values.set("sourceFormat", Format.DB);
+        return new ConverterInputOperationsOptions(_values);
+    }
+
+    public function readArrayOfArrays(value : Array<Array<Dynamic>>) : ConverterInputOperationsOptions {
+        _values.set("source", value);
+        _values.set("sourceType", "array");
+        _values.set("sourceFormat", Format.ARRAY);
+        return new ConverterInputOperationsOptions(_values);
+    }
+
     // TODO - Add additional
     /*
     public function reader() : ConverterInputFormatOptions {
         return setSource(reader, "reader");
-    }/
+    }*/
 
     private function setSource(value : Dynamic, sourceType : String) : ConverterInputFormatOptions {
         _values.set("source", value);
-        _values.set("sourceType", value);
+        _values.set("sourceType", sourceType);
         return new ConverterInputFormatOptions(_values);
     }
 }
-*/

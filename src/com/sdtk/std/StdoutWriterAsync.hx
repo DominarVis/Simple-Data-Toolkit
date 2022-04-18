@@ -22,7 +22,7 @@
 
 package com.sdtk.std;
 
-#if JS_BROWSER
+#if (JS_BROWSER || JS_SNOWFLAKE)
 @:expose
 @:nativeGen
 class StdoutWriterAsync implements WriterAsync {

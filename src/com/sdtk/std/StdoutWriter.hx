@@ -30,6 +30,14 @@ class StdoutWriter extends Writer {
         com.sdtk.std.JS_BROWSER.Console.log(str);
     }
 }
+#elseif JS_SNOWFLAKE
+@:expose
+@:nativeGen
+class StdoutWriter extends Writer {
+    public override function write(str : String) : Void {
+        com.sdtk.std.JS_SNOWFLAKE.Logger.log(str);
+    }
+}
 #elseif JS_WSH
 @:expose
 @:nativeGen

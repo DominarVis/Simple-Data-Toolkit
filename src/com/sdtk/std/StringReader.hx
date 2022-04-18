@@ -87,6 +87,14 @@ class StringReader extends Reader {
         moveToNext();
     }
 
+    public override function rawIndex() : Int {
+        return _index;
+    }
+
+    public override function jumpTo(index : Int) : Void {
+        _index = index;
+    }
+
     public function setString(sValue : String) {
         _value = sValue;
     }

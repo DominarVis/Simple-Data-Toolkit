@@ -120,7 +120,7 @@ class RowFilterDataTableReader extends DataTableReader {
       default:
         _switch = 0;
     }
-    incrementTo(_reader.name(), current);
+    incrementTo(_reader.name(), current, _reader.rawIndex());
     check(reuse);
     _bufferReaderPrevious = current;
     return current;

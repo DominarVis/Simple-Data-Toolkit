@@ -86,6 +86,8 @@ class Parameters extends com.sdtk.std.Parameters {
           case "VERSION":
             #if JS_BROWSER
               com.sdtk.std.JS_BROWSER.Console.log
+            #elseif JS_SNOWFLAKE
+              com.sdtk.stdcom.sdtk.std.JS_SNOWFLAKE.Logger.logger.log
             #elseif JS_WSH
               com.sdtk.std.JS_WSH.WScript.Echo
             #elseif JS_NODE
@@ -113,6 +115,8 @@ class Parameters extends com.sdtk.std.Parameters {
       default:
         #if JS_BROWSER
           com.sdtk.std.JS_BROWSER.Console.log
+        #elseif JS_SNOWFLAKE
+          com.sdtk.stdcom.sdtk.std.JS_SNOWFLAKE.Logger.log
         #elseif JS_WSH
           com.sdtk.std.JS_WSH.WScript.Echo
         #elseif JS_NODE

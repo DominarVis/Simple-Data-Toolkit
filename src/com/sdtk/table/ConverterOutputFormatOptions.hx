@@ -24,7 +24,7 @@ package com.sdtk.table;
 
 @:expose
 @:nativeGen
-class ConverterInputFormatOptions {
+class ConverterOutputFormatOptions {
     private var _values : Map<String, Dynamic>;
 
     public function new(?values : Null<Map<String, Dynamic>>) {
@@ -34,20 +34,40 @@ class ConverterInputFormatOptions {
         _values = values;
     }
 
-    public function csv() : ConverterInputOperationsOptions {
-        return setSourceFormat(CSV);
+    public function csv() : ConverterOutputOperationsOptions {
+        return setTargetFormat(CSV);
     }
 
-    public function psv() : ConverterInputOperationsOptions {
-        return setSourceFormat(PSV);
+    public function psv() : ConverterOutputOperationsOptions {
+        return setTargetFormat(PSV);
     }
 
-    public function tsv() : ConverterInputOperationsOptions {
-        return setSourceFormat(TSV);
+    public function tsv() : ConverterOutputOperationsOptions {
+        return setTargetFormat(TSV);
     }
 
-    private function setSourceFormat(value : Format) : ConverterInputOperationsOptions {
-        _values.set("sourceFormat", value);
-        return new ConverterInputOperationsOptions(_values);
+    public function sql() : ConverterOutputOperationsOptions {
+        return setTargetFormat(SQL);
+    }
+
+    public function csharp() : ConverterOutputOperationsOptions {
+        return setTargetFormat(CSharp);
+    }    
+
+    public function java() : ConverterOutputOperationsOptions {
+        return setTargetFormat(Java);
+    }    
+
+    public function haxe() : ConverterOutputOperationsOptions {
+        return setTargetFormat(Haxe);
+    }    
+
+    public function python() : ConverterOutputOperationsOptions {
+        return setTargetFormat(Python);
+    }
+
+    private function setTargetFormat(value : Format) : ConverterOutputOperationsOptions {
+        _values.set("targetFormat", value);
+        return new ConverterOutputOperationsOptions(_values);
     }
 }

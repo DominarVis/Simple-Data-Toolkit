@@ -41,6 +41,11 @@ class DataEntryReader implements com.sdtk.std.Disposable {
   private var _index : Int = -1;
 
   /**
+    Contains the raw index for the entry from the data store.
+  **/
+  private var _rawIndex : Int = -1;
+
+  /**
     Contains the value located at the column and row.
   **/
   private var _value : Dynamic;
@@ -60,7 +65,8 @@ class DataEntryReader implements com.sdtk.std.Disposable {
    */
   private var _nameIsIndex : Bool;
   
-  public function incrementTo(name : Null<String>, value : Dynamic) {
+  public function incrementTo(name : Null<String>, value : Dynamic, rawIndex : Int) {
+    _rawIndex = rawIndex;
     _index++;
   	var indexAsString : String = Std.string(_index);
     _value = value;
@@ -108,6 +114,13 @@ class DataEntryReader implements com.sdtk.std.Disposable {
   **/
   public function index() : Int {
     return _index;
+  }
+
+  /**
+    Returns the index of the entry from the data store.
+  **/
+  public function rawIndex() : Int {
+    return _rawIndex;
   }
 
   /**

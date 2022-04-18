@@ -22,9 +22,10 @@
 
 package com.sdtk.table;
 
+
 @:expose
 @:nativeGen
-class ConverterInputFormatOptions {
+class ConverterOutputOptions {
     private var _values : Map<String, Dynamic>;
 
     public function new(?values : Null<Map<String, Dynamic>>) {
@@ -34,20 +35,24 @@ class ConverterInputFormatOptions {
         _values = values;
     }
 
-    public function csv() : ConverterInputOperationsOptions {
-        return setSourceFormat(CSV);
+    public function writeFile(file : String) : ConverterOutputFormatOptions {
+        return setTarget(file, "file");
     }
 
-    public function psv() : ConverterInputOperationsOptions {
-        return setSourceFormat(PSV);
+    public function writeString() : ConverterOutputFormatOptions {
+        return setTarget(new StringBuf(), "string");
+    }    
+
+    public function writeArrayOfArrays() : ConverterOutputOperationsOptions {
+        _values.set("target", new Array());
+        _values.set("targetType", "array");
+        _values.set("targetFormat", Format.ARRAY);
+        return new ConverterOutputOperationsOptions(_values);
     }
 
-    public function tsv() : ConverterInputOperationsOptions {
-        return setSourceFormat(TSV);
-    }
-
-    private function setSourceFormat(value : Format) : ConverterInputOperationsOptions {
-        _values.set("sourceFormat", value);
-        return new ConverterInputOperationsOptions(_values);
-    }
+    private function setTarget(value : Dynamic, targetType : String) : ConverterOutputFormatOptions {
+        _values.set("target", value);
+        _values.set("targetType", targetType);
+        return new ConverterOutputFormatOptions(_values);
+    }    
 }

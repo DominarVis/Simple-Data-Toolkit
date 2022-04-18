@@ -44,6 +44,14 @@ class FileReader extends Reader {
         }
     }
 
+    public override function rawIndex() : Int {
+      return _reader.rawIndex();
+    }
+
+    public override function jumpTo(index : Int) : Void {
+      _reader.jumpTo(index);
+    }
+
     public override function dispose() : Void {
       if (_request != null) {
           _reader.dispose();
@@ -82,6 +90,8 @@ class FileReader extends Reader {
       return sr;
     }
 }
+#elseif JS_SNOWFLAKE
+  // TODO
 #elseif JS_WSH
 @:expose
 @:nativeGen
@@ -89,12 +99,30 @@ class FileReader extends Reader {
   private var _in : com.sdtk.std.JS_WSH.FileStreamObject;
   private var _path : String;
   private var _next : Null<String> = null;
+  private var _nextRawIndex : Null<Int>;
+  private var _currentRawIndex : Null<Int>;
 
   public function new(sName : String) {
       super();
       _path = sName;
       var fso : com.sdtk.std.JS_WSH.ActiveXObject = new com.sdtk.std.JS_WSH.ActiveXObject("Scripting.FileSystemObject");
       _in = fso.OpenTextFile(_path, 1, false);
+      _nextRawIndex = 0;
+  }
+
+  public override function rawIndex() : Int {
+    return _currentRawIndex;
+  }
+
+  public override function jumpTo(index : Int) : Void {
+    if (index < _nextRawIndex) {
+      var fso : com.sdtk.std.JS_WSH.ActiveXObject = new com.sdtk.std.JS_WSH.ActiveXObject("Scripting.FileSystemObject");
+      _in = fso.OpenTextFile(_path, 1, false);
+      _nextRawIndex = 0;
+    }
+    _in.Skip(index - _nextRawIndex);
+    _nextRawIndex = index;
+    check();
   }
 
   public override function start() : Void {
@@ -110,6 +138,7 @@ class FileReader extends Reader {
           _next = null;
           dispose();
         }
+        _nextRawIndex++;
     } else {
       _next = null;
     }
@@ -155,8 +184,16 @@ class FileReader extends Reader {
 @:expose
 @:nativeGen
 class FileReader extends com.sdtk.std.CSHARP.AbstractReader {
+    private var _path : String;
+
     public function new(sValue : String) {
         super(com.sdtk.std.CSHARP.File.OpenText(sValue));
+        _path = sValue;
+    }
+
+    private override function reset() : Void {
+      super.reset();
+      _reader = com.sdtk.std.CSHARP.File.OpenText(_path);
     }
 
     public function convertToStringReader() : StringReader {
@@ -174,6 +211,8 @@ class FileReader extends com.sdtk.std.CSHARP.AbstractReader {
 @:expose
 @:nativeGen
 class FileReader extends com.sdtk.std.JAVA.AbstractReader {
+    private var _path : String;
+
     private static function createReaderI(sValue : String) : Null<com.sdtk.std.JAVA.ReaderI> {
         try {
             return new com.sdtk.std.JAVA.FileReaderI(sValue);
@@ -184,6 +223,7 @@ class FileReader extends com.sdtk.std.JAVA.AbstractReader {
 
     public function new(sValue : String) {
         super(createReaderI(sValue));
+        _path = sValue;
     }
 
     public function convertToStringReader() : StringReader {
@@ -221,9 +261,17 @@ import sys.io.FileInput;
 @:expose
 @:nativeGen
 class FileReader extends com.sdtk.std.HAXE.AbstractReader {
+  private var _path : String;
+
   public function new(sName : String) {
     super(File.read(sName));
+    _path = sName;
   }
+
+  private override function reset() : Void {
+    super.reset();
+    _reader = File.read(_path);
+  }  
   
   public function convertToStringReader() : StringReader {
     var sb : StringBuf = new StringBuf();

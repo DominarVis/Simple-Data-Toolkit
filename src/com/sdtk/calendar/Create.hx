@@ -31,6 +31,7 @@ import com.sdtk.calendar.Parameters;
 @:expose
 @:nativeGen
 class Create {
+    #if !EXCLUDE_PARAMETERS
     static public function main() : Void {
         var pParameters : Parameters = new Parameters();
 
@@ -56,4 +57,5 @@ class Create {
             }
         }
     }
+    #end
 }

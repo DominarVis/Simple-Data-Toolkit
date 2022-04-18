@@ -63,6 +63,8 @@ class SysLogWriter extends Writer {
         // TODO
       #elseif JS_BROWSER
         com.sdtk.std.JS_BROWSER.Console.log(sLine);
+      #elseif JS_SNOWFLAKE
+        com.sdtk.std.JS_SNOWFLAKE.Logger.log(sLine);
       #else
         return null;
       #end

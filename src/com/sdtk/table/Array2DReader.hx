@@ -59,7 +59,7 @@ class Array2DReader<A> extends DataTableReader {
       var rr : ArrayRowReader<Dynamic> = cast rowReader;
       rr.reuse(cast _info._arr[_i]);
     }
-    incrementTo(null, rowReader);
+    incrementTo(null, rowReader, _i);
     _i += _info._rowIncrement;
     return rowReader;
   }

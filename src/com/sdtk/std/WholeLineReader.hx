@@ -29,11 +29,22 @@ class WholeLineReader extends Reader {
   private var _buffer : StringBuf = new StringBuf();
   private var _list : Null<Array<String>>;
   private var _current : Null<String>;
+  private var _currentRawIndex : Null<Int>;
   private var _reader : Null<Reader>;
 
   public function new(rReader : Reader) {
     super();
     _reader = rReader;
+  }
+
+  public override function rawIndex() : Int {
+    return _currentRawIndex;
+  }
+
+  public override function jumpTo(index : Int) : Void {
+    _current = null;
+    _reader.jumpTo(index);
+    check();
   }
 
   private function check() : Void {
@@ -44,6 +55,7 @@ class WholeLineReader extends Reader {
          return;
        } else {
         try {
+          _currentRawIndex = _reader.rawIndex();
           while (true) {
             var s : Null<String> = _reader.next();
             if (s == null && !_empty) {

@@ -88,6 +88,8 @@ class StdinReader extends com.sdtk.std.JAVA.AbstractReader {
         super(new com.sdtk.std.JAVA.InputStreamReader(com.sdtk.std.JAVA.SystemI.In));
     }
 }
+#elseif JS_SNOWFLAKE
+
 #elseif JS_BROWSER
 
 #else

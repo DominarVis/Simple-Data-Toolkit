@@ -89,11 +89,14 @@ class Converter {
     }
   }
 
+  #if !EXCLUDE_PARAMETERS
   public static function main() : Void {
     var pParameters = new Parameters();
     if (pParameters.getRunInTestMode()) {
       #if JS_BROWSER
         com.sdtk.std.JS_BROWSER.Console.log
+      #elseif JS_SNOWFLAKE
+        com.sdtk.std.JS_SNOWFLAKE.Logger.log
       #elseif JS_WSH
         com.sdtk.std.JS_WSH.WScript.Echo
       #elseif JS_NODE
@@ -109,9 +112,9 @@ class Converter {
     }
     Stopwatch.printResults();
   }
-/*
+  #end
+
   public static function start() : ConverterInputOptions {
     return new ConverterInputOptions();
   }
-  */
 }

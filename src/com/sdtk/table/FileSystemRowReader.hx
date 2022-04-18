@@ -67,7 +67,7 @@ class FileSystemRowReader extends DataTableRowReader {
   }
 
   public override function next() : Dynamic {
-    incrementTo(_fields[index()], _array[index()]);
+    incrementTo(_fields[index()], _array[index()], index());
     return value();
   }
 }

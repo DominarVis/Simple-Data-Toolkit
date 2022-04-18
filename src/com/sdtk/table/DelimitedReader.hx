@@ -88,7 +88,7 @@ class DelimitedReader extends DataTableReader {
         
       }
     }
-    incrementTo(null, rowReader);
+    incrementTo(null, rowReader, _reader.rawIndex());
     return rowReader;
   }
   

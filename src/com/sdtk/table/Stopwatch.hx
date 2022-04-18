@@ -82,6 +82,8 @@ class Stopwatch {
 
       #if JS_BROWSER
         com.sdtk.std.JS_BROWSER.Console.log
+      #elseif JS_SNOWFLAKE
+        com.sdtk.std.JS_SNOWFLAKE.Logger.log
       #elseif JS_WSH
         com.sdtk.std.JS_WSH.WScript.Echo
       #elseif JS_NODE

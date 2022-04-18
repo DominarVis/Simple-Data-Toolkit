@@ -60,6 +60,8 @@ class Transfer {
     writer.dispose();
   }
 
+  #if !EXCLUDE_PARAMETERS
+  
   /**
     Defines default transfer method.
 	**/
@@ -83,12 +85,16 @@ class Transfer {
     switch (pParameters.getInputMode())
     {
       case 0:
-        #if !JS_BROWSER
-          rReader = new StdinReader();
-        #else
+        #if JS_BROWSER
           MutableConsole.log = wWriter.write;
+        #elseif JS_SNOWFLAKE
+          // TODO
+        #else
+          rReader = new StdinReader();
         #end
-      #if !JS_BROWSER
+      #if JS_BROWSER
+      #elseif JS_SNOWFLAKE
+      #else
       case 1:
         rReader = new ProcessReader(pParameters.getProcessParam(), pParameters.getProcessParams());
       #end
@@ -148,4 +154,5 @@ class Transfer {
     }
     defaultTransfer(sLocation, pParameters);
   }
+  #end
 }

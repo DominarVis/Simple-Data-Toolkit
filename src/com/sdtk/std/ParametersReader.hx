@@ -22,6 +22,7 @@
 
 package com.sdtk.std;
 
+#if !EXCLUDE_PARAMETERS
 @:expose
 @:nativeGen
 class ParametersReader extends Reader {
@@ -38,6 +39,14 @@ class ParametersReader extends Reader {
         _parameters = pParameters;
         _next = "";
         moveToNext();
+    }
+
+    public override function rawIndex() : Int {
+        return _index;
+    }
+
+    public override function jumpTo(index : Int) : Void {
+        _index = index;
     }
 
     private function moveToNext() {
@@ -85,3 +94,4 @@ class ParametersReader extends Reader {
         return this;
     }
 }
+#end

@@ -41,4 +41,7 @@ enum Format {
   HTMLTable;
   ARRAY;
   MAP;
+  ARRAYMAP;
+  MAPARRAY;
+  DB;
 }

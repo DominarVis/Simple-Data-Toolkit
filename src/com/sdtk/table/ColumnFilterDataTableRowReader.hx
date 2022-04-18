@@ -60,7 +60,7 @@ class ColumnFilterDataTableRowReader extends DataTableRowReader {
 
     public override function next() : Dynamic {
         var oCurrent : Dynamic = _current;
-        incrementTo(_reader.name(), oCurrent);
+        incrementTo(_reader.name(), oCurrent, _reader.rawIndex());
         check();
         return oCurrent;
     }

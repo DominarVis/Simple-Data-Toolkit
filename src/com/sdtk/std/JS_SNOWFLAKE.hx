@@ -22,29 +22,11 @@
 
 package com.sdtk.std;
 
-/**
-  Defines interface for sending log entries to a popup or alert.
-**/
-@:expose
-@:nativeGen
-class PopUpWriter extends Writer {
-  public override function write(sLine : String) : Void {
-    try {
-      #if sys
-        // TODO
-      #elseif JS_SNOWFLAKE
-        // TODO
-      #elseif JS_WSH
-        // TODO
-      #elseif JS_NODE
-        // TODO
-      #elseif JS_BROWSER
-        com.sdtk.std.JS_BROWSER.Window.alert(sLine);
-      #else
-        return null;
-      #end
-    } catch (msg : Dynamic) {
-      return;
-    }
-  }
+// TODO File reading/writing
+
+#if JS_SNOWFLAKE
+@native('Logger') extern class Logger {
+  public static function log(s : String) : Void;
+  public static function readLine() : String;
 }
+#end

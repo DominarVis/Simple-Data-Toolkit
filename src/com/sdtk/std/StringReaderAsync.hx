@@ -47,7 +47,7 @@ class StringReaderAsync extends com.sdtk.std.JAVA.AbstractReaderAsync {
         super.dispose();
     }
 }
-#elseif (JS_BROWSER || JS_WSH)
+#elseif (JS_BROWSER || JS_WSH || JS_SNOWFLAKE)
 @:expose
 @:nativeGen
 class StringReaderAsync extends ReaderAsyncAbstract {

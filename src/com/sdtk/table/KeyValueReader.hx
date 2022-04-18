@@ -89,7 +89,7 @@ class KeyValueReader extends DataTableReader {
         var rr : KeyValueRowReader = cast rowReader;
         rr.reuse(_maps[index() + 1], _columns);
       }
-      incrementTo(_names[index() + 1], rowReader);
+      incrementTo(_names[index() + 1], rowReader, index() + 1);
       return value();
     } else {
       return null;

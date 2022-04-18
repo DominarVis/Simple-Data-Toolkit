@@ -111,10 +111,16 @@ class DataTableReader extends DataEntryReader {
           bWritingRowNames = writeRowName(writers, rowWriters, sName, bWritingRowNames);
   	      rowReader.convertToAll(rowWriters);
   	    }
+        i = 0;
         for (rowWriter in rowWriters) {
           if (rowWriter != null) {
-            rowWriter.dispose();
+            if (rowWriter == NullRowWriter.instance) {
+              rowWriters[i] = null;
+            } else {
+              rowWriter.dispose();
+            }
           }
+          i++;
         }
   	  } else {
         var i : Int = 0;
@@ -234,6 +240,9 @@ class DataTableReader extends DataEntryReader {
           bFirst = false;
         } else {
           rowReader = nextReuse(rowReader);
+          if (rowReader == null) {
+            break;
+          }
           rowReader.alwaysString(_alwaysString);
           rowReader.start();
           try {

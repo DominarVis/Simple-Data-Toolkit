@@ -42,6 +42,12 @@ implements Disposable implements DataIterator<String> implements DataIterable<St
     public function start() : Void {
     }
 
+    public function rawIndex() : Int {
+        return -1;
+    }
+
+    public function jumpTo(index : Int) : Void { }
+
     public function hasNext() : Bool {
         return false;
     }
@@ -135,9 +141,15 @@ implements Disposable implements DataIterator<String> implements DataIterable<St
             return true;
         }
 
+        #if java
+            override
+        #end
         public function reset() : Void {
         }
 
+        #if java
+            override
+        #end        
         public function skip(n : Int64) : Int64 {
             var i : Int64 = n.copy();
             var dec : Int64 = Int64.neg(Int64.make(0, 1));

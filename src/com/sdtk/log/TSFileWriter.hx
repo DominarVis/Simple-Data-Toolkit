@@ -41,6 +41,8 @@ class TSFileWriter extends com.sdtk.std.Writer {
     var sSeparator : String = "";
     #if JS_BROWSER
       sSeparator = "?";
+    #elseif JS_SNOWFLAKE
+      sSeparator = "?";
     #end
     _path = ((_location == null) ? "" : _location) + sSeparator + Math.ffloor(getTimeStamp() * 1000.0);
     #if sys
@@ -57,6 +59,8 @@ class TSFileWriter extends com.sdtk.std.Writer {
         return Date.now().getTime() * 1.0;
       #elseif JS_BROWSER
         return Date.now().getTime() * 1.0;
+      #elseif JS_SNOWFLAKE
+        return Date.now().getTime() * 1.0;        
       #else
         return 0;
       #end
@@ -82,6 +86,8 @@ class TSFileWriter extends com.sdtk.std.Writer {
         catch (msg : Dynamic) {
         }
         out.Close();
+      #elseif JS_SNOWFLAKE
+        // TODO
       #elseif JS_NODE
         // TODO
       #elseif JS_BROWSER

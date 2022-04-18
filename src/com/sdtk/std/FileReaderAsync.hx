@@ -82,6 +82,9 @@ class FileReaderAsync extends com.sdtk.std.JS_WSH.ReaderAsyncAbstractI {
         super(new FileReader(sName));
     }
 }
+#elseif JS_SNOWFLAKE
+// TODO
+
 #elseif JS_NODE
 // TODO
 @:expose

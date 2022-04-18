@@ -1,6 +1,6 @@
 package com.sdtk.std;
 
-#if (!cs && !java && !JS_BROWSER && !JS_NODE && !JS_WSH)
+#if (!cs && !java && !JS_BROWSER && !JS_NODE && !JS_WSH && !JS_SNOWFLAKE)
 import haxe.io.Input;
 import haxe.io.Output;
 
@@ -8,6 +8,8 @@ class AbstractReader extends Reader {
   private var _next : Null<String> = null;
   private var _reader : Null<Input>;
   private var _mode : Int = 0;
+  private var _nextRawIndex : Null<Int>;
+  private var _rawIndex : Null<Int>;  
   
 
   public function new(iReader : Input) {
@@ -15,6 +17,22 @@ class AbstractReader extends Reader {
     _reader = iReader;
     _next = "";
   }
+
+  private function reset() : Void {
+    _nextRawIndex = 0;
+  }  
+
+  public override function rawIndex() : Int {
+    return _rawIndex;
+  }
+
+  public override function jumpTo(index : Int) : Void {
+    if (index < _nextRawIndex) {
+        reset();
+    }
+    _reader.readString(index - _nextRawIndex);
+    _nextRawIndex = index;
+  }  
 
   public override function start() : Void {
     moveToNext();

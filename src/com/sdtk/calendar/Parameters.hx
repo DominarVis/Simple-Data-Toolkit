@@ -24,6 +24,7 @@ package com.sdtk.calendar;
 
 import com.sdtk.std.*;
 
+#if !EXCLUDE_PARAMETERS
 /**
   Handles command-line parameters.
 **/
@@ -134,3 +135,4 @@ class Parameters extends com.sdtk.std.Parameters {
       return _invalid;
   }
 }
+#end

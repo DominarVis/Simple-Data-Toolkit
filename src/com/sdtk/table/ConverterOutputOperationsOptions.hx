@@ -24,7 +24,7 @@ package com.sdtk.table;
 
 @:expose
 @:nativeGen
-class ConverterInputFormatOptions {
+class ConverterOutputOperationsOptions {
     private var _values : Map<String, Dynamic>;
 
     public function new(?values : Null<Map<String, Dynamic>>) {
@@ -34,20 +34,21 @@ class ConverterInputFormatOptions {
         _values = values;
     }
 
-    public function csv() : ConverterInputOperationsOptions {
-        return setSourceFormat(CSV);
-    }
-
-    public function psv() : ConverterInputOperationsOptions {
-        return setSourceFormat(PSV);
-    }
-
-    public function tsv() : ConverterInputOperationsOptions {
-        return setSourceFormat(TSV);
-    }
-
-    private function setSourceFormat(value : Format) : ConverterInputOperationsOptions {
-        _values.set("sourceFormat", value);
-        return new ConverterInputOperationsOptions(_values);
+    public function execute(?callback : Null<Dynamic->Void>) : Dynamic {
+        // TODO - Add additional options
+        var result : Dynamic = null;
+        Converter.convertWithOptions(cast _values.get("source"), cast _values.get("sourceFormat"), cast _values.get("target"), cast _values.get("targetFormat"), null /*sFilterColumnsExclude : Null<String>*/, null /*sFilterColumnsInclude : Null<String>*/, null /*sFilterRowsExclude : Null<String>*/, null /*sFilterRowsInclude : Null<String>*/, null /*sSortRowsBy : Null<String>*/, false/*leftTrim : Bool*/, false/*rightTrim : Bool*/);
+        switch (_values.get("targetType")) {
+            case "string":
+                result = _values.get("target").toString();
+            case "array":
+                result = _values.get("target");
+        }
+        if (callback == null) { 
+            return result;
+        } else {
+            callback(result);
+            return null;
+        }
     }
 }

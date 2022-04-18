@@ -49,6 +49,8 @@ package com.sdtk.std;
 @:native('java.io.Reader') extern class ReaderI implements Disposable {
     public function new();
     public function read() : Int;
+    public function reset() : Void;
+    public function skip(i : haxe.Int64) : haxe.Int64;
     @:native('close') public function dispose() : Void;
 }
 
@@ -207,11 +209,36 @@ class AbstractReaderAsync implements ReaderAsync implements UsesCompletionHandle
 class AbstractReader extends Reader {
     private var _next : Null<String> = null;
     private var _reader : Null<ReaderI>;
+    private var _nextRawIndex : Null<Int>;
+    private var _rawIndex : Null<Int>;
 
     public function new(rReader : ReaderI) {
         super();
         _reader = rReader;
         _next = "";
+        _nextRawIndex = 0;
+        _rawIndex = 0;
+    }
+
+    public override function reset() : Void {
+        _nextRawIndex = 0;
+        try {
+            _reader.reset();
+        } catch (msg : Dynamic) { }
+    }
+
+    public override function rawIndex() : Int {
+        return _rawIndex;
+    }
+
+    public override function jumpTo(index : Int) : Void {
+        if (index < _nextRawIndex) {
+            reset();
+        }
+        try {
+            _reader.skip(index - _nextRawIndex);
+        } catch (msg : Dynamic) { }
+        _nextRawIndex = index;
     }
 
     public override function start() : Void {

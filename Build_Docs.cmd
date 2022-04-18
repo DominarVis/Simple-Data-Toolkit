@@ -10,9 +10,9 @@ pushd doc-src
 pdflatex stc.tex
 pdflatex slg.tex
 pdflatex calendar.tex
-htlatex stc.tex
-htlatex slg.tex
-htlatex calendar.tex
+make4ht -c htlatex.cfg stc.tex "xhtml,NoFonts,-css"
+make4ht -c htlatex.cfg slg.tex "xhtml,NoFonts,-css"
+make4ht -c htlatex.cfg calendar.tex "xhtml,NoFonts,-css"
 del *.aux
 del *.log
 del *.dvi

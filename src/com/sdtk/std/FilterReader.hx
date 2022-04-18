@@ -28,10 +28,21 @@ class FilterReader extends Reader {
   private var _reader : Null<Reader>;
   private var _filter : Null<Array<Filter>>;
   private var _current : Null<String>;
+  private var _currentRawIndex : Null<Int>;
 
   public function new(rReader : Reader) {
     super();
     _reader = rReader;
+  }
+
+  public override function rawIndex() : Int {
+    return _currentRawIndex;
+  }
+
+  public override function jumpTo(index : Int) : Void {
+      _reader.jumpTo(index);
+      _current = null;
+      check();
   }
 
   public function addFilter(fFilter : Filter) : Void {
@@ -47,6 +58,7 @@ class FilterReader extends Reader {
              _current = _reader.next();
          } else {
              while (_current == null) {
+                var iNext : Int = _reader.rawIndex();
                 var sNext = _reader.next();
                 if (sNext == null) {
                     break;
@@ -56,6 +68,7 @@ class FilterReader extends Reader {
                 }
                 if (sNext != null) {
                     _current = sNext;
+                    _currentRawIndex = iNext;
                 }
              }
          }

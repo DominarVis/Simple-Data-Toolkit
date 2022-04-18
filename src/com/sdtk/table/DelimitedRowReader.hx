@@ -33,6 +33,7 @@ class DelimitedRowReader extends DataTableRowReader {
   private var _info : Null<DelimitedInfo> = null;
   private var _reader : Reader;
   private var _current : Null<String>;
+  private var _currentRawIndex : Null<Int>;
   private var _done : Bool = false;
   private var _header : Null<Array<String>> = null;
   private var _initHeader : Bool;
@@ -50,6 +51,7 @@ class DelimitedRowReader extends DataTableRowReader {
     _initHeader = bInitHeader;
     _done = false;
     _index = -1;
+    _rawIndex = -1;
     _started = false;
     _value = null;
   }
@@ -63,6 +65,7 @@ class DelimitedRowReader extends DataTableRowReader {
       var iCount : Int = 0;
       var sValue : StringBuf = new StringBuf();
 
+      _currentRawIndex = _reader.rawIndex();
       if (!_reader.hasNext()) {
         _current = null;
         _done = true;
@@ -177,14 +180,15 @@ class DelimitedRowReader extends DataTableRowReader {
 
   public override function next() : Dynamic {
     var sCurrent = _current;
+    var iRawIndex = _currentRawIndex;
     check();
     if (_header == null) {
-      incrementTo(null, sCurrent);
+      incrementTo(null, sCurrent, iRawIndex);
     } else {
       if (_initHeader) {
         _header.push(sCurrent);
       }
-      incrementTo(_header[index() + 1], sCurrent);
+      incrementTo(_header[index() + 1], sCurrent, iRawIndex);
     }
     return sCurrent;
   }

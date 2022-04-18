@@ -24,7 +24,7 @@ package com.sdtk.table;
 
 @:expose
 @:nativeGen
-class ConverterInputFormatOptions {
+class ConverterInputOperationsOptions {
     private var _values : Map<String, Dynamic>;
 
     public function new(?values : Null<Map<String, Dynamic>>) {
@@ -34,20 +34,7 @@ class ConverterInputFormatOptions {
         _values = values;
     }
 
-    public function csv() : ConverterInputOperationsOptions {
-        return setSourceFormat(CSV);
-    }
-
-    public function psv() : ConverterInputOperationsOptions {
-        return setSourceFormat(PSV);
-    }
-
-    public function tsv() : ConverterInputOperationsOptions {
-        return setSourceFormat(TSV);
-    }
-
-    private function setSourceFormat(value : Format) : ConverterInputOperationsOptions {
-        _values.set("sourceFormat", value);
-        return new ConverterInputOperationsOptions(_values);
+    public function output() : ConverterOutputOptions {
+        return new ConverterOutputOptions(_values);
     }
 }

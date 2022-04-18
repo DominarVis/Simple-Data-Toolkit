@@ -33,13 +33,21 @@ class ConverterStageStandard implements ConverterStage {
           case "STRING":
             var sString : String = cast(oTarget, String);
             switch (sString.charAt(0)) {
+              #if !EXCLUDE_CONTROLS
               case ".", "#":
                 oTarget = getControl(oTarget);
+              #end
+              #if !EXCLUDE_FILES
               default:
                 oTarget = (new FileWriter(sString, false)).convertToStringWriter().switchToDroppingCharacters();
+              #end
             }
           case "STRINGBUF":
             oTarget = new StringWriter(oTarget);
+          case "ARRAY":
+            if (fTarget == null) {
+              fTarget = ARRAY;
+            }
         }
 
         if (fTarget == null) {
@@ -89,7 +97,11 @@ class ConverterStageStandard implements ConverterStage {
           case Java:
             ciTarget = JavaInfoArrayOfMaps.instance;
           case CSharp:
-            ciTarget = CSharpInfoArrayOfMaps.instance;              
+            ciTarget = CSharpInfoArrayOfMaps.instance;  
+          case ARRAY:
+            _writer = Array2DWriter.writeToExpandableArray(cast oTarget);   
+          case DB:
+            // TODO         
           default:
             // Intentionally left empty
         }
@@ -103,6 +115,8 @@ class ConverterStageStandard implements ConverterStage {
     } else {
       // TODO
       #if JS_BROWSER
+
+      #elseif JS_SNOWFLAKE
 
       #end
     }
@@ -126,18 +140,32 @@ class ConverterStageStandard implements ConverterStage {
           sSource = Type.getClassName(Type.getClass(oSource)).toUpperCase();
         }
 
+        if (sSource == "STRINGBUF") {
+          var sb : StringBuf = cast oSource;
+          oSource = sb.toString();
+          sSource = "STRING";
+        }
+
         switch (sSource) {
           case "STRING":
             var sString : String = cast(oSource, String);
             switch (sString.charAt(0)) {
+              #if !EXCLUDE_CONTROLS
               case ".", "#":
                 oSource = getControl(oSource);
+              #end
+              #if !EXCLUDE_FILES
               default:
                 if (sString.indexOf("\n") >= 0 || sString.indexOf("\t") >= 0 || sString.indexOf(",") >= 0 || sString.indexOf("|") >= 0) {
                   oSource = new StringReader(sString);
                 } else {
                   oSource = (new FileReader(sString)).convertToStringReader().switchToDroppingCharacters();
                 }
+              #end
+            }
+          case "ARRAY":
+            if (fSource == null) {
+              fSource = ARRAY;
             }
         }
 
@@ -188,7 +216,11 @@ class ConverterStageStandard implements ConverterStage {
           case Java:
             ciSource = JavaInfoArrayOfMaps.instance;
           case CSharp:
-            ciSource = CSharpInfoArrayOfMaps.instance;            
+            ciSource = CSharpInfoArrayOfMaps.instance;    
+          case DB:
+            _reader = DatabaseReader.read(oSource);
+          case ARRAY:
+            _reader = Array2DReader.readWholeArray(cast oSource);
           default:
             // Intentionally left empty
         }
@@ -249,6 +281,9 @@ class ConverterStageStandard implements ConverterStage {
     #elseif JS_NODE
       // TODO
       return null;
+    #elseif JS_SNOWFLAKE
+      // TODO
+      return null;      
     #elseif JS_BROWSER
       // TODO - Add support for jQuery, Angular, etc.
       return com.sdtk.std.JS_BROWSER.Document.getElementById(sName);
@@ -265,6 +300,8 @@ class ConverterStageStandard implements ConverterStage {
       // TODO
     #elseif JS_NODE
       // TODO
+    #elseif JS_SNOWFLAKE
+      // TODO      
     #elseif JS_BROWSER
       sTag = StringTools.trim(cast(oControl, com.sdtk.std.JS_BROWSER.Element).tagName).toUpperCase();
     #else

@@ -87,6 +87,8 @@ package com.sdtk.std;
 @:nativeGen
 class AbstractReader extends Reader {
     private var _next : Null<String> = null;
+    private var _nextRawIndex : Null<Int>;
+    private var _rawIndex : Null<Int>;
     private var _reader : Null<TextReader>;
     private var _mode : Int = 0;
 
@@ -94,6 +96,26 @@ class AbstractReader extends Reader {
         super();
         _reader = trReader;
         _next = "";
+        _rawIndex = 0;
+        _nextRawIndex = 0;
+    }
+
+    private function reset() : Void {
+        _nextRawIndex = 0;
+    }
+
+    public override function rawIndex() : Int {
+        return _rawIndex;
+    }
+    
+    public override function jumpTo(index : Int) : Void {
+        if (index < _nextRawIndex) {
+            reset();
+        }
+        while (_nextRawIndex < index) {
+            _reader.Read();
+            _nextRawIndex++;
+        }
     }
 
     public override function start() : Void {
@@ -108,11 +130,13 @@ class AbstractReader extends Reader {
                     var c : Int = _reader.Read();
                     if (c > 0) {
                         _next = String.fromCharCode(c);
+                        _nextRawIndex += _next.length;
                     } else {
                         dispose();
                     }
                 case 1:
                     _next = _reader.ReadLine();
+                    _nextRawIndex += _next.length;
             }
         } catch (message : Dynamic) {
             dispose();
@@ -124,6 +148,7 @@ class AbstractReader extends Reader {
     }
 
     public override function next() : Null<String> {
+        _rawIndex = _nextRawIndex;
         var sValue : Null<String> = _next;
         if (sValue != null) {
             moveToNext();

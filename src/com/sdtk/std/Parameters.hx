@@ -22,6 +22,7 @@
 
 package com.sdtk.std;
 
+#if !EXCLUDE_PARAMETERS
 @:expose
 @:nativeGen
 class Parameters {
@@ -74,3 +75,4 @@ class Parameters {
         getArguments();
     }
 }
+#end

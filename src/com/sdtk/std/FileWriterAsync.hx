@@ -56,6 +56,8 @@ class FileWriterAsync implements WriterAsync {
         return this;
     }
 }
+#elseif JS_SNOWFLAKE
+    // TODO
 #elseif JS_WSH
 @:expose
 @:nativeGen

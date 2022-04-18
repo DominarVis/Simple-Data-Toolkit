@@ -70,6 +70,8 @@ class Parameters extends com.sdtk.std.Parameters {
                 com.sdtk.std.JS_WSH.WScript.Echo
               #elseif JS_NODE
                 com.sdtk.std.JS_NODE.Console.log
+              #elseif JS_SNOWFLAKE
+                com.sdtk.stdcom.sdtk.std.JS_SNOWFLAKE.Logger.log
               #else
                 Sys.println
               #end

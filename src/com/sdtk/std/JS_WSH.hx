@@ -37,6 +37,7 @@ package com.sdtk.std;
   public function WriteLine(sData : String) : Void;
   public function Read(iChars : Int) : String;
   public function ReadAll() : String;
+  public function Skip(iChars : Int) : Void;
   public function Close() : Void;
 }
 

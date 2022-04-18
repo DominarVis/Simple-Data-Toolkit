@@ -41,6 +41,7 @@ class ArrayRowReader<A> extends DataTableRowReader {
     _i = info._start;
     _started = false;
     _index = -1;
+    _rawIndex = -1;
     _started = false;
     _value = null;
   }
@@ -112,8 +113,8 @@ class ArrayRowReader<A> extends DataTableRowReader {
   public override function next() : Dynamic {
     _name = Std.string(_index);
     _value = _info._arr[_i];
+    incrementTo(null, _value, _i);
     _i += _info._increment;
-    incrementTo(null, _value);
     return _value;
   }
 

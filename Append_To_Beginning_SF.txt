@@ -1,0 +1,59 @@
+CREATE OR REPLACE PROCEDURE sdtk(data VARIANT, in_format VARCHAR, out_format VARCHAR)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+    var data = DATA;
+    var in_format = IN_FORMAT;
+    var out_format = OUT_FORMAT;
+
+    function exec(sql, binds) {
+        var sqlCommand = snowflake.createStatement({ sqlText: sql, binds: binds });
+        var result = sqlCommand.execute();
+        try {
+            result.next();
+            return result.getColumnValue(1);
+        } catch (ex) { }
+        return null;
+    }
+
+    var Logger = {
+        "log": function (msg) {
+            // From https://community.snowflake.com/s/article/Snowflake-Stored-Procedure-Logging
+            exec("create temp table identifier ($log_table) if not exists (ts number, msg string)", null);
+            exec("insert into identifier ($log_table) values (:1, :2)", [Date.now(), msg]);
+        },
+        "readLine": function () {
+            
+        },
+    };
+
+    var IO = {
+        "createRawFileFormat": function () {
+            return exec("CREATE OR REPLACE FILE FORMAT raw TYPE=CSV RECORD_DELIMITER=NONE FIELD_DELIMITER=NONE SKIP_HEADER=0 ESCAPE=NONE ESCAPE_UNENCLOSED_FIELD=NONE TRIM_SPACE=false FIELD_OPTIONALLY_ENCLOSED_BY=NONE SKIP_BLANK_LINES=false");
+        },
+        "read": function (path) {
+            return exec("SELECT d.$1, d.$2 FROM " + path + " (file_format=>raw) d")
+        },
+        "write": function (path, data) {
+            
+        },
+        "defaultCompressMethod": function (value) {
+            if (value == null || value == undefined) {
+                return "ZSTD";
+            } else {
+                return value;
+            }
+        },
+        "uncompress": function (data, method) {
+            method = IO.defaultCompressMethod(method);
+            return exec("SELECT DECOMPRESS_BINARY(:1, :2)", [data, method]);
+        },
+        "compress": function (data, method) {
+            method = IO.defaultCompressMethod(method);
+            return exec("SELECT COMPRESS(:1, :2)", [data, method]);
+        },
+    };
+
+
+

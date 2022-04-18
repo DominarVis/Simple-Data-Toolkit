@@ -17,6 +17,7 @@ class KeyValueRowReader extends DataTableRowReader {
     _map = mMap;
     _columns = cColumns;
     _index = -1;
+    _rawIndex = -1;
     _started = false;
     _value = null;
   }
@@ -40,7 +41,7 @@ class KeyValueRowReader extends DataTableRowReader {
 
   public override function next() : Dynamic {
     var sColumn : String = _columns[index() + 1];
-    incrementTo(sColumn, _map.get(sColumn));
+    incrementTo(sColumn, _map.get(sColumn), index() + 1);
     return value();
   }
 }

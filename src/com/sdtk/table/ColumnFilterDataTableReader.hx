@@ -79,7 +79,7 @@ class ColumnFilterDataTableReader extends DataTableReader {
         } else {
             nextValue = rowReader;
         }
-    	incrementTo(_reader.name(), new ColumnFilterDataTableRowReader(nextValue, _remove));
+    	incrementTo(_reader.name(), new ColumnFilterDataTableRowReader(nextValue, _remove), _reader.rawIndex());
         return value();
     }
       

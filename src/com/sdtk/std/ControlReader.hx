@@ -24,7 +24,7 @@ package com.sdtk.std;
 
 import com.sdtk.std.JS_BROWSER;
 
-#if !EXCLUDE_STDOUT
+#if !EXCLUDE_CONTROLS
 /**
   Defines interface for reading log entries from a control.
 **/

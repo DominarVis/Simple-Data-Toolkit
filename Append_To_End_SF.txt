@@ -1,0 +1,119 @@
+        
+        
+        var fSource;
+        switch (in_format.trim().toLowerCase()) {
+                case "csv":
+                        fSource = com.sdtk.table.Format.CSV;
+                case "tsv":
+                        fSource = com.sdtk.table.Format.TSV;
+                case "psv":
+                        fSource = com.sdtk.table.Format.PSV;
+                case "array":
+                        fSource = com.sdtk.table.Format.ARRAY;
+        }
+        
+        var oTarget;
+        var fTarget;
+        var bText;
+        switch (out_format.trim().toLowerCase()) {
+                case "csv":
+                        fTarget = com.sdtk.table.Format.CSV;
+                        oTarget = new com.sdtk.std.StringWriter();
+                        bText = true;
+                case "tsv":
+                        fTarget = com.sdtk.table.Format.TSV;
+                        oTarget = new com.sdtk.std.StringWriter();
+                        bText = true;
+                case "psv":
+                        fTarget = com.sdtk.table.Format.PSV;
+                        oTarget = new com.sdtk.std.StringWriter();
+                        bText = true;
+                case "array":
+                        fTarget = com.sdtk.table.Format.ARRAY;
+                        oTarget = new Array();
+                        bText = false;
+        }
+
+        com.sdtk.table.Converter.convertWithOptions(data, fSource, oTarget, fTarget, null /*sFilterColumnsExclude : Null<String>*/, null /*sFilterColumnsInclude : Null<String>*/, null /*sFilterRowsExclude : Null<String>*/, null /*sFilterRowsInclude : Null<String>*/, null /*sSortRowsBy : Null<String>*/, false/*leftTrim : Bool*/, false/*rightTrim : Bool*/);
+        
+        if (bText) {
+                return oTarget.toString();
+        } else {
+                return oTarget;
+        }
+$$
+;
+
+
+CREATE OR REPLACE PROCEDURE sdtk_from_csv(data VARCHAR)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+        var sql_command = snowflake.createStatement({ sqlText: "CALL sdtk(?, 'CSV', 'array')" }, binds: [data]);
+        var result = sql_command.execute();
+        result.next();
+        return result.getColumnValue(1);
+$$
+;
+
+CREATE OR REPLACEPROCEDURE sdtk_from_tsv(data VARCHAR)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+        var sql_command = snowflake.createStatement({ sqlText: "CALL sdtk(?, 'TSV', 'array')" }, binds: [data]);
+        var result = sql_command.execute();
+        result.next();
+        return result.getColumnValue(1);
+$$
+;
+
+
+CREATE OR REPLACE PROCEDURE sdtk_from_psv(data VARCHAR)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+        var sql_command = snowflake.createStatement({ sqlText: "CALL sdtk(?, 'PSV', 'array')" }, binds: [data]);
+        var result = sql_command.execute();
+        result.next();
+        return result.getColumnValue(1);
+$$
+;
+
+CREATE OR REPLACE PROCEDURE sdtk_to_csv(data VARIANT)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+        var sql_command = snowflake.createStatement({ sqlText: "CALL sdtk(?, 'array', 'CSV')" }, binds: [data]);
+        var result = sql_command.execute();
+        result.next();
+        return result.getColumnValue(1);
+$$
+;
+
+CREATE OR REPLACE PROCEDURE sdtk_to_tsv(data VARIANT)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+        var sql_command = snowflake.createStatement({ sqlText: "CALL sdtk(?, 'array', 'TSV')" }, binds: [data]);
+        var result = sql_command.execute();
+        result.next();
+        return result.getColumnValue(1);
+$$
+;
+
+CREATE OR REPLACE PROCEDURE sdtk_to_psv(data VARIANT)
+RETURNS VARIANT
+LANGUAGE JAVASCRIPT
+AS
+$$
+        var sql_command = snowflake.createStatement({ sqlText: "CALL sdtk(?, 'array', 'PSV')" }, binds: [data]);
+        var result = sql_command.execute();
+        result.next();
+        return result.getColumnValue(1);
+$$
+;

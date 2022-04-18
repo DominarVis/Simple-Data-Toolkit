@@ -56,6 +56,8 @@ class FileWriter extends Writer {
     return sw;
   }    
 }
+#elseif JS_SNOWFLAKE
+  // TODO
 #elseif JS_WSH
 @:expose
 @:nativeGen
