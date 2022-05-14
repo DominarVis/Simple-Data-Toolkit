@@ -88,6 +88,28 @@ class StdinReader extends com.sdtk.std.JAVA.AbstractReader {
         super(new com.sdtk.std.JAVA.InputStreamReader(com.sdtk.std.JAVA.SystemI.In));
     }
 }
+#elseif python
+@:expose
+@:nativeGen
+class StdinReader extends FileReader {
+    public function new() {
+        super(null);
+    }
+
+    private override function open() : Void {
+        _in = python.Syntax.code("sys.stdin");
+    }    
+
+    private override function close() : Void { }    
+}
+#elseif php
+@:expose
+@:nativeGen
+class StdinReader extends FileReader {
+    public function new() {
+        super("php://stdin");
+    }
+}
 #elseif JS_SNOWFLAKE
 
 #elseif JS_BROWSER

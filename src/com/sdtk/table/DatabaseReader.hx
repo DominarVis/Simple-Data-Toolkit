@@ -53,6 +53,7 @@ class DatabaseReader extends DataTableReader {
       _finalMappings = new Map<String, Dynamic->Dynamic->String->Array<String>->DatabaseReader>();
       _finalMappings.set("next", dbIterator);
       _finalMappings.set("__next__", dbIterator);
+      _finalMappings.set("fetch", dbIterator);
 
       _columnMappings = new Map<String, Dynamic->Dynamic->Array<String>>();
       _columnMappings.set("__iter__-description", columnDescription);
@@ -116,9 +117,10 @@ class DatabaseReader extends DataTableReader {
     #elseif java
       // TODO
       return null;
+    #elseif php
+      return o;
     #else
-      var r : Array<Dynamic> = cast o;
-      return o[i];
+      return o;
     #end    
   }
 
@@ -145,10 +147,10 @@ class DatabaseReader extends DataTableReader {
 
   private static function dbIterator(o : Dynamic, t : Dynamic, mapping : String, columns : Array<String>) : DatabaseReader {
     return new DatabaseIteratorReader(o, t, mapping, columns);
-  }  
+  }
 
   private static function getTypeIfNeeded(o : Dynamic) : Dynamic {
-    #if(python || js)
+    #if(python || js || php)
       return o;
     #elseif cs
       // TODO
@@ -168,10 +170,12 @@ class DatabaseReader extends DataTableReader {
       return cast python.Syntax.code("hasattr({0}, {1})", t, f);
     #elseif cs
       // TODO
-      return null;
+      return false;
     #elseif java
       // TODO
-      return null;
+      return false;
+    #elseif php
+      return cast php.Syntax.code("method_exists({0}, {1})", t, f);
     #else
       return Reflect.hasField(t, f);
     #end
@@ -188,6 +192,8 @@ class DatabaseReader extends DataTableReader {
     #elseif java
       // TODO
       return null;
+    #elseif php
+      return cast php.Syntax.code("{0}->{1}", o, f);      
     #else
       return Reflect.callMethod(o, cast Reflect.field(t, f), null);
     #end
@@ -342,6 +348,8 @@ class DatabaseIteratorReader extends DatabaseReader {
   }
 
   public override function nextReuse(rowReader : Null<DataTableRowReader>) : Dynamic {
+    _current = _prep(_next);
+    doNext();
     if (rowReader == null) {
       return new DatabaseIteratorRowReader(this);
     } else {
@@ -352,8 +360,6 @@ class DatabaseIteratorReader extends DatabaseReader {
   }
   
   public override function next() : Dynamic {
-    _current = _prep(_next);
-    doNext();
     return nextReuse(null);
   }
 }
@@ -369,6 +375,7 @@ class DatabaseIteratorRowReader extends DataTableRowReader {
 
   public function reuse(reader : DatabaseIteratorReader) {
     _reader = reader;
+    _index = -1;
   }
 
   public override function hasNext() : Bool {

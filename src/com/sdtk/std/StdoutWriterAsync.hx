@@ -64,5 +64,7 @@ class StdoutWriterAsync extends FileWriterAsync {
         super((Sys.systemName().indexOf("Windows") >= 0) ? "CON" : "/proc/self/fd1");
     }
 }
+#elseif python
+
 #end
 // TODO

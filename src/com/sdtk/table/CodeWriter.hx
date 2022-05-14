@@ -85,6 +85,18 @@ class CodeWriter extends DataTableWriter {
     return new CodeWriter(SQLSelectInfo.instance, writer);
   }
 
+  public static function createSQLCreatetWriter(writer : Writer, name : String) {
+    return new CodeWriter(SQLSelectInfo.createTable(name), writer);
+  }  
+
+  public static function createSQLCreatetOrReplaceWriter(writer : Writer, name : String) {
+    return new CodeWriter(SQLSelectInfo.createOrReplaceTable(name), writer);
+  }  
+
+  public static function createSQLInsertSelectWriter(writer : Writer, name : String) {
+    return new CodeWriter(SQLSelectInfo.insertIntoTable(name), writer);
+  }    
+
   public static function createCSharpArrayOfArraysWriter(writer : Writer) {
     return new CodeWriter(CSharpInfoArrayOfArrays.instance, writer);
   }

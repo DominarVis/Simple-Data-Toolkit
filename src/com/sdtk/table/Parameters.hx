@@ -40,7 +40,17 @@ class Parameters extends com.sdtk.std.Parameters {
   private var _recordPass : Bool = false;
   private var _leftTrim : Bool = false;
   private var _rightTrim : Bool = false;
+  private var _inputOptions : Map<String, Dynamic> = null;
+  private var _outputOptions : Map<String, Dynamic> = null;
   
+  private static function setValue(options : Map<String, Dynamic>, key : String, value : Dynamic) : Map<String, Dynamic> {
+    if (options == null) {
+      options = new Map<String, Dynamic>();
+    }
+    options.set(key, value);
+    return options;
+  }
+
   public function new() {
     super();
     var i : Int = 0;
@@ -73,6 +83,30 @@ class Parameters extends com.sdtk.std.Parameters {
             _leftTrim = true;
           case "RIGHTTRIM":
             _rightTrim = true;
+          case "EXCLUDEHEADER":
+            if (sLocations.length == 1) {
+              _inputOptions = setValue(_inputOptions, "header", false);
+            } else if (sLocations.length == 2) {
+              _outputOptions = setValue(_outputOptions, "header", false);
+            }
+          case "TEXTONLY":
+            if (sLocations.length == 1) {
+              _inputOptions = setValue(_inputOptions, "textOnly", true);
+            } else if (sLocations.length == 2) {
+              _outputOptions = setValue(_outputOptions, "textOnly", true);
+            }
+          case "CREATEORREPLACE":
+            _outputOptions = setValue(_outputOptions, "sqlType", "CreateOrReplace");
+            i++;
+            _outputOptions = setValue(_outputOptions, "tableName", getParameter(i));
+          case "CREATE":
+            _outputOptions = setValue(_outputOptions, "sqlType", "Create");
+            i++;
+            _outputOptions = setValue(_outputOptions, "tableName", getParameter(i));
+          case "INSERT":
+            _outputOptions = setValue(_outputOptions, "sqlType", "Insert");
+            i++;
+            _outputOptions = setValue(_outputOptions, "tableName", getParameter(i));
           case "RUNTESTS":
             _runInTestMode = true;
           case "RECORDPASS":
@@ -96,7 +130,7 @@ class Parameters extends com.sdtk.std.Parameters {
               Sys.println
             #end
             (
-              "Version 0.0.7"
+              "Version 0.1.2"
             );
           default:
             sLocations.push(sParameter);
@@ -275,6 +309,14 @@ class Parameters extends com.sdtk.std.Parameters {
 
   public function getRightTrim() : Bool {
     return _rightTrim;
+  }
+
+  public function getInputOptions() : Map<String, Dynamic> {
+    return _inputOptions;
+  }
+
+  public function getOutputOptions() : Map<String, Dynamic> {
+    return _outputOptions;
   }  
 }
 #end

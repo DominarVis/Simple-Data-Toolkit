@@ -38,5 +38,7 @@ class StdinReaderAsync extends FileReaderAsync {
         super((Sys.systemName().indexOf("Windows") >= 0) ? "CON" : "/proc/self/fd0");
     }
 }
+#elseif python
+// TODO
 #end
 // TODO

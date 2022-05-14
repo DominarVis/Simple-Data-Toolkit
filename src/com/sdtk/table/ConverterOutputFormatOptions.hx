@@ -34,20 +34,45 @@ class ConverterOutputFormatOptions {
         _values = values;
     }
 
-    public function csv() : ConverterOutputOperationsOptions {
-        return setTargetFormat(CSV);
+    public function csv() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
+        return setTargetFormatDelimited(CSV);
     }
 
-    public function psv() : ConverterOutputOperationsOptions {
-        return setTargetFormat(PSV);
+    public function psv() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
+        return setTargetFormatDelimited(PSV);
     }
 
-    public function tsv() : ConverterOutputOperationsOptions {
-        return setTargetFormat(TSV);
+    public function tsv() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
+        return setTargetFormatDelimited(TSV);
     }
 
-    public function sql() : ConverterOutputOperationsOptions {
-        return setTargetFormat(SQL);
+    public function htmlTable() : ConverterOutputOperationsOptions {
+        return setTargetFormat(HTMLTable);
+    }
+
+    public function dir() : ConverterOutputOperationsOptions {
+        return setTargetFormat(DIR);
+    }
+
+    public function ini() : ConverterOutputOperationsOptions {
+        return setTargetFormat(INI);
+    }    
+
+    public function json() : ConverterOutputOperationsOptions {
+        return setTargetFormat(JSON);
+    }        
+
+    public function properties() : ConverterOutputOperationsOptions {
+        return setTargetFormat(PROPERTIES);
+    }            
+
+    public function splunk() : ConverterOutputOperationsOptions {
+        return setTargetFormat(SPLUNK);
+    }    
+
+    public function sql() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsSQL {
+        _values.set("targetFormat", Format.SQL);
+        return new ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsSQL(_values);
     }
 
     public function csharp() : ConverterOutputOperationsOptions {
@@ -70,4 +95,9 @@ class ConverterOutputFormatOptions {
         _values.set("targetFormat", value);
         return new ConverterOutputOperationsOptions(_values);
     }
+
+    private function setTargetFormatDelimited(value : Format) : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
+        _values.set("targetFormat", value);
+        return new ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited(_values);
+    }    
 }

@@ -46,10 +46,36 @@ class Converter {
 
 
   public static function convert(oSource : Dynamic, oTarget : Dynamic) : Void {
-    convertWithOptions(oSource, null, oTarget, null, null, null, null, null, null, false, false);
+    convertWithOptions(oSource, null, oTarget, null, null, null, null, null, null, false, false, null, null);
   }
 
-  public static function convertWithOptions(oSource : Dynamic, fSource : Null<Format>, oTarget : Dynamic, fTarget : Null<Format>, sFilterColumnsExclude : Null<String>, sFilterColumnsInclude : Null<String>, sFilterRowsExclude : Null<String>, sFilterRowsInclude : Null<String>, sSortRowsBy : Null<String>, leftTrim : Bool, rightTrim : Bool) : Void {
+  private static function length(o : Dynamic) : Int {
+    if (isString(o)) {
+      var s : String = cast o;
+      return o.length;
+    } else if (
+        #if (haxe_ver < 3.2)
+          Std.is(o, Array)
+        #else
+          Std.isOfType(o, Array)
+        #end     
+      ) {
+      var a : Array<Dynamic> = cast o;
+      return a.length;
+    } else {
+      return -1;
+    }
+  }
+
+  private static function isString(o : Dynamic) : Bool {
+    #if (haxe_ver < 3.2)
+      return Std.is(o, String);
+    #else
+      return Std.isOfType(o, String);
+    #end     
+  }  
+
+  public static function convertWithOptions(oSource : Dynamic, fSource : Null<Format>, oTarget : Dynamic, fTarget : Null<Format>, sFilterColumnsExclude : Dynamic, sFilterColumnsInclude : Dynamic, sFilterRowsExclude : Dynamic, sFilterRowsInclude : Dynamic, sSortRowsBy : Dynamic, leftTrim : Bool, rightTrim : Bool, inputOptions : Map<String, Dynamic>, outputOptions : Map<String, Dynamic>) : Void {
     _watch.start();
 
     var aStages : Array<ConverterStage> = new Array<ConverterStage>();
@@ -60,14 +86,18 @@ class Converter {
       // Store the data in a temporary location
       // Sort the temporary location
       // Then output to the final output
-      if (sSortRowsBy != null && sSortRowsBy.length > 0) {
+      if (sSortRowsBy != null && length(sSortRowsBy) > 0) {
         var awWriter = Array2DWriter.writeToExpandableArray(null);
-        aStages.push(new ConverterStageStandard(oSource, fSource, awWriter, Format.ARRAY, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim));
-        aStages.push(ConverterStageSort.createWithArrayAndColumnsString(awWriter.getArray(), sSortRowsBy));
+        aStages.push(new ConverterStageStandard(oSource, fSource, awWriter, Format.ARRAY, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions, null));
+        if (isString(sSortRowsBy)) {
+          aStages.push(ConverterStageSort.createWithArrayAndColumnsString(awWriter.getArray(), cast sSortRowsBy));
+        } else {
+          aStages.push(ConverterStageSort.createWithArrayAndColumns(awWriter.getArray(), cast sSortRowsBy));
+        }
         var arReader : Array2DReader<Dynamic> = awWriter.flip();
-        aStages.push(new ConverterStageStandard(arReader, Format.ARRAY, oTarget, fTarget, null, null, null, null, false, false));
+        aStages.push(new ConverterStageStandard(arReader, Format.ARRAY, oTarget, fTarget, null, null, null, null, false, false, null, outputOptions));
       } else {
-        aStages.push(new ConverterStageStandard(oSource, fSource, oTarget, fTarget, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim));
+        aStages.push(new ConverterStageStandard(oSource, fSource, oTarget, fTarget, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions, outputOptions));
       }
 
       for (csStage in aStages) {
@@ -108,7 +138,7 @@ class Converter {
         Tests.runTests(pParameters.getRecordPass(), pParameters.getVerbose())
       );
     } else {
-      convertWithOptions(pParameters.getInput(), pParameters.getInputFormat(), pParameters.getOutput(), pParameters.getOutputFormat(), pParameters.getFilterColumnsExclude(), pParameters.getFilterColumnsInclude(), pParameters.getFilterRowsExclude(), pParameters.getFilterRowsInclude(), pParameters.getSortRowsBy(), pParameters.getLeftTrim(), pParameters.getRightTrim());
+      convertWithOptions(pParameters.getInput(), pParameters.getInputFormat(), pParameters.getOutput(), pParameters.getOutputFormat(), pParameters.getFilterColumnsExclude(), pParameters.getFilterColumnsInclude(), pParameters.getFilterRowsExclude(), pParameters.getFilterRowsInclude(), pParameters.getSortRowsBy(), pParameters.getLeftTrim(), pParameters.getRightTrim(), pParameters.getInputOptions(), pParameters.getOutputOptions());
     }
     Stopwatch.printResults();
   }
@@ -117,4 +147,8 @@ class Converter {
   public static function start() : ConverterInputOptions {
     return new ConverterInputOptions();
   }
+
+  public static function quick() : ConverterQuickInputOptions {
+    return new ConverterQuickInputOptions();
+  }  
 }

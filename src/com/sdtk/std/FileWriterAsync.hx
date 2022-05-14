@@ -108,4 +108,6 @@ class FileWriterAsync implements WriterAsync {
         }
     }
 }
+#elseif python
+// TODO
 #end

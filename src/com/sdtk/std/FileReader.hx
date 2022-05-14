@@ -253,6 +253,171 @@ class FileReader extends com.sdtk.std.JAVA.AbstractReader {
       return sr;
     }
 }
+#elseif python
+@:expose
+@:nativeGen
+class FileReader extends Reader {
+  private var _in : Dynamic;
+  private var _path : String;
+  private var _next : Null<String> = null;
+  private var _nextRawIndex : Null<Int>;
+  private var _currentRawIndex : Null<Int>;
+
+  public function new(sName : String) {
+      super();
+      _path = sName;
+      open();
+      _nextRawIndex = 0;
+  }
+
+  private function open() : Void {
+    _in = python.Syntax.code("open({0}, \"r\")", _path);
+  }
+
+  public override function rawIndex() : Int {
+    return _currentRawIndex;
+  }
+
+  public override function jumpTo(index : Int) : Void {
+    if (index < _nextRawIndex) {
+      open();
+      _nextRawIndex = 0;
+    }
+    python.Syntax.code("{0}.seek({1})", _in, index - _nextRawIndex);
+    _nextRawIndex = index;
+    check();
+  }
+
+  public override function start() : Void {
+    check();
+  }
+
+  private function check() : Void {
+    if (_in != null) {
+        try {
+          _next = python.Syntax.code("{0}.read(1)", _in);
+        }
+        catch (msg : Dynamic) {
+          _next = null;
+          dispose();
+        }
+        _nextRawIndex++;
+    } else {
+      _next = null;
+    }
+  }
+
+  public override function hasNext() : Bool {
+    return _next != null;
+  }
+
+  public override function next() : String {
+    var _current = _next;
+    check();
+    return _current;
+  }
+
+  public override function peek() : String {
+    return _next;
+  }
+
+  private function close() : Void {
+    python.Syntax.code("{0}.close()", _in);
+  }
+
+  public override function dispose() : Void {
+    if (_path != null) {
+      _path = null;
+      close();
+      _in = null;
+    }
+  }
+
+  public function convertToStringReader() : StringReader {
+    var s : String = "";
+    if (_next != null) {
+      s += _next;
+    }
+    s += python.Syntax.code("{0}.read()", _in);
+    var sr : StringReader = new StringReader(s);
+    this.dispose();
+    return sr;
+  }
+}
+#elseif php
+@:expose
+@:nativeGen
+class FileReader extends Reader {
+  private var _path : String;
+  private var _next : Null<String> = null;
+  private var _nextRawIndex : Null<Int>;
+  private var _currentRawIndex : Null<Int>;
+
+  public function new(sName : String) {
+      super();
+      _path = sName;
+      _nextRawIndex = 0;
+  }
+
+  public override function rawIndex() : Int {
+    return _currentRawIndex;
+  }
+
+  public override function jumpTo(index : Int) : Void {
+    _nextRawIndex = index;
+    check();
+  }
+
+  public override function start() : Void {
+    check();
+  }
+
+  private function check() : Void {
+    if (_path != null) {
+        try {
+          _next = php.Syntax.code("file_get_contents({0}, false, null, {1}, 1)", _path, _nextRawIndex);
+        }
+        catch (msg : Dynamic) {
+          _next = null;
+          dispose();
+        }
+        _nextRawIndex++;
+    } else {
+      _next = null;
+    }
+  }
+
+  public override function hasNext() : Bool {
+    return _next != null;
+  }
+
+  public override function next() : String {
+    var _current = _next;
+    check();
+    return _current;
+  }
+
+  public override function peek() : String {
+    return _next;
+  }
+
+  public override function dispose() : Void {
+    if (_path != null) {
+      _path = null;
+    }
+  }
+
+  public function convertToStringReader() : StringReader {
+    var s : String = "";
+    if (_next != null) {
+      s += _next;
+    }
+    s += php.Syntax.code("file_get_contents({0}, false, null, {1}, null)", _path, _nextRawIndex);
+    var sr : StringReader = new StringReader(s);
+    this.dispose();
+    return sr;
+  }
+}
 #else
 import haxe.io.Input;
 import sys.io.File;

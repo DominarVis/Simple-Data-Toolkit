@@ -34,13 +34,36 @@ class ConverterOutputOperationsOptions {
         _values = values;
     }
 
+    public function sortRowsBy(value : String) : ConverterOutputOperationsOptions {
+        return mergeSortBy("sortRowsBy", value);
+    }
+
+    private function mergeSortBy(key : String, value : String) : ConverterOutputOperationsOptions {
+        var current : Array<String> = _values.get(key);
+
+        if (current == null) {
+            current = new Array<String>();
+        }
+
+        current.push(value);
+        _values.set(key, current);
+
+        return this;
+    }
+
     public function execute(?callback : Null<Dynamic->Void>) : Dynamic {
         // TODO - Add additional options
         var result : Dynamic = null;
-        Converter.convertWithOptions(cast _values.get("source"), cast _values.get("sourceFormat"), cast _values.get("target"), cast _values.get("targetFormat"), null /*sFilterColumnsExclude : Null<String>*/, null /*sFilterColumnsInclude : Null<String>*/, null /*sFilterRowsExclude : Null<String>*/, null /*sFilterRowsInclude : Null<String>*/, null /*sSortRowsBy : Null<String>*/, false/*leftTrim : Bool*/, false/*rightTrim : Bool*/);
+        Converter.convertWithOptions(cast _values.get("source"), cast _values.get("sourceFormat"), cast _values.get("target"), cast _values.get("targetFormat"), cast _values.get("filterColumnsExclude"), cast _values.get("filterColumnsInclude"), cast _values.get("filterRowsExclude"), cast _values.get("filterRowsInclude"), cast _values.get("sortRowsBy"), false/*leftTrim : Bool*/, false/*rightTrim : Bool*/, cast _values.get("inputOptions"), cast _values.get("outputOptions"));
         switch (_values.get("targetType")) {
             case "string":
-                result = _values.get("target").toString();
+                var sb : StringBuf =  _values.get("target");
+                #if php
+                    // Handle bug in Haxe to PHP conversion for StringBuf
+                    result = php.Syntax.code("{0}->b", sb);
+                #else
+                    result = sb.toString();
+                #end
             case "array":
                 result = _values.get("target");
         }
@@ -50,5 +73,64 @@ class ConverterOutputOperationsOptions {
             callback(result);
             return null;
         }
+    }
+}
+
+@:expose
+@:nativeGen
+class ConverterOutputOperationsOptionsSQL extends ConverterOutputOperationsOptions {
+    public function new(?values : Null<Map<String, Dynamic>>) {
+        super(values);
+    }
+
+    public function createTable(name : String) : ConverterOutputOperationsOptions {
+        return setValue("Create", name);
+    }
+    
+    public function createOrReplaceTable(name : String) : ConverterOutputOperationsOptions {
+        return setValue("CreateOrReplace", name);
+    }
+    
+    public function insertIntoTable(name : String) : ConverterOutputOperationsOptions {    
+        return setValue("Insert", name);
+    }
+
+    private function setValue(sqlType : String, tableName : String) : ConverterOutputOperationsOptions {
+        var options : Map<String, Dynamic> = cast _values.get("outputOptions");
+        if (options == null) {
+            options = new Map<String, Dynamic>();
+            _values.set("outputOptions", options);
+        }
+        options.set("sqlType", sqlType);
+        options.set("tableName", tableName);
+
+        return new ConverterOutputOperationsOptions(_values);
+    }
+}
+
+@:expose
+@:nativeGen
+class ConverterOutputOperationsOptionsDelimited extends ConverterOutputOperationsOptions {
+    public function new(?values : Null<Map<String, Dynamic>>) {
+        super(values);
+    }
+
+    public function excludeHeader(?value : Bool = true) : ConverterOutputOperationsOptionsDelimited {
+        return setValue("header", !value);
+    }
+
+    public function textOnly(?value : Bool = true) : ConverterOutputOperationsOptionsDelimited {
+        return setValue("textOnly", !value);
+    }    
+
+    private function setValue(key : String, value : Bool) : ConverterOutputOperationsOptionsDelimited {
+        var options : Map<String, Dynamic> = cast _values.get("outputOptions");
+        if (options == null) {
+            options = new Map<String, Dynamic>();
+            _values.set("outputOptions", options);
+        }
+        options.set(key, value);
+
+        return this;
     }
 }

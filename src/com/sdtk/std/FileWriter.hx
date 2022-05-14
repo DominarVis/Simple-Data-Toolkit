@@ -221,6 +221,122 @@ class FileWriter extends Writer {
     return sw;
   }    
 }
+#elseif python
+@:expose
+@:nativeGen
+class FileWriter extends Writer {
+  private var _out : Dynamic;
+  private var _path : String;
+
+  public function new(sName : String, bAppend : Bool) {
+      super();
+      _path = sName;
+      if (!bAppend) {
+        open(false);
+      }
+  }
+
+  private function open(bAppend : Bool) : Void {
+      _out = python.Syntax.code("open({0}, {1})", _path, bAppend ? "a" : "w");
+  }
+
+  private function close() : Void {
+      python.Syntax.code("{0}.close()", _out);
+      _out = null;
+  }
+
+  private function writeI(str : String) : Void {
+      try {
+        python.Syntax.code("{0}.write({1})", _out, str);
+      }
+      catch (msg : Dynamic) {
+      }    
+  }
+
+  public override function write(str : String) : Void {
+    if (_out == null) {
+      open(true);
+      writeI(str);
+      close();
+    } else {
+      writeI(str);
+    }
+  }
+
+  public override function dispose() {
+    if (_path != null) {
+      _path = null;
+      if (_out != null) {
+        close();
+        _out = null;
+      }
+    }
+  }
+
+  public function convertToStringWriter() : StringWriter {
+    var sw : StringWriter = new StringWriter(null);
+    sw.endWith(this);
+    return sw;
+  }  
+}
+#elseif php
+@:expose
+@:nativeGen
+class FileWriter extends Writer {
+  private var _out : Dynamic;
+  private var _path : String;
+
+  public function new(sName : String, bAppend : Bool) {
+      super();
+      _path = sName;
+      if (!bAppend) {
+        open(false);
+      }
+  }
+
+  private function open(bAppend : Bool) : Void {
+      _out = php.Syntax.code("fopen({0}, {1}", _path, bAppend ? "a" : "w");
+  }
+
+  private function close() : Void {
+      php.Syntax.code("fclose({0})", _out);
+      _out = null;
+  }
+
+  private function writeI(str : String) : Void {
+      try {
+        php.Syntax.code("fwrite({0}, {1})", _out, str);
+      }
+      catch (msg : Dynamic) {
+      }    
+  }
+
+  public override function write(str : String) : Void {
+    if (_out == null) {
+      open(true);
+      writeI(str);
+      close();
+    } else {
+      writeI(str);
+    }
+  }
+
+  public override function dispose() {
+    if (_path != null) {
+      _path = null;
+      if (_out != null) {
+        close();
+        _out = null;
+      }
+    }
+  }
+
+  public function convertToStringWriter() : StringWriter {
+    var sw : StringWriter = new StringWriter(null);
+    sw.endWith(this);
+    return sw;
+  }  
+}
 #elseif cs
 @:expose
 @:nativeGen

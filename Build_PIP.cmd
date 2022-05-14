@@ -21,6 +21,7 @@ MKDIR out\packaging
 MKDIR out\packaging\src
 MKDIR out\packaging\src\sdtk
 MKDIR out\packaging\tests
+ECHO. > out\packaging\src\sdtk\__init__.py
 COPY out\sdtk.py out\packaging\src\sdtk
 COPY lgpl-3.0.txt out\packaging\LICENSE
 COPY README.md out\packaging
@@ -30,8 +31,6 @@ ECHO requires = ["setuptools>=42"] >> out\packaging\pyproject.toml
 ECHO build-backend = "setuptools.build_meta" >> out\packaging\pyproject.toml
 
 ECHO [metadata] > out\packaging\setup.cfg
-
-
 
 ECHO name = sdtk-visllc >> out\packaging\setup.cfg
 ECHO version = %PACKAGE_VERSION% >> out\packaging\setup.cfg

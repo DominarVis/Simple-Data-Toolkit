@@ -44,6 +44,13 @@ class Array2DWriter<A> extends DataTableWriter {
     return new Array2DWriter<A>(new Array2DInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
   }
   
+  public static function writeToExpandableArrayI<A>(arr : Null<Array<Dynamic>>) : Array2DWriter<Dynamic> {
+    if (arr == null) {
+      arr = new Array<Array<Dynamic>>();
+    }
+    return new Array2DWriter<Dynamic>(new Array2DInfo<Dynamic>(cast arr, 0, -1, -1, 1, 1));
+  }
+
   public static function writeToExpandableArray<A>(arr : Null<Array<Array<A>>>) : Array2DWriter<A> {
     if (arr == null) {
       arr = new Array<Array<A>>();

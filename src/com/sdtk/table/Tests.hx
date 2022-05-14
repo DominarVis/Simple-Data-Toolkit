@@ -78,7 +78,7 @@ class Tests {
     var sPSV : String = StringTools.replace(sCSV, ",", "|");
     var sbBuffer : StringBuf = new StringBuf();
     try {
-      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.PSV, null, null, null, null, null, false, false);
+      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.PSV, null, null, null, null, null, false, false, null, null);
       return compareResults(recordPass, verbose, sTest, sPSV, StringTools.replace(sbBuffer.toString(), "\"", ""));
     } catch (msg : Dynamic) {
       if (verbose) {
@@ -94,7 +94,7 @@ class Tests {
   	var sExcluded : String = "A,C\n5,7\n1,3\n8,5";
     var sbBuffer : StringBuf = new StringBuf();
     try {
-      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, "B", null, null, null, null, false, false);
+      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, "B", null, null, null, null, false, false, null, null);
       return compareResults(recordPass, verbose, sTest, sExcluded, StringTools.replace(sbBuffer.toString(), "\"", ""));
     } catch (msg : Dynamic) {
       if (verbose) {
@@ -110,7 +110,7 @@ class Tests {
   	var sExcluded : String = "A,B,C\n1,2,3\n8,1,5";
     var sbBuffer : StringBuf = new StringBuf();
     try {
-      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, null, "#2", null, null, false, false);
+      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, null, "#2", null, null, false, false, null, null);
       return compareResults(recordPass, verbose, sTest, sExcluded, StringTools.replace(sbBuffer.toString(), "\"", ""));
     } catch (msg : Dynamic) {
       if (verbose) {
@@ -126,7 +126,7 @@ class Tests {
     var sIncluded : String = "B\n6\n2\n1";
     var sbBuffer : StringBuf = new StringBuf();
     try {
-      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, "B", null, null, null, false, false);
+      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, "B", null, null, null, false, false, null, null);
       return compareResults(recordPass, verbose, sTest, sIncluded, StringTools.replace(sbBuffer.toString(), "\"", ""));
     } catch (msg : Dynamic) {
       if (verbose) {
@@ -142,7 +142,7 @@ class Tests {
   	var sExcluded : String = "5,6,7";
     var sbBuffer : StringBuf = new StringBuf();
     try {
-      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, null, null, "#2", null, false, false);
+      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, null, null, "#2", null, false, false, null, null);
       return compareResults(recordPass, verbose, sTest, sExcluded, StringTools.replace(sbBuffer.toString(), "\"", ""));
     } catch (msg : Dynamic) {
       if (verbose) {
@@ -158,7 +158,7 @@ class Tests {
     var sOrdered : String = "A,B,C\n1,2,3\n8,1,5\n5,6,7";
     var sbBuffer : StringBuf = new StringBuf();
     try {
-      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, null, null, null, "C", false, false);
+      Converter.convertWithOptions(sCSV, Format.CSV, sbBuffer, Format.CSV, null, null, null, null, "C", false, false, null, null);
       return compareResults(recordPass, verbose, sTest, sOrdered, StringTools.replace(sbBuffer.toString(), "\"", ""));
     } catch (msg : Dynamic) {
       if (verbose) {

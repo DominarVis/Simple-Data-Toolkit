@@ -44,6 +44,10 @@ class Array2DReader<A> extends DataTableReader {
     return new Array2DReader<A>(new Array2DInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
   }
 
+  public static function readWholeArrayI<Dynamic>(arr : Array<Dynamic>) : Array2DReader<Dynamic> {
+    return new Array2DReader<Dynamic>(new Array2DInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+  }
+
   public static function reuse<A>(info : Array2DInfo<A>) : Array2DReader<A> {
     return new Array2DReader(info);
   }

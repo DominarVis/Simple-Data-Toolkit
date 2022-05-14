@@ -34,7 +34,63 @@ class ConverterInputOperationsOptions {
         _values = values;
     }
 
+    public function excludeColumn(value : String) : ConverterInputOperationsOptions {
+        return mergeFilter("filterColumnsExclude", new com.sdtk.std.FilterBlockEqualString(value));
+    }
+
+    public function includeColumn(value : String) : ConverterInputOperationsOptions {
+        return mergeFilter("filterColumnsInclude", new com.sdtk.std.FilterAllowEqualString(value));
+    }
+
+    public function excludeRow(value : String) : ConverterInputOperationsOptions {
+        return mergeFilter("filterRowsExclude", new com.sdtk.std.FilterBlockEqualString(value));
+    }
+
+    public function includeRow(value : String) : ConverterInputOperationsOptions {
+        return mergeFilter("filterRowsIncludee", new com.sdtk.std.FilterAllowEqualString(value));
+    }
+
+    private function mergeFilter(key : String, value : com.sdtk.std.Filter) : ConverterInputOperationsOptions {
+        var current : Array<com.sdtk.std.Filter> = _values.get(key);
+
+        if (current == null) {
+            current = new Array<com.sdtk.std.Filter>();
+        }
+
+        current.push(value);
+        _values.set(key, current);
+
+        return this;
+    }
+
     public function output() : ConverterOutputOptions {
         return new ConverterOutputOptions(_values);
+    }
+}
+
+@:expose
+@:nativeGen
+class ConverterInputOperationsOptionsDelimited extends ConverterInputOperationsOptions {
+    public function new(?values : Null<Map<String, Dynamic>>) {
+        super(values);
+    }
+
+    public function excludeHeader(?value : Bool = true) : ConverterInputOperationsOptionsDelimited {
+        return setValue("header", !value);
+    }
+
+    public function textOnly(?value : Bool = true) : ConverterInputOperationsOptionsDelimited {
+        return setValue("textOnly", !value);
+    }    
+
+    private function setValue(key : String, value : Bool) : ConverterInputOperationsOptionsDelimited {
+        var options : Map<String, Dynamic> = cast _values.get("inputOptions");
+        if (options == null) {
+            options = new Map<String, Dynamic>();
+            _values.set("inputOptions", options);
+        }
+        options.set(key, value);
+
+        return this;
     }
 }

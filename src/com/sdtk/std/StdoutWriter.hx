@@ -110,6 +110,30 @@ class StdoutWriter extends Writer {
         }
     }
 }
+#elseif python
+@:expose
+@:nativeGen
+class StdoutWriter extends FileWriter {
+    public function new() {
+        super(null, false);
+    }
+
+    private override function open(bAppend : Bool) : Void {
+        _out = python.Syntax.code("sys.stdout");
+    }
+
+    private override function close() : Void {
+        _out = python.Syntax.code("{0}.flush()", _out);
+    }
+}
+#elseif php
+@:expose
+@:nativeGen
+class StdoutWriter extends FileWriter {
+    public function new() {
+        super("php://stdout", false);
+    }
+}
 #else
 import haxe.io.Output;
 

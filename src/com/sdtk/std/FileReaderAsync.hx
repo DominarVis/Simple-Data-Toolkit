@@ -144,5 +144,7 @@ class FileReaderAsync extends com.sdtk.std.JAVA.AbstractReaderAsync {
         }
     }
 }
+#elseif python
+// TODO
 #end
 // TODO

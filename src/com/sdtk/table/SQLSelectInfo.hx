@@ -33,12 +33,15 @@ class SQLSelectInfo implements CodeInfo {
 
   public static var instance : CodeInfo = new SQLSelectInfo();
 
+  private var _appendBeginning : String = "";
+  private var _appendEnd : String = "";
+
   public function start() : String {
-    return "";
+    return _appendBeginning;
   }
 
   public function end() : String {
-    return "";
+    return _appendEnd;
   }  
 
   public function rowStart(name : String, index : Int) : String {
@@ -99,5 +102,26 @@ class SQLSelectInfo implements CodeInfo {
   
   public function replacements() : Array<String> {
     return ["''", "'"];
+  }
+
+  public static function createTable(name : String) {
+    var info = new SQLSelectInfo();
+    info._appendBeginning = "CREATE TABLE " + name + " AS\n";
+    info._appendEnd = ";";
+    return info;
+  }
+
+  public static function createOrReplaceTable(name : String) {
+    var info = new SQLSelectInfo();
+    info._appendBeginning = "CREATE OR REPLACE TABLE " + name + " AS\n";
+    info._appendEnd = ";";
+    return info;
+  }
+
+  public static function insertIntoTable(name : String) {
+    var info = new SQLSelectInfo();
+    info._appendBeginning = "INSERT INTO " + name + "\n";
+    info._appendEnd = ";";
+    return info;
   }
 }

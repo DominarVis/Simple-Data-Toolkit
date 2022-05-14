@@ -34,20 +34,49 @@ class ConverterInputFormatOptions {
         _values = values;
     }
 
-    public function csv() : ConverterInputOperationsOptions {
-        return setSourceFormat(CSV);
+    public function csv() : ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited {
+        return setSourceFormatDelimited(CSV);
     }
 
-    public function psv() : ConverterInputOperationsOptions {
-        return setSourceFormat(PSV);
+    public function psv() : ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited {
+        return setSourceFormatDelimited(PSV);
     }
 
-    public function tsv() : ConverterInputOperationsOptions {
-        return setSourceFormat(TSV);
+    public function tsv() : ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited {
+        return setSourceFormatDelimited(TSV);
+    }
+
+    public function htmlTable() : ConverterInputOperationsOptions {
+        return setSourceFormat(HTMLTable);
+    }
+
+    public function dir() : ConverterInputOperationsOptions {
+        return setSourceFormat(DIR);
+    }
+
+    public function ini() : ConverterInputOperationsOptions {
+        return setSourceFormat(INI);
+    }    
+
+    public function json() : ConverterInputOperationsOptions {
+        return setSourceFormat(JSON);
+    }        
+
+    public function properties() : ConverterInputOperationsOptions {
+        return setSourceFormat(PROPERTIES);
+    }            
+
+    public function splunk() : ConverterInputOperationsOptions {
+        return setSourceFormat(SPLUNK);
     }
 
     private function setSourceFormat(value : Format) : ConverterInputOperationsOptions {
         _values.set("sourceFormat", value);
         return new ConverterInputOperationsOptions(_values);
     }
+
+    private function setSourceFormatDelimited(value : Format) : ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited {
+        _values.set("sourceFormat", value);
+        return new ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited(_values);
+    }    
 }

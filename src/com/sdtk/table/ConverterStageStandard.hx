@@ -9,7 +9,52 @@ class ConverterStageStandard implements ConverterStage {
   private var _writer : Null<DataTableWriter> = null;
   private var _reader : Null<DataTableReader> = null;
 
-  public function new(oSource : Dynamic, fSource : Null<Format>, oTarget : Dynamic, fTarget : Null<Format>, sFilterColumnsExclude : Null<String>, sFilterColumnsInclude : Null<String>, sFilterRowsExclude : Null<String>, sFilterRowsInclude : Null<String>, leftTrim : Bool, rightTrim : Bool) {
+  private static function isString(o : Dynamic) : Bool {
+    #if (haxe_ver < 3.2)
+      return Std.is(o, String);
+    #else
+      return Std.isOfType(o, String);
+    #end     
+  }  
+
+  private static function mergeFilters(a : Null<Array<com.sdtk.std.Filter>>, b : Null<Array<com.sdtk.std.Filter>>) : com.sdtk.std.Filter {
+    if (a == null && b == null) {
+      return null;
+    } else if (a == null) {
+      return mergeFilters(b, a);
+    } else if (b == null) {
+      if (a.length <= 0) {
+        return null;
+      } else {
+        var filter : Null<com.sdtk.std.Filter> = null;
+        for (f in a) {
+          if (filter == null) {
+            filter = f;
+          } else {
+            filter = filter.and(f);
+          }
+        }
+        return filter;
+      }
+    } else {
+      return mergeFilters(a.concat(b), null);
+    }
+  }
+
+  private static function getOption(options : Map<String, Dynamic>, key : String, ?def : Dynamic = null) : Dynamic {
+    if (options == null) {
+      return def;
+    } else {
+      var value : Dynamic = options.get(key);
+      if (value == null) {
+        return def;
+      } else {
+        return value;
+      }
+    }
+  }
+
+  public function new(oSource : Dynamic, fSource : Null<Format>, oTarget : Dynamic, fTarget : Null<Format>, sFilterColumnsExclude : Dynamic, sFilterColumnsInclude : Dynamic, sFilterRowsExclude : Dynamic, sFilterRowsInclude : Dynamic, leftTrim : Bool, rightTrim : Bool, inputOptions : Map<String, Dynamic>, outputOptions : Map<String, Dynamic>) {
     if (oTarget != null) {
       if (
         #if (haxe_ver < 3.2)
@@ -89,7 +134,22 @@ class ConverterStageStandard implements ConverterStage {
             kvhTarget = SplunkHandler.instance;
             _writer = KeyValueWriter.createSplunkWriter(oTarget);
           case SQL:
-            ciTarget = SQLSelectInfo.instance;
+            var sqlType : String = cast getOption(outputOptions, "sqlType");
+            if (sqlType != null) {
+              var tableName : String = cast getOption(outputOptions, "tableName");
+              switch (sqlType) {
+                case "Create":
+                  ciTarget = SQLSelectInfo.createTable(tableName);
+                case "CreateOrReplace":
+                  ciTarget = SQLSelectInfo.createOrReplaceTable(tableName);
+                case "Insert":
+                  ciTarget = SQLSelectInfo.insertIntoTable(tableName);
+                default:
+                  ciTarget = SQLSelectInfo.instance;
+              }
+            } else {
+              ciTarget = SQLSelectInfo.instance;
+            }
           case Haxe:
             ciTarget = HaxeInfoArrayOfMaps.instance;
           case Python:
@@ -99,7 +159,9 @@ class ConverterStageStandard implements ConverterStage {
           case CSharp:
             ciTarget = CSharpInfoArrayOfMaps.instance;  
           case ARRAY:
-            _writer = Array2DWriter.writeToExpandableArray(cast oTarget);   
+            {
+              _writer = Array2DWriter.writeToExpandableArrayI(cast oTarget);
+            }
           case DB:
             // TODO         
           default:
@@ -107,7 +169,20 @@ class ConverterStageStandard implements ConverterStage {
         }
 
         if (diTarget != null) {
-          _writer = new DelimitedWriter(diTarget, oTarget);
+          var dwWriter = new DelimitedWriter(diTarget, oTarget);
+          _writer = dwWriter;
+          if (cast getOption(outputOptions, "header", true)) {
+            dwWriter.noHeaderIncluded(false);
+          } else {
+            dwWriter.noHeaderIncluded(true);
+          }
+          /* TODO
+          if (cast getOption(outputOptions, "textOnly", false)) {
+            dwWriter.alwaysString(true);
+          } else {
+            dwWriter.alwaysString(false);
+          }
+          */
         } else if (ciTarget != null) {
           _writer = new CodeWriter(ciTarget, oTarget);
         }
@@ -220,12 +295,25 @@ class ConverterStageStandard implements ConverterStage {
           case DB:
             _reader = DatabaseReader.read(oSource);
           case ARRAY:
-            _reader = Array2DReader.readWholeArray(cast oSource);
+            {
+              _reader = Array2DReader.readWholeArrayI(cast oSource);
+            }
           default:
             // Intentionally left empty
         }
         if (diSource != null) {
-          _reader = new DelimitedReader(diSource, oSource);
+          var drReader = new DelimitedReader(diSource, oSource);
+          _reader = drReader;
+          if (cast getOption(inputOptions, "header", true)) {
+            drReader.noHeaderIncluded(false);
+          } else {
+            drReader.noHeaderIncluded(true);
+          }
+          if (cast getOption(inputOptions, "textOnly", false)) {
+            drReader.alwaysString(true);
+          } else {
+            drReader.alwaysString(false);
+          }
         } else if (ciSource != null) {
           // TODO
           //_reader = new CodeReader(ciSource, oSource);
@@ -239,26 +327,34 @@ class ConverterStageStandard implements ConverterStage {
         }
         if (sFilterRowsInclude != null || sFilterRowsExclude != null) {
           var fFilter : Filter;
-          if (sFilterRowsInclude != null && sFilterRowsExclude != null) {
-            fFilter = Filter.parse(sFilterRowsInclude, false);
-            fFilter.and(Filter.parse(sFilterRowsExclude, true));
-          } else if (sFilterRowsInclude != null) {
-            fFilter = Filter.parse(sFilterRowsInclude, false);
+          if (isString(sFilterRowsInclude) || isString(sFilterRowsExclude)) {
+            if (sFilterRowsInclude != null && sFilterRowsExclude != null) {
+              fFilter = Filter.parse(sFilterRowsInclude, false);
+              fFilter.and(Filter.parse(sFilterRowsExclude, true));
+            } else if (sFilterRowsInclude != null) {
+              fFilter = Filter.parse(sFilterRowsInclude, false);
+            } else {
+              fFilter = Filter.parse(sFilterRowsExclude, true);
+            }
           } else {
-            fFilter = Filter.parse(sFilterRowsExclude, true);
+            fFilter = mergeFilters(cast sFilterRowsInclude, cast sFilterRowsExclude);
           }
           _reader = new RowFilterDataTableReader(_reader, fFilter);
         }
       }
       if (sFilterColumnsInclude != null || sFilterColumnsExclude != null) {
         var fFilter : Filter;
-        if (sFilterColumnsInclude != null && sFilterColumnsExclude != null) {
-          fFilter = Filter.parse(sFilterColumnsInclude, false);
-          fFilter.and(Filter.parse(sFilterColumnsExclude, true));
-        } else if (sFilterColumnsInclude != null) {
-          fFilter = Filter.parse(sFilterColumnsInclude, false);
+        if (isString(sFilterColumnsInclude) || isString(sFilterColumnsExclude)) {
+          if (sFilterColumnsInclude != null && sFilterColumnsExclude != null) {
+            fFilter = Filter.parse(sFilterColumnsInclude, false);
+            fFilter.and(Filter.parse(sFilterColumnsExclude, true));
+          } else if (sFilterColumnsInclude != null) {
+            fFilter = Filter.parse(sFilterColumnsInclude, false);
+          } else {
+            fFilter = Filter.parse(sFilterColumnsExclude, true);
+          }
         } else {
-          fFilter = Filter.parse(sFilterColumnsExclude, true);
+          fFilter = mergeFilters(cast sFilterColumnsInclude, cast sFilterColumnsExclude);
         }
         _reader = new ColumnFilterDataTableReader(_reader, fFilter);
       }
