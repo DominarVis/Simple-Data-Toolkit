@@ -33,6 +33,14 @@ class TSVInfo implements DelimitedInfo {
 
   public static var instance : DelimitedInfo = new TSVInfo();
 
+  public function fileStart() : String {
+    return "";
+  }
+
+  public function fileEnd() : String {
+    return "";
+  }
+
   public function delimiter() : String {
     return "\t";
   }
@@ -74,10 +82,18 @@ class TSVInfo implements DelimitedInfo {
   }
   
   public function replacements() : Array<String> {
-    return ["\\", "\\\\", "\n", "\\\n", "\t", "\\\t", "\r", "\\\r"];
+    return ["\\\\", "\\", "\\\n", "\n", "\\\t", "\t", "\\\r", "\r"];
   }
 
   public function replacementIndicator() : Null<String> {
     return "\\";
+  }
+  
+  public function widthMinimum() : Int {
+    return -1;
+  }
+
+  public function widthMaximum() : Int {
+    return -1;
   }  
 }

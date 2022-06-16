@@ -32,7 +32,13 @@ class Reader
 #if java
     extends com.sdtk.std.JAVA.ReaderI
 #end
-implements Disposable implements DataIterator<String> implements DataIterable<String> {
+#if cpp
+    // TODO
+#else
+    implements Disposable
+    implements DataIterator<String>
+    implements DataIterable<String>
+#end {
     public function new() {
         #if java
             super();

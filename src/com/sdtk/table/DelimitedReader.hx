@@ -96,6 +96,10 @@ class DelimitedReader extends DataTableReader {
     return nextReuse(null);
   }
 
+  public static function createRawReader(reader : Reader) {
+    return new DelimitedReader(RAWInfo.instance, reader);
+  }  
+
   public static function createCSVReader(reader : Reader) {
     return new DelimitedReader(CSVInfo.instance, reader);
   }

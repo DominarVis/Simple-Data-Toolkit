@@ -32,6 +32,14 @@ class ConverterQuickOutputOptions {
         _values = values;
     }
 
+    public function tex(?callback : Null<Dynamic->Void>) : Dynamic {
+        return _values.writeString().tex().execute(callback);
+    }    
+
+    public function raw(?callback : Null<Dynamic->Void>) : Dynamic {
+        return _values.writeString().raw().execute(callback);
+    }
+
     public function csv(?callback : Null<Dynamic->Void>) : Dynamic {
         return _values.writeString().csv().execute(callback);
     }

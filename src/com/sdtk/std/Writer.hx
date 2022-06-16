@@ -28,7 +28,11 @@ class Writer
 #if java
     extends com.sdtk.std.JAVA.WriterI
 #end
-implements Disposable implements Flushable
+#if cpp
+    // TODO
+#else
+    implements Disposable implements Flushable
+#end
  {
     public function new() {
         #if java

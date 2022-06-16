@@ -34,6 +34,10 @@ class ConverterInputFormatOptions {
         _values = values;
     }
 
+    public function raw() : ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited {
+        return setSourceFormatDelimited(RAW);
+    }
+
     public function csv() : ConverterInputOperationsOptions.ConverterInputOperationsOptionsDelimited {
         return setSourceFormatDelimited(CSV);
     }

@@ -31,41 +31,17 @@ package com.sdtk.table;
 class AbstractTableRowWriter extends DataTableRowWriter {
   private var _header : Array<String>;
   private var _info : TableInfo;
-  #if JS_BROWSER
-    private var _element : Element;
-  #else
-    private var _element : Dynamic;
-  #end
+  private var _writer : TableWriter;
 
-  public function new(tdInfo : TableInfo, oElement : Dynamic, sHeader : Array<String>) {
+  public function new(tdInfo : TableInfo, writer : TableWriter, sHeader : Array<String>) {
     super();
-    reuse(tdInfo, oElement, sHeader);
+    reuse(tdInfo, writer, sHeader);
   }
 
-  public function reuse(tdInfo : TableInfo, oElement : Dynamic, sHeader : Array<String>) {
+  public function reuse(tdInfo : TableInfo, writer : TableWriter, sHeader : Array<String>) {
     _info = tdInfo;
-    #if JS_BROWSER
-      _element = cast(oElement, Element);
-    #else
-      _element = oElement;
-    #end
+    _writer = writer;
     _header = sHeader;
-  }
-
-  public function getTag() : String {
-    return _info.Cell()[0];
-  }
-
-  public override function write(data : Dynamic, name : String, index : Int) : Void {
-    #if JS_BROWSER
-      var oCell : Element = Document.createElement(getTag());
-      oCell.setAttribute("ColumnNumber", "" + index);
-      oCell.setAttribute("ColumnName", name);
-      oCell.setAttribute("RowNumber", _element.getAttribute("RowNumber"));
-      oCell.setAttribute("RowName",  _element.getAttribute("RowName"));
-      oCell.innerText = data;
-      _element.appendChild(oCell);
-    #end
   }
 
   #if cs
@@ -76,6 +52,6 @@ class AbstractTableRowWriter extends DataTableRowWriter {
   public override function dispose() : Void {
     _header = null;
     _info = null;
-    _element = null;
+    _writer = null;
   }
 }

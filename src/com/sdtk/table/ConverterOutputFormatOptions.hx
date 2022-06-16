@@ -34,6 +34,14 @@ class ConverterOutputFormatOptions {
         _values = values;
     }
 
+    public function tex() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
+        return setTargetFormatDelimited(TEX);
+    }
+
+    public function raw() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
+        return setTargetFormatDelimited(RAW);
+    }
+    
     public function csv() : ConverterOutputOperationsOptions.ConverterOutputOperationsOptionsDelimited {
         return setTargetFormatDelimited(CSV);
     }

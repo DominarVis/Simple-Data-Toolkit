@@ -118,20 +118,7 @@ class Parameters extends com.sdtk.std.Parameters {
           case "PROFILE":
             Stopwatch.setDefaultActual(true);
           case "VERSION":
-            #if JS_BROWSER
-              com.sdtk.std.JS_BROWSER.Console.log
-            #elseif JS_SNOWFLAKE
-              com.sdtk.stdcom.sdtk.std.JS_SNOWFLAKE.Logger.logger.log
-            #elseif JS_WSH
-              com.sdtk.std.JS_WSH.WScript.Echo
-            #elseif JS_NODE
-              com.sdtk.std.JS_NODE.Console.log
-            #else
-              Sys.println
-            #end
-            (
-              "Version 0.1.2"
-            );
+            printVersion();
           default:
             sLocations.push(sParameter);
         }
@@ -147,21 +134,58 @@ class Parameters extends com.sdtk.std.Parameters {
         setInput(sLocations[0]);
         setOutput(sLocations[1]);
       default:
-        #if JS_BROWSER
-          com.sdtk.std.JS_BROWSER.Console.log
-        #elseif JS_SNOWFLAKE
-          com.sdtk.stdcom.sdtk.std.JS_SNOWFLAKE.Logger.log
-        #elseif JS_WSH
-          com.sdtk.std.JS_WSH.WScript.Echo
-        #elseif JS_NODE
-          com.sdtk.std.JS_NODE.Console.log
-        #else
-          Sys.println
-        #end
-        (
-          "More than two files specified.  This indicates that the tool was run improperly."
-        );
+          throw "More than two files specified.  This indicates that the tool was run improperly.";
     }
+  }
+
+  public function fullPrint() : Void {
+    printName();
+    printVersion();
+    printDetails();
+  }
+
+  public function printName() : Void {
+    print("Simple Data Toolkit - Simple Table Converter");
+  }
+
+  public function printVersion() : Void {
+    print("Version 0.1.2");
+  }
+
+  public function printDetails() : Void {
+    print("Copyright (C) 2019 Vis LLC - All Rights Reserved");
+    print("");
+    print("Project Home - https://sourceforge.net/projects/simple-data-toolkit/");
+    print("");
+    print("This program is free software: you can redistribute it and/or modify");
+    print("it under the terms of the GNU Lesser General Public License as published by");
+    print("the Free Software Foundation, either version 3 of the License, or");
+    print("(at your option) any later version.");
+    print("");
+    print("This program is distributed in the hope that it will be useful,");
+    print("but WITHOUT ANY WARRANTY; without even the implied warranty of");
+    print("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the");
+    print("GNU General Public License for more details.");
+    print("");
+    print("You should have received a copy of the GNU Lesser General Public License");
+    print("along with this program.  If not, see <https://www.gnu.org/licenses/>.");
+  }
+
+  private inline function print(s : String) : Void {
+    #if JS_BROWSER
+      com.sdtk.std.JS_BROWSER.Console.log
+    #elseif JS_SNOWFLAKE
+      com.sdtk.stdcom.sdtk.std.JS_SNOWFLAKE.Logger.log
+    #elseif JS_WSH
+      com.sdtk.std.JS_WSH.WScript.Echo
+    #elseif JS_NODE
+      com.sdtk.std.JS_NODE.Console.log
+    #else
+      Sys.println
+    #end
+    (
+      s
+    );
   }
 
   private function getType(sLocation : String) : Int {
@@ -231,6 +255,10 @@ class Parameters extends com.sdtk.std.Parameters {
     }
     sName = sName.toLowerCase();
     switch (sName.substr(sName.lastIndexOf("."))) {
+      case ".tex":
+        return Format.TEX;
+      case ".txt":
+        return Format.RAW;
       case ".csv":
         return Format.CSV;
       case ".psv":

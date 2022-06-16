@@ -27,6 +27,10 @@ package com.sdtk.table;
 class ConverterQuickInputOptions {
     public function new() { }
 
+    public function raw(value : String) : ConverterQuickOutputOptions {
+        return next(read(value).raw());
+    }
+
     public function csv(value : String) : ConverterQuickOutputOptions {
         return next(read(value).csv());
     }

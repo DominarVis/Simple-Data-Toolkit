@@ -44,4 +44,6 @@ enum Format {
   ARRAYMAP;
   MAPARRAY;
   DB;
+  RAW;
+  TEX;
 }

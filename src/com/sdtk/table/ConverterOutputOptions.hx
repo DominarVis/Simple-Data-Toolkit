@@ -23,6 +23,10 @@
 package com.sdtk.table;
 
 
+#if JS_BROWSER
+    import com.sdtk.std.JS_BROWSER.Element;
+#end
+
 @:expose
 @:nativeGen
 class ConverterOutputOptions {
@@ -37,6 +41,15 @@ class ConverterOutputOptions {
 
     public function writeFile(file : String) : ConverterOutputFormatOptions {
         return setTarget(file, "file");
+    }
+
+    public function writeElement(e : 
+        #if JS_BROWSER
+            Element
+        #else
+            Dynamic
+        #end) : ConverterOutputFormatOptions {
+        return setTarget(e, "element");
     }
 
     public function writeString() : ConverterOutputFormatOptions {

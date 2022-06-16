@@ -54,6 +54,9 @@ echo        ^<projectUrl^>%PROJECT_HOME%^</projectUrl^> >> tmp\stc.nuspec
 echo        ^<!-- There are a number of CDN Services that can be used for hosting the Icon for a package. More information can be found here: https://docs.chocolatey.org/en-us/create/create-packages#package-icon-guidelines --^> >> tmp\stc.nuspec
 echo        ^<!-- Here is an example using Githack --^> >> tmp\stc.nuspec
 echo        ^<!--^<iconUrl^>http://rawcdn.githack.com/__REPLACE_YOUR_REPO__/master/icons/stc.png^</iconUrl^>--^> >> tmp\stc.nuspec
+echo        ^<licenseUrl^>%PROJECT_LICENSE_URL%^</licenseUrl^> >> tmp\stc.nuspec
+echo        ^<packageSourceUrl^>%PROJECT_SOURCE_URL%^</packageSourceUrl^> >> tmp\stc.nuspec
+echo        ^<docsUrl^>%PROJECT_DOCS_URL%^</docsUrl^> >> tmp\stc.nuspec
 echo        ^<copyright^>%PACKAGE_COPYRIGHT%^</copyright^> >> tmp\stc.nuspec
 echo        ^<!-- If there is a license Url available, it is required for the community feed --^> >> tmp\stc.nuspec
 echo        ^<tags^>%PROGRAM_TAGS%^</tags^> >> tmp\stc.nuspec
@@ -67,6 +70,22 @@ echo        ^<file src="%tools\**" target="tools" /^> >> tmp\stc.nuspec
 echo    ^</files^> >> tmp\stc.nuspec
 echo ^</package^> >> tmp\stc.nuspec
 
+echo VERIFICATION Verification is intended to assist the Chocolatey moderators and community in verifying that this package's contents are trustworthy. > tmp\tools\VERIFICATION.txt
+echo %PROJECT_VERIFICATION% >> tmp\tools\VERIFICATION.txt
+echo: >> tmp\tools\VERIFICATION.txt
+echo To verify the binaries: >> tmp\tools\VERIFICATION.txt
+echo: >> tmp\tools\VERIFICATION.txt
+echo * Ensure you have Git installed. >> tmp\tools\VERIFICATION.txt
+echo * Run `git clone https://github.com/Vis-LLC/Simple-Data-Toolkit.git` >> tmp\tools\VERIFICATION.txt
+REM * Switch to the tag of the released version. For instance: 
+REM    `git checkout 0.10.11`
+echo * Run `Build_CSharp.cmd` (`.\Build_CSharp.cmd` in PowerShell) >> tmp\tools\VERIFICATION.txt
+echo * Once that is successfully completed, head into out >> tmp\tools\VERIFICATION.txt
+echo    folder where you will find stc.exe. >> tmp\tools\VERIFICATION.txt
+echo * Verify the checksum you find there with the checksum shown on the package  >> tmp\tools\VERIFICATION.txt
+echo    page of the community repository. >> tmp\tools\VERIFICATION.txt
+
+
 pushd tmp
 choco pack
 popd
@@ -75,5 +94,5 @@ MOVE tmp\*.nupkg out\%PROGRAM_NAME%.nupkg
 popd
 RMDIR /S /Q tmp
 choco apikey --key %CHOCO_KEY% --source https://push.chocolatey.org/
-choco push out\%PROGRAM_NAME% --source https://push.chocolatey.org/
+choco push out\%PROGRAM_NAME%.nupkg --source https://push.chocolatey.org/
 popd

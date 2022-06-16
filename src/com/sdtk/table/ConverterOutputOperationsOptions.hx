@@ -22,6 +22,10 @@
 
 package com.sdtk.table;
 
+#if JS_BROWSER
+    import com.sdtk.std.JS_BROWSER.Element;
+#end
+
 @:expose
 @:nativeGen
 class ConverterOutputOperationsOptions {
@@ -54,6 +58,12 @@ class ConverterOutputOperationsOptions {
     public function execute(?callback : Null<Dynamic->Void>) : Dynamic {
         // TODO - Add additional options
         var result : Dynamic = null;
+        var eTarget : Dynamic = null;
+        if (_values.get("targetType") == "element" && _values.get("targetFormat") != Format.HTMLTable) {
+            eTarget = _values.get("target");
+            _values.set("target", new StringBuf());
+            _values.set("targetType", "string");
+        }
         Converter.convertWithOptions(cast _values.get("source"), cast _values.get("sourceFormat"), cast _values.get("target"), cast _values.get("targetFormat"), cast _values.get("filterColumnsExclude"), cast _values.get("filterColumnsInclude"), cast _values.get("filterRowsExclude"), cast _values.get("filterRowsInclude"), cast _values.get("sortRowsBy"), false/*leftTrim : Bool*/, false/*rightTrim : Bool*/, cast _values.get("inputOptions"), cast _values.get("outputOptions"));
         switch (_values.get("targetType")) {
             case "string":
@@ -66,6 +76,13 @@ class ConverterOutputOperationsOptions {
                 #end
             case "array":
                 result = _values.get("target");
+        }
+        if (eTarget != null) {
+            #if JS_BROWSER
+                var e : Element = cast eTarget;
+                e.innerText = result;
+            #end
+            result = null;
         }
         if (callback == null) { 
             return result;

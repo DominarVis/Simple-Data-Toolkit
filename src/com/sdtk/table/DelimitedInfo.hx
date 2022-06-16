@@ -28,6 +28,8 @@ package com.sdtk.table;
 @:expose
 @:nativeGen
 interface DelimitedInfo {
+  public function fileStart() : String;
+  public function fileEnd() : String;
   public function delimiter() : String;
   public function rowDelimiter() : String;
   public function boolStart() : String;
@@ -40,4 +42,6 @@ interface DelimitedInfo {
   public function floatEnd() : String;
   public function replacements() : Array<String>;
   public function replacementIndicator() : Null<String>;
+  public function widthMinimum() : Int;
+  public function widthMaximum() : Int;
 }

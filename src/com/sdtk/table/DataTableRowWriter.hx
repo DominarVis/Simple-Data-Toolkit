@@ -27,7 +27,12 @@ package com.sdtk.table;
 **/
 @:expose
 @:nativeGen
-class DataTableRowWriter implements com.sdtk.std.Disposable {
+class DataTableRowWriter 
+#if cpp
+  // TODO
+#else
+  implements com.sdtk.std.Disposable
+#end {
   public function new() { }
 
   /**

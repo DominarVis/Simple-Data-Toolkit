@@ -31,7 +31,7 @@ class TableHeaderRowWriter extends AbstractTableRowWriter {
     super(tdInfo, oElement, sHeader);
   }
 
-  public override function getTag() : String {
-    return _info.HeaderCell()[0];
+  public override function write(data : Dynamic, name : String, index : Int) : Void {
+    _writer.writeCell(true, data, name, index);
   }
 }

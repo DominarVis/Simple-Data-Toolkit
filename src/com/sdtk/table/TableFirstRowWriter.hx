@@ -27,12 +27,12 @@ package com.sdtk.table;
 **/
 @:nativeGen
 class TableFirstRowWriter extends AbstractTableRowWriter {
-  public function new(tdInfo : TableInfo, oElement : Dynamic, sHeader : Array<String>) {
-    super(tdInfo, oElement, sHeader);
+  public function new(tdInfo : TableInfo, writer : TableWriter, sHeader : Array<String>) {
+    super(tdInfo, writer, sHeader);
   }
 
   public override function write(data : Dynamic, name : String, index : Int) : Void {
     _header.push(data);
-    super.write(data, name, index);
+    _writer.writeCell(false, data, name, index);
   }
 }

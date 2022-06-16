@@ -43,6 +43,7 @@ class DelimitedWriter extends DataTableWriter {
 
   public override function start() : Void {
     _writer.start();
+    _writer.write(_info.fileStart());
   }
 
   public function noHeaderIncluded(noHeader : Bool) : Void {
@@ -66,6 +67,7 @@ class DelimitedWriter extends DataTableWriter {
   #end
   public override function dispose() : Void {
     if (!_done) {
+      _writer.write(_info.fileEnd());
       _done = true;
       _writer.dispose();
     }
@@ -77,6 +79,14 @@ class DelimitedWriter extends DataTableWriter {
   
   public override function writeRowNameFirst() : Bool {
   	return true;
+  }
+
+  public static function createTeXWriter(writer : Writer) {
+    return new DelimitedWriter(TeXInfo.instance, writer);
+  }
+
+  public static function createRawWriter(writer : Writer) {
+    return new DelimitedWriter(RAWInfo.instance, writer);
   }
 
   public static function createCSVWriter(writer : Writer) {

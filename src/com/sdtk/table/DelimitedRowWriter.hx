@@ -105,20 +105,21 @@ class DelimitedRowWriter extends DataTableRowWriter {
 
   private function writeValue(data : Dynamic, buf : StringBuf) : Void {
     if (data != null) {
-      switch (Type.typeof(data)) {
-        case TInt :
+      var t : Type.ValueType = Type.typeof(data);
+      switch (t) {
+        case TInt:
           buf.add(_info.intStart());
           buf.add(Std.string(data));
           buf.add(_info.intEnd());
-        case TBool :
+        case TBool:
           buf.add(_info.boolStart());
           buf.add(Std.string(data));
           buf.add(_info.boolEnd());
-        case TFloat :
+        case TFloat:
           buf.add(_info.floatStart());
           buf.add(Std.string(data));
           buf.add(_info.floatEnd());
-        case other :
+        case other:
           buf.add(_info.stringStart());
           buf.add(replacement(Std.string(data)));
           buf.add(_info.stringEnd());

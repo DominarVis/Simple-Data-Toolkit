@@ -22,6 +22,8 @@
 
 package com.sdtk.table;
 
+import com.sdtk.std.Writer;
+
 /**
   Defines interface for a table format (for example, the HTML table tag)
 **/
@@ -52,4 +54,33 @@ interface TableInfo {
     The tags that indicate the start of a data cell.
   **/
   public function Cell() : Array<String>;
+
+  /**
+    Get tag to indicate row number.
+  **/
+  public function RowNumber(i : Int, e : Dynamic) : Void;
+
+  /**
+    Get tag to indicate row name.
+  **/
+  public function RowName(i : String, e : Dynamic) : Void;
+
+  /**
+    Format a row for output
+  **/
+  public function FormatRowStart(writer : Writer, header : Bool, i : Int, n : String, rowCache : Map<String, Dynamic>, globalCache : Map<String, Dynamic>) : Void;
+
+  public function FormatRowEnd(writer : Writer, header : Bool) : Void;
+
+  public function ColumnNumber(i : Int, e : Dynamic) : Void;
+
+  public function ColumnName(i : String, e : Dynamic) : Void;
+
+  public function setData(data : Dynamic, e : Dynamic) : Void;
+
+  public function FormatCell(writer : Writer, header : Bool, c : Int, cn : String, r : Int, rn : String, data : Dynamic, rowCache : Map<String, Dynamic>, globalCache : Map<String, Dynamic>) : Void;
+  
+  public function FormatTableStart(writer : Writer) : Void;
+
+  public function FormatTableEnd(writer : Writer) : Void;
 }

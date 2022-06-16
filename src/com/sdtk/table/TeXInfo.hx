@@ -23,79 +23,74 @@
 package com.sdtk.table;
 
 /**
-  Handles custom delimited files
+  CSV file structure
 **/
 @:expose
 @:nativeGen
-class DelimitedInfoCustom implements DelimitedInfo {
-  public var _fileStart : String;
-  public var _fileEnd : String;
-  public var _delimiter : String;
-  public var _rowDelimiter : String;
-  public var _boolStart : String;
-  public var _boolEnd : String;    
-  public var _stringStart : String;
-  public var _stringEnd : String;
-  public var _intStart : String;
-  public var _intEnd : String;
-  public var _floatStart : String;
-  public var _floatEnd : String;
-  public var _replacements : Array<String>;
+class TeXInfo implements DelimitedInfo {
+  private function new() {
+  }
+
+  public static var instance : DelimitedInfo = new TeXInfo();
+
+  // TODO
+  // \begin{tabular}{ | c | c | }
 
   public function fileStart() : String {
-    return _fileStart;
+    return "\\begin{tabular}";
   }
 
   public function fileEnd() : String {
-    return _fileEnd;
+    return "\\end{tabular}";
   }
 
   public function delimiter() : String {
-    return _delimiter;
+    return "&";
   }
 
   public function rowDelimiter() : String {
-    return _boolStart;
+    return "\\\\\\hline";
   }
 
   public function boolStart() : String {
-    return _boolStart;
+    return "";
   }
 
   public function boolEnd() : String {
-    return _boolEnd;
+    return "";
   }
 
   public function stringStart() : String {
-    return _stringStart;
+    return "\\makecell{";
   }
 
   public function stringEnd() : String {
-    return _stringEnd;
+    return "}";
   }
 
   public function intStart() : String {
-    return _intStart;
+    return "";
   }
 
   public function intEnd() : String {
-    return _intEnd;
+    return "";
   }
 
   public function floatStart() : String {
-    return _floatStart;
+    return "";
   }
 
   public function floatEnd() : String {
-    return _floatEnd;
+    return "";
   }
 
   public function replacements() : Array<String> {
-    return _replacements;
+    return ["\\\\", "\\", "\\\n", "\n", "\\\t", "\t", "\\\r", "\r"];
+    return ["\\\\", "\\", "\\&", "&", "\\%",  "%", "\\#", "#", "\\_", "_", "\\{",  "{", "\\}", "}", "\\~", "~", "\\^", "^"];
   }
 
   public function replacementIndicator() : Null<String> {
-    return null;
+    return "\\";
   }
 
   public function widthMinimum() : Int {

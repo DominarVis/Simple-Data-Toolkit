@@ -137,6 +137,8 @@ class Converter {
       (
         Tests.runTests(pParameters.getRecordPass(), pParameters.getVerbose())
       );
+    } else if (pParameters.getInput() == null || pParameters.getOutput() == null) {
+      pParameters.fullPrint();
     } else {
       convertWithOptions(pParameters.getInput(), pParameters.getInputFormat(), pParameters.getOutput(), pParameters.getOutputFormat(), pParameters.getFilterColumnsExclude(), pParameters.getFilterColumnsInclude(), pParameters.getFilterRowsExclude(), pParameters.getFilterRowsInclude(), pParameters.getSortRowsBy(), pParameters.getLeftTrim(), pParameters.getRightTrim(), pParameters.getInputOptions(), pParameters.getOutputOptions());
     }

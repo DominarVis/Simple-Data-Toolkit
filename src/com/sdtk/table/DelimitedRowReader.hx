@@ -75,9 +75,14 @@ class DelimitedRowReader extends DataTableRowReader {
       var rowDelimiter : String = _info.rowDelimiter();
       var delimiter : String = _info.delimiter();
       var hasNext : Bool = _reader.hasNext();
+      var minimum : Int = _info.widthMinimum();
+      var maximum : Int = _info.widthMaximum();
+      var replacementIndicator : Null<String> = _info.replacementIndicator();
+      var replacements : Array<String> = _info.replacements();
 
       while (hasNext && (iGettingValue >= 0 || sChar != rowDelimiter && sChar != delimiter) && !_done) {
         var bSkip : Bool = false;
+        var bNoNext : Bool = false;
         var bEndValue : Bool = false;
         sChar = _reader.peek();
         if (iGettingValue >= 0) {
@@ -86,9 +91,9 @@ class DelimitedRowReader extends DataTableRowReader {
             bSkip = true;
           }
         } else {
-          if (sChar == _info.delimiter()) {
+          if (sChar == delimiter) {
             bSkip = true;
-          } else if (sChar == _info.rowDelimiter()) {
+          } else if (sChar == rowDelimiter) {
             bSkip = true;
             _done = true;
           } else if (sChar == "\r") {
@@ -99,14 +104,17 @@ class DelimitedRowReader extends DataTableRowReader {
               iGot = iGettingValue;
               bSkip = true;
             }
+          } else if (iCount >= maximum && maximum > 0) {
+            bSkip = true;
+            bNoNext = true;
           }
         }
         iCount++;
-        _reader.next();
+        if (!bNoNext) {
+          _reader.next();
+        }
         {
-          var replacementIndicator : Null<String> = _info.replacementIndicator();
           if (replacementIndicator == null || replacementIndicator == sChar) {
-            var replacements : Array<String> = _info.replacements();
             if (replacements != null && replacements.length > 0) {
               var checkReplace : String = sChar + _reader.peek();
               var replaceI : Int = replacements.length - 2;

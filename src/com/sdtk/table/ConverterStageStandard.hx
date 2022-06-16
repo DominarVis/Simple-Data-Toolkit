@@ -109,6 +109,10 @@ class ConverterStageStandard implements ConverterStage {
         var kvhTarget : Null<KeyValueHandler> = null;
 
         switch (fTarget) {
+          case TEX:
+            diTarget = TeXInfo.instance;
+          case RAW:
+            diTarget = RAWInfo.instance;
           case CSV:
             diTarget = CSVInfo.instance;
           case PSV:
@@ -117,7 +121,17 @@ class ConverterStageStandard implements ConverterStage {
             diTarget = TSVInfo.instance;
           case HTMLTable:
             tiTarget = StandardTableInfo.instance;
-            _writer = TableWriter.createStandardTableWriter(oTarget);
+            if (
+              #if (haxe_ver < 3.2)
+                Std.is(oTarget, Writer)
+              #else
+                Std.isOfType(oTarget, Writer)
+              #end              
+            ) {
+              _writer = TableWriter.createStandardTableWriterForWriter(oTarget);
+            } else {
+              _writer = TableWriter.createStandardTableWriterForElement(oTarget);
+            }
           case DIR:
             fshTarget = CMDDirHandler.instance;
             _writer = FileSystemWriter.createCMDDirWriter(oTarget);
@@ -258,6 +272,8 @@ class ConverterStageStandard implements ConverterStage {
         var kvhSource : Null<KeyValueHandler> = null;
 
         switch (fSource) {
+          case RAW:
+            diSource = RAWInfo.instance;          
           case CSV:
             diSource = CSVInfo.instance;
           case PSV:

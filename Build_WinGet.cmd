@@ -8,7 +8,7 @@ CALL Env.cmd
 
 MKDIR tmp 2> NUL
 
-CALL Build_CSharp.cmd
+REM CALL Build_CSharp.cmd
 COPY out\sdtk.dll tmp
 
 echo ^<?xml version="1.0"?^> > tmp\.nuspec
@@ -33,12 +33,11 @@ echo        ^<!-- Project URL provides a link for the gallery --^> >> tmp\.nuspe
 echo        ^<projectUrl^>%PROJECT_HOME%^</projectUrl^> >> tmp\.nuspec
 echo: >> tmp\.nuspec
 echo        ^<!-- License information is displayed on the gallery --^> >> tmp\.nuspec
-echo        ^<license type="expression"^>%PROJECT_LICENSE_NUGET%^</license^> >> tmp\.nuspec
-echo        ^<licenseUrl^>%PROJECT_LICENSE_URL_NUGET%^</licenseUrl^> >> tmp\.nuspec
+echo        ^<license type="expression"^>%PROJECT_LICENSE%^</license^> >> tmp\.nuspec
 echo: >> tmp\.nuspec
 echo: >> tmp\.nuspec
 echo        ^<!-- Icon is used in Visual Studio's package manager UI --^> >> tmp\.nuspec
-REM echo        ^<icon^>%PACKAGE_ICON%^</icon^> >> tmp\.nuspec
+echo        ^<icon^>%PACKAGE_ICON%^</icon^> >> tmp\.nuspec
 echo: >> tmp\.nuspec
 echo        ^<!--  >> tmp\.nuspec
 echo            If true, this value prompts the user to accept the license when >> tmp\.nuspec
@@ -76,8 +75,6 @@ echo ^</package^> >> tmp\.nuspec
 
 powershell Compress-Archive tmp\* out\sdtk-lib.zip
 MOVE out\sdtk-lib.zip out\sdtk-lib.nupkg
-dotnet nuget push out\sdtk-lib.nupkg --api-key %NUGET_KEY% --source https://api.nuget.org/v3/index.json
-REM manual upload https://www.nuget.org/packages/manage/upload
 popd
 RMDIR /S /Q tmp
 
