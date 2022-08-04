@@ -32,16 +32,20 @@ class FileReader extends Reader {
     public function new(str : String) {
         super();
         try {
-            _request = new com.sdtk.std.JS_BROWSER.XMLHttpRequest();
-            _request.open('GET', str, false);
-            _request.send(null);
-
-            if (_request.status == 200) {
-                _reader = new StringReader(_request.responseText);
-            }
+          _request = new com.sdtk.std.JS_BROWSER.XMLHttpRequest();
+          _request.open('GET', str, false);
+          _request.send(null);
+  
+          if (_request.status == 200) {
+              _reader = new StringReader(_request.responseText);
+          }
         } catch (msg : Dynamic) {
             this.dispose();
         }
+    }
+
+    public override function reset() : Void {
+      _reader.reset();
     }
 
     public override function rawIndex() : Int {
@@ -105,9 +109,13 @@ class FileReader extends Reader {
   public function new(sName : String) {
       super();
       _path = sName;
-      var fso : com.sdtk.std.JS_WSH.ActiveXObject = new com.sdtk.std.JS_WSH.ActiveXObject("Scripting.FileSystemObject");
-      _in = fso.OpenTextFile(_path, 1, false);
-      _nextRawIndex = 0;
+      reset();
+  }
+
+  public override function reset() : Void {
+    var fso : com.sdtk.std.JS_WSH.ActiveXObject = new com.sdtk.std.JS_WSH.ActiveXObject("Scripting.FileSystemObject");
+    _in = fso.OpenTextFile(_path, 1, false);
+    _nextRawIndex = 0;
   }
 
   public override function rawIndex() : Int {
@@ -116,9 +124,7 @@ class FileReader extends Reader {
 
   public override function jumpTo(index : Int) : Void {
     if (index < _nextRawIndex) {
-      var fso : com.sdtk.std.JS_WSH.ActiveXObject = new com.sdtk.std.JS_WSH.ActiveXObject("Scripting.FileSystemObject");
-      _in = fso.OpenTextFile(_path, 1, false);
-      _nextRawIndex = 0;
+      reset();
     }
     _in.Skip(index - _nextRawIndex);
     _nextRawIndex = index;
@@ -191,7 +197,7 @@ class FileReader extends com.sdtk.std.CSHARP.AbstractReader {
         _path = sValue;
     }
 
-    private override function reset() : Void {
+    public override function reset() : Void {
       super.reset();
       _reader = com.sdtk.std.CSHARP.File.OpenText(_path);
     }
@@ -266,8 +272,12 @@ class FileReader extends Reader {
   public function new(sName : String) {
       super();
       _path = sName;
-      open();
-      _nextRawIndex = 0;
+      reset();
+  }
+
+  public override function reset() : Void {
+    open();
+    _nextRawIndex = 0;
   }
 
   private function open() : Void {
@@ -280,8 +290,7 @@ class FileReader extends Reader {
 
   public override function jumpTo(index : Int) : Void {
     if (index < _nextRawIndex) {
-      open();
-      _nextRawIndex = 0;
+      reset();
     }
     python.Syntax.code("{0}.seek({1})", _in, index - _nextRawIndex);
     _nextRawIndex = index;
@@ -359,6 +368,10 @@ class FileReader extends Reader {
       _nextRawIndex = 0;
   }
 
+  public override function reset() : Void {
+    _nextRawIndex = 0;
+  }  
+
   public override function rawIndex() : Int {
     return _currentRawIndex;
   }
@@ -433,7 +446,7 @@ class FileReader extends com.sdtk.std.HAXE.AbstractReader {
     _path = sName;
   }
 
-  private override function reset() : Void {
+  public override function reset() : Void {
     super.reset();
     _reader = File.read(_path);
   }  

@@ -25,7 +25,7 @@ package com.sdtk.std;
 @:expose
 @:nativeGen
 class FilterCompositeAnd extends Filter {
-    private var _list : Array<Filter>;
+    private var _list : Array<Filter> = new Array<Filter>();
 
     public function new() {
         super();

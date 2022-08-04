@@ -122,7 +122,7 @@ class ArrayRowReader<A> extends DataTableRowReader {
     return new ArrayRowReader(_info);
   }
 
-  public function reset() {
+  public function reset() : Void {
     _i = _info._start;
   }
   

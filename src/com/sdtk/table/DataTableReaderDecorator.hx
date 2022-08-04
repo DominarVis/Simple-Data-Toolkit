@@ -90,4 +90,8 @@ class DataTableReaderDecorator extends DataTableReader {
     public override function oneRowPerFile() : Bool {
         return _reader.oneRowPerFile();
     }
+
+    public override function reset() : Void {
+        _reader.reset();
+    }      
 }

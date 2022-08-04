@@ -33,6 +33,7 @@ class ColumnFilterDataTableReader extends DataTableReader {
     private var _columnHeaderFilter : Null<Filter>;
     private var _header : Array<String>;
     private var _sentHeader : Bool = false;
+    private var _prev : Null<DataTableRowReader> = null;
 
     public function new(dtrReader : DataTableReader, fColumnHeaderFilter : Filter) {
         super();
@@ -76,16 +77,20 @@ class ColumnFilterDataTableReader extends DataTableReader {
     	var nextValue : Dynamic;
         if (rowReader == null || _index <= 0) {
             nextValue = nextI();
+            nextValue = new ColumnFilterDataTableRowReader(nextValue, _remove);
         } else {
-            nextValue = rowReader;
+            var rr : ColumnFilterDataTableRowReader = cast rowReader;
+            rr.reuse(nextI(), _remove);
+            nextValue = rr;
         }
-    	incrementTo(_reader.name(), new ColumnFilterDataTableRowReader(nextValue, _remove), _reader.rawIndex());
+    	incrementTo(_reader.name(), nextValue, _reader.rawIndex());
         return value();
     }
       
     private function nextI() : Dynamic {
         if (_sentHeader) {
-            return _reader.next();
+            _prev = _reader.nextReuse(_prev);
+            return _prev;
         } else {
             _sentHeader = true;
             return ArrayRowReader.readWholeArray(_header);
@@ -122,6 +127,11 @@ class ColumnFilterDataTableReader extends DataTableReader {
             _current = null;
             _columnHeaderFilter = null;
             _header = null;
+            _prev = null;
         }
     }
+
+    public override function reset() : Void {
+        _reader.reset();
+    }    
 }

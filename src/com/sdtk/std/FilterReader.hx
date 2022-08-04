@@ -118,4 +118,9 @@ class FilterReader extends Reader {
   public override function unwrapAll() : Reader {
       return _reader.unwrapAll();
   }
+
+  public override function reset() : Void {
+    _reader.reset();
+    _current = null;
+  }
 }

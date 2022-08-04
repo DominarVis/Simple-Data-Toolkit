@@ -31,8 +31,15 @@ class ColumnFilterDataTableRowReader extends DataTableRowReader {
 
     public function new(dtrrReader : DataTableRowReader, iRemove : Array<Bool>) {
         super();
+        reuse(dtrrReader, iRemove);
+    }
+
+    public function reuse(dtrrReader : DataTableRowReader, iRemove : Array<Bool>) {
         _reader = dtrrReader;
         _remove = iRemove;
+        _current = null;
+        _started = false;
+        _index = -1;
     }
 
     private override function startI() {
@@ -47,7 +54,6 @@ class ColumnFilterDataTableRowReader extends DataTableRowReader {
             while (_remove[_reader.index()]) {
                 _current = _reader.next();
                 if (_current == null) {
-                    dispose();
                     return;
                 }
             }

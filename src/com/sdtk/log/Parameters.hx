@@ -76,7 +76,7 @@ class Parameters extends com.sdtk.std.Parameters {
                 Sys.println
               #end
               (
-                "Version 0.1.3"
+                "Version " + com.sdtk.std.Version.get()
               );
             default:
               var iPeriod = sParameter.indexOf(".");

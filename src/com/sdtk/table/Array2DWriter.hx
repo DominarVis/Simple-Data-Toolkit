@@ -107,7 +107,7 @@ class Array2DWriter<A> extends DataTableWriter {
   }
   
   public override function writeHeaderFirst() : Bool {
-    return true;
+    return false;
   }
   
   public override function writeRowNameFirst(): Bool {

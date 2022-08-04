@@ -116,7 +116,27 @@ class DelimitedReader extends DataTableReader {
     return _noHeaderIncluded;
   }
 
-  public function noHeaderIncluded(noHeader : Bool) : Void {
+  public override function noHeaderIncluded(noHeader : Bool) : Void {
     _noHeaderIncluded = noHeader;
   }
+
+  public override function allowNoHeaderInclude() : Bool {
+    return true;
+  }  
+
+  public function skipRows(rows : Int) : Void {
+    var noHeaderIncluded : Bool = _noHeaderIncluded;
+    var reader : DataTableRowReader = null;
+    while (rows > 0) {
+      reader = cast nextReuse(reader);
+      rows--;
+    }
+    _noHeaderIncluded = noHeaderIncluded;
+  }
+
+  public override function reset() : Void {
+    _reader.reset();
+    _header = null;
+    _done = false;
+  }    
 }

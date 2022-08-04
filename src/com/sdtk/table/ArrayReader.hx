@@ -81,4 +81,8 @@ class ArrayReader<A> extends DataTableReader {
   public override function iterator() : Iterator<Dynamic> {
     return new ArrayReader<A>(_info);
   }
+
+  public override function reset() : Void {
+    _i = _info._start;
+  }  
 }

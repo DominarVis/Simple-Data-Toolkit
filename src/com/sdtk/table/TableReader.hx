@@ -78,4 +78,8 @@ class TableReader extends DataTableReader {
     _reader = null;
     _header = null;
   }
+
+  public override function reset() : Void {
+    // TODO
+  }  
 }

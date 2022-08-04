@@ -47,3 +47,93 @@ enum Format {
   RAW;
   TEX;
 }
+
+@:expose
+@:nativeGen
+class Formats {
+  private function new() { }
+
+  public static function CSV() : Format {
+    return Format.CSV;
+  }
+
+  public static function PSV() : Format {
+    return Format.PSV;
+  }  
+
+  public static function TSV() : Format {
+    return Format.TSV;
+  }
+
+  public static function DIR() : Format {
+    return Format.DIR;
+  }  
+
+  public static function INI() : Format {
+    return Format.INI;
+  }
+
+  public static function JSON() : Format {
+    return Format.JSON;
+  }  
+
+  public static function PROPERTIES() : Format {
+    return Format.PROPERTIES;
+  }
+
+  public static function SQL() : Format {
+    return Format.SQL;
+  }
+
+  public static function Haxe() : Format {
+    return Format.Haxe;
+  }
+
+  public static function Python() : Format {
+    return Format.Python;
+  }
+
+  public static function Java() : Format {
+    return Format.Java;
+  }
+
+  public static function CSharp() : Format {
+    return Format.CSharp;
+  }
+
+  public static function SPLUNK() : Format {
+    return Format.SPLUNK;
+  }
+
+  public static function HTMLTable() : Format {
+    return Format.HTMLTable;
+  }
+
+  public static function ARRAY() : Format {
+    return Format.ARRAY;
+  }
+
+  public static function MAP() : Format {
+    return Format.MAP;
+  }  
+
+  public static function ARRAYMAP() : Format {
+    return Format.ARRAYMAP;
+  }  
+
+  public static function MAPARRAY() : Format {
+    return Format.MAPARRAY;
+  }  
+
+  public static function DB() : Format {
+    return Format.DB;
+  }  
+
+  public static function RAW() : Format {
+    return Format.RAW;
+  }  
+
+  public static function TEX() : Format {
+    return Format.TEX;
+  }  
+}

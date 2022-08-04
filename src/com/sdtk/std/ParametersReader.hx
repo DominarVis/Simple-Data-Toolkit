@@ -41,6 +41,11 @@ class ParametersReader extends Reader {
         moveToNext();
     }
 
+    public override function reset() : Void {
+        _index = 0;
+        _next = "";
+    }
+
     public override function rawIndex() : Int {
         return _index;
     }

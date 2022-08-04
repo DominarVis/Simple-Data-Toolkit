@@ -22,6 +22,8 @@
 
 package com.sdtk.table;
 
+import com.sdtk.std.DataIterable;
+
 /**
   Defines defaults and interface for reading a whole table.
 **/
@@ -294,5 +296,129 @@ class DataTableReader extends DataEntryReader {
       _alwaysString = value;
       return _alwaysString;
     }
+  }
+
+  public function reset() : Void { }
+
+  public function moveTo(row : Int) : Void {
+    if (row < _index) {
+      reset();
+    }
+    while (_index < row) {
+      //TODO
+      //skip();
+    }
+  }
+
+  public function noHeaderIncluded(noHeader : Bool) : Void { }
+
+  public function allowNoHeaderInclude() : Bool {
+    return false;
+  }
+
+  public function indexer() : com.sdtk.std.DataIterable<Dynamic> {
+    if (_iteratorData == null) {
+      _iteratorData = new DataTableReaderSharedIterator(this);
+    }
+    return new DataTableReaderIterable<Dynamic>(_iteratorData, function () : Dynamic { 
+      return _iteratorData._row;
+    });
+  }
+
+  public function readColumnIndex(i : Int) : com.sdtk.std.DataIterable<Dynamic> {
+    if (_iteratorData == null) {
+      _iteratorData = new DataTableReaderSharedIterator(this);
+    }
+    return new DataTableReaderIterable<Dynamic>(_iteratorData, function () : Dynamic {
+      return _iteratorData._dataByIndex[i];
+    });
   }  
+
+  public function readColumnName(s : String) : com.sdtk.std.DataIterable<Dynamic> {
+    if (_iteratorData == null) {
+      _iteratorData = new DataTableReaderSharedIterator(this);
+    }
+    return new DataTableReaderIterable<Dynamic>(_iteratorData, function () : Dynamic {
+      return _iteratorData._dataByName[s];
+    });
+  }
+
+  /* TODO
+  public function flipColumnRows() : DataTableReader {
+
+  }
+
+  public function reverse() : DataTableReader {
+
+  }
+  
+  //  ,1,2,3,4
+  // A,0,0,0,0
+  // B,0,0,0,0
+  //
+  // A,1,0
+  // A,2,0
+  // A,3,0
+  public function pivot() : DataTableReader {
+
+  }
+*/
+  
+  private var _iteratorData : DataTableReaderSharedIterator;
+}
+
+@:nativeGen
+class DataTableReaderIterable<T> implements com.sdtk.std.DataIterable<T> {
+  private var _shared : DataTableReaderSharedIterator;
+  private var _f : Void -> Dynamic;
+
+  public function new(shared : DataTableReaderSharedIterator, f : Void->Dynamic) {
+    _shared = shared;
+    _f = f;
+  }
+
+  public function iterator() : DataTableReaderIterator<T> {
+    return new DataTableReaderIterator<T>(_shared, _f);
+  }
+}
+
+@:nativeGen
+class DataTableReaderIterator<T> implements com.sdtk.std.DataIterator<T> {
+  private var _shared : DataTableReaderSharedIterator;
+  private var _f : Void -> Dynamic;
+  private var _row : Int = 0;
+  
+  public function new(shared : DataTableReaderSharedIterator, f : Void->Dynamic) {
+    _shared = shared;
+    _f = f;
+  }
+
+  public function hasNext() : Bool {
+    // TODO
+    return false;
+  }
+
+  public function next() : T {
+    _shared.moveTo(_row + 1);
+    _row++;
+    return _f();
+  }
+}
+
+@:nativeGen
+class DataTableReaderSharedIterator {
+  public var _reader : DataTableReader;
+  public var _row : Int = 0;
+  public var _dataByIndex : Array<Dynamic>;
+  public var _dataByName : Map<String, Dynamic>;
+
+  public function new(reader : DataTableReader) {
+    _reader = reader;
+  }
+  
+  public function moveTo(?row : Int) {
+    if (row != _row) {
+      _reader.moveTo(row);
+    }
+  }
 }

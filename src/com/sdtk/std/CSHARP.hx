@@ -100,7 +100,7 @@ class AbstractReader extends Reader {
         _nextRawIndex = 0;
     }
 
-    private function reset() : Void {
+    public override function reset() : Void {
         _nextRawIndex = 0;
     }
 

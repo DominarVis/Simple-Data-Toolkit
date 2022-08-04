@@ -5,6 +5,7 @@ cd "%~dp0"
 cd $(dirname "$0")
 
 CALL Env.cmd
+CALL Update_Version.cmd
 
 mkdir out 2> NUL
 
@@ -66,7 +67,7 @@ REM py -m twine upload --repository testpypi dist\*.*
 REM py -m twine upload --repository pypi dist\*.*
 CD ..
 COPY packaging\dist\*.* .
-REM RMDIR -r packaging
+RMDIR /s /q packaging
 popd
 
 popd

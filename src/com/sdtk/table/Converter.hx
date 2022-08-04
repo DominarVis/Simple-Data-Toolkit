@@ -87,15 +87,26 @@ class Converter {
       // Sort the temporary location
       // Then output to the final output
       if (sSortRowsBy != null && length(sSortRowsBy) > 0) {
-        var awWriter = Array2DWriter.writeToExpandableArray(null);
+        var awWriter;
+        if (#if (haxe_ver < 3.2)
+          Std.is(oTarget, Array2DWriter)
+        #else
+          Std.isOfType(oTarget, Array2DWriter)
+        #end) {
+          awWriter = cast oTarget;
+        } else {                  
+          awWriter = Array2DWriter.writeToExpandableArray(null);
+        }             
         aStages.push(new ConverterStageStandard(oSource, fSource, awWriter, Format.ARRAY, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions, null));
         if (isString(sSortRowsBy)) {
           aStages.push(ConverterStageSort.createWithArrayAndColumnsString(awWriter.getArray(), cast sSortRowsBy));
         } else {
           aStages.push(ConverterStageSort.createWithArrayAndColumns(awWriter.getArray(), cast sSortRowsBy));
         }
-        var arReader : Array2DReader<Dynamic> = awWriter.flip();
-        aStages.push(new ConverterStageStandard(arReader, Format.ARRAY, oTarget, fTarget, null, null, null, null, false, false, null, outputOptions));
+        if (awWriter != oTarget) {
+          var arReader : Array2DReader<Dynamic> = awWriter.flip();
+          aStages.push(new ConverterStageStandard(arReader, Format.ARRAY, oTarget, fTarget, null, null, null, null, false, false, null, outputOptions));
+        }
       } else {
         aStages.push(new ConverterStageStandard(oSource, fSource, oTarget, fTarget, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions, outputOptions));
       }
@@ -152,5 +163,5 @@ class Converter {
 
   public static function quick() : ConverterQuickInputOptions {
     return new ConverterQuickInputOptions();
-  }  
+  }
 }

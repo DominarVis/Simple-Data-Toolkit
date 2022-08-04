@@ -269,6 +269,10 @@ class DatabaseReader extends DataTableReader {
     }
     return null;
   }
+
+  public override function reset() : Void {
+    // TODO
+  }    
 }
 
 @:nativeGen

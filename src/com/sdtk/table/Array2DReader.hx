@@ -83,4 +83,8 @@ class Array2DReader<A> extends DataTableReader {
   public override function headerRowNotIncluded() : Bool {
     return false;
   }
+
+  public override function reset() : Void {
+    _i = _info._start;
+  }
 }

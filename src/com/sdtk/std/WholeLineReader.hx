@@ -37,6 +37,10 @@ class WholeLineReader extends Reader {
     _reader = rReader;
   }
 
+  public override function reset() : Void {
+    _reader.reset();
+  }
+
   public override function rawIndex() : Int {
     return _currentRawIndex;
   }

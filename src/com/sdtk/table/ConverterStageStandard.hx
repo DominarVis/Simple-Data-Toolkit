@@ -1,3 +1,25 @@
+/*
+    Copyright (C) 2019 Vis LLC - All Rights Reserved
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+/*
+    Simple Data Toolkit
+    Simple Table Converter (STC) - Source code can be found in Converter.hx in Haxe on SourceForge.net
+*/
+
 package com.sdtk.table;
 
 //import Assertion.*;
@@ -17,14 +39,36 @@ class ConverterStageStandard implements ConverterStage {
     #end     
   }  
 
+  private static function isInt(o : Dynamic) : Bool {
+    #if (haxe_ver < 3.2)
+      return Std.is(o, Int);
+    #else
+      return Std.isOfType(o, Int);
+    #end     
+  }    
+
   private static function mergeFilters(a : Null<Array<com.sdtk.std.Filter>>, b : Null<Array<com.sdtk.std.Filter>>) : com.sdtk.std.Filter {
-    if (a == null && b == null) {
+    if ((a == null || a.length <= 0)&& (b == null || b.length <= 0)) {
       return null;
-    } else if (a == null) {
-      return mergeFilters(b, a);
-    } else if (b == null) {
-      if (a.length <= 0) {
-        return null;
+    } else {
+      var mergedA : Null<com.sdtk.std.Filter>;
+      var mergedB : Null<com.sdtk.std.Filter>;
+      if (a == null || a.length <= 0) {
+        mergedA = null;
+      } else {
+        var filter : Null<com.sdtk.std.Filter> = null;
+        for (f in a) {
+          if (filter == null) {
+            filter = f;
+          } else {
+            filter = filter.or(f);
+          }
+        }
+        mergedA = filter;
+      }
+
+      if (b == null || b.length <= 0) {
+        mergedB = null;
       } else {
         var filter : Null<com.sdtk.std.Filter> = null;
         for (f in a) {
@@ -34,10 +78,16 @@ class ConverterStageStandard implements ConverterStage {
             filter = filter.and(f);
           }
         }
-        return filter;
+        mergedB = filter;
       }
-    } else {
-      return mergeFilters(a.concat(b), null);
+
+      if (mergedA != null && mergedB != null) {
+        return mergedA.and(mergedB);
+      } else if (mergedA != null) {
+        return mergedA;
+      } else {
+        return mergedB;
+      }
     }
   }
 
@@ -54,7 +104,8 @@ class ConverterStageStandard implements ConverterStage {
     }
   }
 
-  public function new(oSource : Dynamic, fSource : Null<Format>, oTarget : Dynamic, fTarget : Null<Format>, sFilterColumnsExclude : Dynamic, sFilterColumnsInclude : Dynamic, sFilterRowsExclude : Dynamic, sFilterRowsInclude : Dynamic, leftTrim : Bool, rightTrim : Bool, inputOptions : Map<String, Dynamic>, outputOptions : Map<String, Dynamic>) {
+  public static function createWriter(oTarget : Dynamic, fTarget : Null<Format>, outputOptions : Map<String, Dynamic>) : Null<DataTableWriter> {
+    var writer : Null<DataTableWriter> = null;
     if (oTarget != null) {
       if (
         #if (haxe_ver < 3.2)
@@ -63,9 +114,9 @@ class ConverterStageStandard implements ConverterStage {
           Std.isOfType(oTarget, DataTableWriter)
         #end
       ) {
-        _writer = cast oTarget;
+        writer = cast oTarget;
       }
-      if (_writer == null) {
+      if (writer == null) {
         var sTarget;
 
         if (oTarget == Std.string(oTarget)) {
@@ -128,25 +179,25 @@ class ConverterStageStandard implements ConverterStage {
                 Std.isOfType(oTarget, Writer)
               #end              
             ) {
-              _writer = TableWriter.createStandardTableWriterForWriter(oTarget);
+              writer = TableWriter.createStandardTableWriterForWriter(oTarget);
             } else {
-              _writer = TableWriter.createStandardTableWriterForElement(oTarget);
+              writer = TableWriter.createStandardTableWriterForElement(oTarget);
             }
           case DIR:
             fshTarget = CMDDirHandler.instance;
-            _writer = FileSystemWriter.createCMDDirWriter(oTarget);
+            writer = FileSystemWriter.createCMDDirWriter(oTarget);
           case INI:
             kvhTarget = INIHandler.instance;
-            _writer = KeyValueWriter.createINIWriter(oTarget);
+            writer = KeyValueWriter.createINIWriter(oTarget);
           case JSON:
             kvhTarget = JSONHandler.instance;
-            _writer = KeyValueWriter.createJSONWriter(oTarget);
+            writer = KeyValueWriter.createJSONWriter(oTarget);
           case PROPERTIES:
             kvhTarget = PropertiesHandler.instance;
-            _writer = KeyValueWriter.createPropertiesWriter(oTarget);
+            writer = KeyValueWriter.createPropertiesWriter(oTarget);
           case SPLUNK:
             kvhTarget = SplunkHandler.instance;
-            _writer = KeyValueWriter.createSplunkWriter(oTarget);
+            writer = KeyValueWriter.createSplunkWriter(oTarget);
           case SQL:
             var sqlType : String = cast getOption(outputOptions, "sqlType");
             if (sqlType != null) {
@@ -174,7 +225,7 @@ class ConverterStageStandard implements ConverterStage {
             ciTarget = CSharpInfoArrayOfMaps.instance;  
           case ARRAY:
             {
-              _writer = Array2DWriter.writeToExpandableArrayI(cast oTarget);
+              writer = Array2DWriter.writeToExpandableArrayI(cast oTarget);
             }
           case DB:
             // TODO         
@@ -184,7 +235,7 @@ class ConverterStageStandard implements ConverterStage {
 
         if (diTarget != null) {
           var dwWriter = new DelimitedWriter(diTarget, oTarget);
-          _writer = dwWriter;
+          writer = dwWriter;
           if (cast getOption(outputOptions, "header", true)) {
             dwWriter.noHeaderIncluded(false);
           } else {
@@ -198,7 +249,7 @@ class ConverterStageStandard implements ConverterStage {
           }
           */
         } else if (ciTarget != null) {
-          _writer = new CodeWriter(ciTarget, oTarget);
+          writer = new CodeWriter(ciTarget, oTarget);
         }
       }
     } else {
@@ -210,6 +261,11 @@ class ConverterStageStandard implements ConverterStage {
       #end
     }
 
+    return writer;
+  }
+
+  public static function createReader(oSource : Dynamic, fSource : Null<Format>, sFilterColumnsExclude : Dynamic, sFilterColumnsInclude : Dynamic, sFilterRowsExclude : Dynamic, sFilterRowsInclude : Dynamic, leftTrim : Bool, rightTrim : Bool, inputOptions : Map<String, Dynamic>) : Null<DataTableReader> {
+    var reader : Null<DataTableReader> = null;
     if (oSource != null) {
       if (
         #if (haxe_ver < 3.2)
@@ -218,9 +274,9 @@ class ConverterStageStandard implements ConverterStage {
           Std.isOfType(oSource, DataTableReader)
         #end
       ) {
-        _reader = cast oSource;
+        reader = cast oSource;
       }
-      if (_reader == null) {
+      if (reader == null) {
         var sSource;
 
         if (oSource == Std.string(oSource)) {
@@ -259,7 +315,7 @@ class ConverterStageStandard implements ConverterStage {
         }
 
         if (fSource == null) {
-          switch (getControlType(oTarget)) {
+          switch (getControlType(oSource)) {
             case 0:
               fSource = HTMLTable;
           }
@@ -282,22 +338,22 @@ class ConverterStageStandard implements ConverterStage {
             diSource = TSVInfo.instance;
           case HTMLTable:
             tiSource = StandardTableInfo.instance;
-            _reader = TableReader.createStandardTableReader(oSource);
+            reader = TableReader.createStandardTableReader(oSource);
           case DIR:
             fshSource = CMDDirHandler.instance;
-            _reader = FileSystemReader.createCMDDirReader(oSource);
+            reader = FileSystemReader.createCMDDirReader(oSource);
           case INI:
             kvhSource = INIHandler.instance;
-            _reader = KeyValueReader.createINIReader(oSource);
+            reader = KeyValueReader.createINIReader(oSource);
           case JSON:
             kvhSource = JSONHandler.instance;
-            _reader = KeyValueReader.createJSONReader(oSource);
+            reader = KeyValueReader.createJSONReader(oSource);
           case PROPERTIES:
             kvhSource = PropertiesHandler.instance;
-            _reader = KeyValueReader.createPropertiesReader(oSource);
+            reader = KeyValueReader.createPropertiesReader(oSource);
           case SPLUNK:
             kvhSource = SplunkHandler.instance;
-            _reader = KeyValueReader.createSplunkReader(oSource);
+            reader = KeyValueReader.createSplunkReader(oSource);
           case SQL:
             ciSource = SQLSelectInfo.instance;
           case Haxe:
@@ -309,17 +365,17 @@ class ConverterStageStandard implements ConverterStage {
           case CSharp:
             ciSource = CSharpInfoArrayOfMaps.instance;    
           case DB:
-            _reader = DatabaseReader.read(oSource);
+            reader = DatabaseReader.read(oSource);
           case ARRAY:
             {
-              _reader = Array2DReader.readWholeArrayI(cast oSource);
+              reader = Array2DReader.readWholeArrayI(cast oSource);
             }
           default:
             // Intentionally left empty
         }
         if (diSource != null) {
           var drReader = new DelimitedReader(diSource, oSource);
-          _reader = drReader;
+          reader = drReader;
           if (cast getOption(inputOptions, "header", true)) {
             drReader.noHeaderIncluded(false);
           } else {
@@ -332,14 +388,14 @@ class ConverterStageStandard implements ConverterStage {
           }
         } else if (ciSource != null) {
           // TODO
-          //_reader = new CodeReader(ciSource, oSource);
+          //reader = new CodeReader(ciSource, oSource);
         }
         if (leftTrim && rightTrim) {
-          _reader = new DataTableReaderTrim(_reader);
+          reader = new DataTableReaderTrim(reader);
         } else if (leftTrim) {
-          _reader = new DataTableReaderLeftTrim(_reader);
+          reader = new DataTableReaderLeftTrim(reader);
         } else if (rightTrim) {
-          _reader = new DataTableReaderRightTrim(_reader);
+          reader = new DataTableReaderRightTrim(reader);
         }
         if (sFilterRowsInclude != null || sFilterRowsExclude != null) {
           var fFilter : Filter;
@@ -355,7 +411,7 @@ class ConverterStageStandard implements ConverterStage {
           } else {
             fFilter = mergeFilters(cast sFilterRowsInclude, cast sFilterRowsExclude);
           }
-          _reader = new RowFilterDataTableReader(_reader, fFilter);
+          reader = new RowFilterDataTableReader(reader, fFilter);
         }
       }
       if (sFilterColumnsInclude != null || sFilterColumnsExclude != null) {
@@ -370,13 +426,42 @@ class ConverterStageStandard implements ConverterStage {
             fFilter = Filter.parse(sFilterColumnsExclude, true);
           }
         } else {
+          if (sFilterColumnsInclude != null && sFilterColumnsInclude.length > 0) {
+            if (isString(sFilterColumnsInclude[0]) || isInt(sFilterColumnsInclude[0])) {
+              var fFilters : Array<Filter> = new Array<Filter>();
+              var sFilters : Array<String> = cast sFilterColumnsInclude;
+              for (sFilter in sFilters) {
+                var fFilter : Filter = Filter.parse(sFilter, false);
+                fFilters.push(fFilter);
+              }
+              sFilterColumnsInclude = fFilters;
+            }
+          }
+          if (sFilterColumnsExclude != null && sFilterColumnsExclude.length > 0) {
+            if (isString(sFilterColumnsExclude[0]) || isInt(sFilterColumnsExclude[0])) {
+              var fFilters : Array<Filter> = new Array<Filter>();
+              var sFilters : Array<String> = cast sFilterColumnsExclude;
+              for (sFilter in sFilters) {
+                var fFilter : Filter = Filter.parse(sFilter, true);
+                fFilters.push(fFilter);
+              }              
+            }
+          }
           fFilter = mergeFilters(cast sFilterColumnsInclude, cast sFilterColumnsExclude);
         }
-        _reader = new ColumnFilterDataTableReader(_reader, fFilter);
+        reader = new ColumnFilterDataTableReader(reader, fFilter);
       }
     } else {
       // TODO
     }
+
+    return reader;
+  }
+
+  public function new(oSource : Dynamic, fSource : Null<Format>, oTarget : Dynamic, fTarget : Null<Format>, sFilterColumnsExclude : Dynamic, sFilterColumnsInclude : Dynamic, sFilterRowsExclude : Dynamic, sFilterRowsInclude : Dynamic, leftTrim : Bool, rightTrim : Bool, inputOptions : Map<String, Dynamic>, outputOptions : Map<String, Dynamic>) {
+    _writer = createWriter(oTarget, fTarget, outputOptions);
+    _reader = createReader(oSource, fSource, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions);
+
     
     //TODO
     //assert(_writer != null, "_writer should not be null for " + Type.getClassName(Type.getClass(this)));

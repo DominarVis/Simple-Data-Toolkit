@@ -103,4 +103,11 @@ class Filter {
         cfAnd.and(fFilter);
         return cfAnd;
     }
+
+    public function or(fFilter : Filter) : Filter {
+        var cfAnd = new FilterCompositeOr();
+        cfAnd.or(this);
+        cfAnd.or(fFilter);
+        return cfAnd;
+    }    
 }

@@ -71,7 +71,7 @@ class ArrayRowWriter<A> extends DataTableRowWriter {
   **/
   public static function continueWriteReuse<A>(info : ArrayInfo<A>, start : Int, end : Int, rowWriter : Null<ArrayRowWriter<A>>) : ArrayRowWriter<A> {
     var info : ArrayInfo<A> = new ArrayInfo<A>(info._arr, start, end, info._entriesInRow, info._increment, info._rowIncrement);
-    if (info == null) {
+    if (rowWriter == null) {
       rowWriter = new ArrayRowWriter(info);
     } else {
       rowWriter.reuse(info);
@@ -84,7 +84,7 @@ class ArrayRowWriter<A> extends DataTableRowWriter {
   **/
   public static function writeToPartOfArrayReuse<A>(arr : Array<A>, start : Int, end : Int, increment : Int, rowWriter : Null<ArrayRowWriter<A>>) : ArrayRowWriter<A> {
     var info : ArrayInfo<A> = new ArrayInfo<A>(arr, start, end, arr.length - 1, increment, 1);
-    if (info == null) {
+    if (rowWriter == null) {
       rowWriter = new ArrayRowWriter(info);
     } else {
       rowWriter.reuse(info);
@@ -97,7 +97,7 @@ class ArrayRowWriter<A> extends DataTableRowWriter {
   **/
   public static function writeToWholeArrayReuse<A>(arr : Array<A>, rowWriter : Null<ArrayRowWriter<A>>) : ArrayRowWriter<A> {
     var info : ArrayInfo<A> = new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 0);
-    if (info == null) {
+    if (rowWriter == null) {
       rowWriter = new ArrayRowWriter(info);
     } else {
       rowWriter.reuse(info);
@@ -107,7 +107,7 @@ class ArrayRowWriter<A> extends DataTableRowWriter {
 
   public static function writeToExpandableArrayReuse<A>(arr : Array<A>, rowWriter : Null<ArrayRowWriter<A>>) : ArrayRowWriter<A> {
     var info : ArrayInfo<A> = new ArrayInfo<A>(arr, 0, -1, -1, 1, 0);
-    if (info == null) {
+    if (rowWriter == null) {
       rowWriter = new ArrayRowWriter(info);
     } else {
       rowWriter.reuse(info);
@@ -128,7 +128,7 @@ class ArrayRowWriter<A> extends DataTableRowWriter {
     }
   }
   
-  public function reset() {
+  public function reset() : Void {
     _i = _info._start;
   }
   

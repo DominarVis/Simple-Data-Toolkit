@@ -1,0 +1,109 @@
+# Properties file for SDTKJEdit plugin
+plugin.SDTKJEditPlugin.activate=defer
+plugin.SDTKJEditPlugin.name=SDTKJEdit
+plugin.SDTKJEditPlugin.author=Vis LLC
+plugin.SDTKJEditPlugin.usePluginHome=true
+plugin.SDTKJEditPlugin.version=0.1.4
+plugin.SDTKJEditPlugin.docs=index.html
+plugin.SDTKJEditPlugin.depend.0=jdk 1.6
+plugin.SDTKJEditPlugin.depend.1=jedit 05.00.01.00
+plugin.SDTKJEditPlugin.description=This plugin provides a menu that allows for easy converting of different data formats.
+
+plugin.SDTKJEditPlugin.menu=SDTKJEdit \
+	- \
+	SDTKJEdit.csv-to-psv \
+	SDTKJEdit.csv-to-tsv \
+	SDTKJEdit.csv-to-html-table \
+	SDTKJEdit.csv-to-json \
+	SDTKJEdit.csv-to-tex \
+	SDTKJEdit.csv-to-csharp \
+	SDTKJEdit.csv-to-haxe \
+	SDTKJEdit.csv-to-java \
+	SDTKJEdit.csv-to-python \
+	SDTKJEdit.csv-to-sql \
+	- \
+	SDTKJEdit.psv-to-csv \
+	SDTKJEdit.psv-to-tsv \
+	SDTKJEdit.psv-to-html-table \
+	SDTKJEdit.psv-to-json \
+	SDTKJEdit.psv-to-tex \
+	SDTKJEdit.psv-to-csharp \
+	SDTKJEdit.psv-to-haxe \
+	SDTKJEdit.psv-to-java \
+	SDTKJEdit.psv-to-python \
+	SDTKJEdit.psv-to-sql \
+	- \
+	SDTKJEdit.tsv-to-csv \
+	SDTKJEdit.tsv-to-psv \
+	SDTKJEdit.tsv-to-html-table \
+	SDTKJEdit.tsv-to-json \
+	SDTKJEdit.tsv-to-tex \
+	SDTKJEdit.tsv-to-csharp \
+	SDTKJEdit.tsv-to-haxe \
+	SDTKJEdit.tsv-to-java \
+	SDTKJEdit.tsv-to-python \
+	SDTKJEdit.tsv-to-sql
+
+SDTKJEdit.label=SDTKJEdit
+
+SDTKJEdit.csv-to-psv.label=CSV to PSV
+SDTKJEdit.csv-to-tsv.label=CSV to TSV
+SDTKJEdit.csv-to-html-table.label=CSV to HTML Table
+SDTKJEdit.csv-to-json.label=CSV to JSON
+SDTKJEdit.csv-to-tex.label=CSV to TeX
+SDTKJEdit.csv-to-csharp.label=CSV to C#
+SDTKJEdit.csv-to-haxe.label=CSV to Haxe
+SDTKJEdit.csv-to-java.label=CSV to Java
+SDTKJEdit.csv-to-python.label=CSV to Python
+SDTKJEdit.csv-to-sql.label=CSV to SQL
+
+SDTKJEdit.psv-to-csv.label=PSV to CSV
+SDTKJEdit.psv-to-tsv.label=PSV to TSV
+SDTKJEdit.psv-to-html-table.label=PSV to HTML Table
+SDTKJEdit.psv-to-json.label=PSV to JSON
+SDTKJEdit.psv-to-tex.label=PSV to TeX
+SDTKJEdit.psv-to-csharp.label=PSV to C#
+SDTKJEdit.psv-to-haxe.label=PSV to Haxe
+SDTKJEdit.psv-to-java.label=PSV to Java
+SDTKJEdit.psv-to-python.label=PSV to Python
+SDTKJEdit.psv-to-sql.label=PSV to SQL
+
+SDTKJEdit.tsv-to-csv.label=TSV to CSV
+SDTKJEdit.tsv-to-psv.label=TSV to PSV
+SDTKJEdit.tsv-to-html-table.label=TSV to HTML Table
+SDTKJEdit.tsv-to-json.label=TSV to JSON
+SDTKJEdit.tsv-to-tex.label=TSV to TeX
+SDTKJEdit.tsv-to-csharp.label=TSV to C#
+SDTKJEdit.tsv-to-haxe.label=TSV to Haxe
+SDTKJEdit.tsv-to-java.label=TSV to Java
+SDTKJEdit.tsv-to-python.label=TSV to Python
+SDTKJEdit.tsv-to-sql.label=TSV to SQL
+
+plugin.SDTKJEditPlugin.option-pane=SDTKJEdit
+
+options.SDTKJEdit.code=new SDTKJEditOptionPane();
+
+options.SDTKJEdit.label=Simple Data Toolkit
+options.SDTKJEdit.file=File:
+options.SDTKJEdit.choose-file=Choose
+options.SDTKJEdit.choose-file.title=Choose a notepad file
+options.SDTKJEdit.choose-font=Font:
+options.SDTKJEdit.show-filepath.title=Display notepad file path
+
+SDTKJEdit.title=Simple Data Toolkit
+
+SDTKJEdit.choose-file.icon=Open.png
+SDTKJEdit.save-file.icon=Save.png
+SDTKJEdit.copy-to-buffer.icon=CopyToBuffer.png
+
+options.SDTKJEdit.show-filepath=true
+options.SDTKJEdit.font=Monospaced
+options.SDTKJEdit.fontstyle=0
+options.SDTKJEdit.fontsize=14
+
+options.SDTKJEdit.filepath=
+
+
+
+
+

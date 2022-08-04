@@ -149,7 +149,7 @@ class Parameters extends com.sdtk.std.Parameters {
   }
 
   public function printVersion() : Void {
-    print("Version 0.1.2");
+    print("Version " + com.sdtk.std.Version.get());
   }
 
   public function printDetails() : Void {

@@ -5,6 +5,7 @@ cd "%~dp0"
 cd $(dirname "$0")
 
 CALL Env.cmd
+CALL Update_Version.cmd
 
 MKDIR tmp 2> NUL
 MKDIR tmp\tools 2> NUL

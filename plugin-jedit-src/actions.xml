@@ -1,0 +1,225 @@
+<!-- Action definition file for SDTKJEdit plugin -->
+<!-- $Id$
+-->
+
+<!DOCTYPE ACTIONS SYSTEM "actions.dtd">
+<ACTIONS>
+	<ACTION NAME="SDTKJEdit.csv-to-psv">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToPsv();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-tsv">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToTsv();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-html-table">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToHtmlTable();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-json">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToJson();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-tex">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToTex();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-csharp">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToCSharp();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-haxe">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToHaxe();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-java">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToJava();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.csv-to-python">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToPython();
+		</CODE>
+	</ACTION>	
+
+	<ACTION NAME="SDTKJEdit.csv-to-sql">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).csvToSql();
+		</CODE>
+	</ACTION>
+
+	
+
+
+
+
+	<ACTION NAME="SDTKJEdit.psv-to-csv">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToCsv();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-tsv">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToPsv();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-html-table">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToHtmlTable();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-json">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToJson();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-tex">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToTex();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-csharp">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToCSharp();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-haxe">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToHaxe();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-java">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToJava();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.psv-to-python">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToPython();
+		</CODE>
+	</ACTION
+
+	<ACTION NAME="SDTKJEdit.psv-to-sql">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).psvToSql();
+		</CODE>
+	</ACTION>
+
+
+
+
+	<ACTION NAME="SDTKJEdit.tsv-to-csv">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToCsv();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-psv">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToPsv();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-html-table">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToHtmlTable();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-json">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToJson();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-tex">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToTex();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-csharp">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToCSharp();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-haxe">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToHaxe();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-java">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToJava();
+		</CODE>
+	</ACTION>
+
+	<ACTION NAME="SDTKJEdit.tsv-to-python">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToPython();
+		</CODE>
+	</ACTION>	
+
+	<ACTION NAME="SDTKJEdit.tsv-to-sql">
+		<CODE>
+			wm.addDockableWindow(SDTKJEditPlugin.NAME);
+			wm.getDockableWindow(SDTKJEditPlugin.NAME).tsvToSql();
+		</CODE>
+	</ACTION>
+</ACTIONS>
+

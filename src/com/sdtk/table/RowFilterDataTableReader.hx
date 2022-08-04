@@ -145,4 +145,8 @@ class RowFilterDataTableReader extends DataTableReader {
   public override function headerRowNotIncluded() : Bool {
     return _reader.headerRowNotIncluded();
   }    
+
+  public override function reset() : Void {
+    _reader.reset();
+  }  
 }
