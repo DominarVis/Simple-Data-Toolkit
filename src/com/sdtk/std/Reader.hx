@@ -92,6 +92,13 @@ class Reader
     }
 
     #if java
+    override
+    #end
+    public function reset() : Void {
+    }
+
+
+    #if java
         public function readI(requested : Int) : com.sdtk.std.JAVA.StringI {
             var buf : StringBuf = new StringBuf();
 
@@ -145,12 +152,6 @@ class Reader
 
         public function ready() : Bool {
             return true;
-        }
-
-        #if java
-            override
-        #end
-        public function reset() : Void {
         }
 
         #if java
