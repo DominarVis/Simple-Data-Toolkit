@@ -46,7 +46,7 @@ class MatrixRowReader extends DataTableRowReaderDecorator {
         if (j < 0) {
             current = _info._currentRow[i];
         } else if (j < _info._headers.length) {
-            current = _info._headers[j][_info._currentI];
+            current = _info._headers[j][_info._currentI + _info._headerColumns];
         } else if (j == _info._headers.length) {
             current = _reader.next();
             _info._currentI++;

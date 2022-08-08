@@ -42,6 +42,7 @@ class MatrixReader extends DataTableReaderDecorator {
                 var rowBuffer = new Array<Dynamic>();
                 _info._headers[i] = rowBuffer;
                 var rowReader : DataTableRowReader = reader.next();
+                rowReader.start();
                 while (rowReader.hasNext()) {
                     rowBuffer.push(rowReader.next());
                 }

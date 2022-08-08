@@ -78,6 +78,11 @@ class DataTableRowReaderDecorator extends DataTableRowReader {
         _reader.start();
     }
 
+    public override function alwaysString(?value : Null<Bool>) : Bool {
+        _reader.alwaysString(value);
+        return super.alwaysString(value);
+    }
+
     /**
     Closes/disposes of all data structures required to read the table.
     **/

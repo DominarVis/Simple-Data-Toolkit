@@ -24,6 +24,6 @@ package com.sdtk.std;
 @:expose 
 @:nativeGen 
 class Version { 
- private static var _code : String = "0.1.4"; 
+ private static var _code : String = "0.1.5"; 
  public static function get() : String { return _code; } 
 } 
