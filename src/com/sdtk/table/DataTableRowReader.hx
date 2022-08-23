@@ -104,7 +104,25 @@ class DataTableRowReader extends DataEntryReader {
           } else if (isInt) {
             result = Std.parseInt(str);
           } else {
+            #if python
+              if (str.indexOf("datetime.datetime(") == 0) {
+                str = StringTools.replace(str, "datetime.datetime(", "");
+                str = StringTools.replace(str, ")", "");
+                var str2 : Array<String> = str.split(",");
+                var i2 : Array<Int> = new Array<Int>();
+                i2.resize(str2.length);
+                var i : Int = 0;
+                while (i < i2.length) {
+                  i2[i] = Std.parseInt(StringTools.trim(str2[i]));
+                  i++;
+                }
+                result = new Date(i2[0], i2[1], i2[2], i2[3], i2[4], i2[5]);
+              } else {
+            #end
             result = str;
+            #if python
+            }
+            #end
           }
       }
     }

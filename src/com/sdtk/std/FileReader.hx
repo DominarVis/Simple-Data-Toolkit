@@ -308,6 +308,11 @@ class FileReader extends Reader {
         }
         catch (msg : Dynamic) {
           _next = null;
+        }
+        if (_next == "") {
+          _next = null;
+        }
+        if (_next == null) {
           dispose();
         }
         _nextRawIndex++;

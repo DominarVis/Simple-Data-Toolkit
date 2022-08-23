@@ -284,6 +284,9 @@ class Parameters extends com.sdtk.std.Parameters {
       case ".properties":
         return Format.PROPERTIES;
       default:
+        if (sName.indexOf("dbtype=") >= 0) {
+          return Format.DB;
+        }
         return null;
     }
   }

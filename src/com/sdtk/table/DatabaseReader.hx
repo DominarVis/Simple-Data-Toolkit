@@ -22,288 +22,319 @@
 
 package com.sdtk.table;
 
+#if(!JS_BROWSER)
 import com.sdtk.std.*;
 
 /**
-  Adapts delimited files (like CSV, PSV, etc) to STC table reader interface.
+  Adapts database queries to STC table reader interface.
 **/
 @:expose
 @:nativeGen
 class DatabaseReader extends DataTableReader {
-  private static var _mappings : Array<String> = null;
-  private static var _finalMappings : Map<String, Dynamic->Dynamic->String->Array<String>->DatabaseReader> = null;
-  private static var _columnMappings : Map<String, Dynamic->Dynamic->Array<String>> = null;
-  private static var _retrievalTypes : Map<String, Dynamic->Dynamic->Int->Dynamic> = new Map<String, Dynamic->Dynamic->Int->Dynamic>();
-  private static var _retrievalPrepTypes : Map<String, Dynamic->Dynamic> = new Map<String, Dynamic->Dynamic>();
   private var _done : Bool = false;
+  private var _cur : #if java
+    java.sql.ResultSet
+  #elseif cs
+    Dynamic
+  #elseif python
+    Dynamic
+  #elseif JS_SNOWFLAKE
+    Dynamic
+  #elseif JS_WSH
+    Dynamic
+  #elseif php
+    Dynamic
+  #else // Hashlink
+    sys.db.ResultSet
+  #end;
+  #if python
+    private var _row : Dynamic;
+  #end
+  #if php
+    private var _connector : Int;
+    private var _rowValues : Array<Dynamic>;
+    private static inline var CONNECTOR_MYSQL : Int = 0;
+    private static inline var CONNECTOR_SQLITE : Int = 1;
+    private static inline var CONNECTOR_ORACLE : Int = 2;
+    private static inline var CONNECTOR_SQLSERVER : Int = 3;
+    private static inline var CONNECTOR_SNOWFLAKE : Int = 4;
+    private static inline var CONNECTOR_POSTGRES : Int = 5;
+  #end
+  private var _reading : Bool = false;
+  private var _hold : Dynamic = null;
 
-  public function new() {
-    super();
-  }
+  #if cs
+    private var _reader : Bool;
 
-  private static function initMappings() : Void {
-    if (_mappings == null) {
-      _mappings = new Array<String>();
-      _mappings.push("execute");
-      _mappings.push("__iter__");
-      _mappings.push("iterator");
-      //_mappings.put("createStatement", dbCreateStatement);
-      //_mappings.put("cursor", dbCursor);
-
-      _finalMappings = new Map<String, Dynamic->Dynamic->String->Array<String>->DatabaseReader>();
-      _finalMappings.set("next", dbIterator);
-      _finalMappings.set("__next__", dbIterator);
-      _finalMappings.set("fetch", dbIterator);
-
-      _columnMappings = new Map<String, Dynamic->Dynamic->Array<String>>();
-      _columnMappings.set("__iter__-description", columnDescription);
-      _columnMappings.set("execute-getColumnName", columnGetColumnName);
-
-      _retrievalTypes = new Map<String, Dynamic->Dynamic->Int->Dynamic>();
-      _retrievalTypes.set("", getArrayValue);
-      _retrievalTypes.set("getColumnValue", getColumnValue);
-
-      _retrievalPrepTypes = new Map<String, Dynamic->Dynamic>();
-      _retrievalPrepTypes.set("", getArrayPrep);
-      _retrievalPrepTypes.set("getColumnValue", noPrep);      
+    @:functionCode("return o is System.Data.Common.DbDataReader;")
+    private static function checkIfReader(o : Dynamic) : Bool {
+      return false;
     }
+
+    @:functionCode("
+      if (o is System.Data.DataSet) {
+          System.Data.DataSet ds = (System.Data.DataSet) o;
+          o = ds.Tables[0];
+      }
+      if (o is System.Data.DataTable) {
+        System.Data.DataTable dt = (System.Data.DataTable)o;
+        return dt.Select();
+      } else {
+          return o;
+      }
+    ")
+    private static function getRowCollection(o : Dynamic) : Dynamic {
+      return null;
+    }
+
+    @:functionCode("
+      if (reader) {
+        System.Data.Common.DbDataReader r = (System.Data.Common.DbDataReader) o;
+        return r.FieldCount;
+      } else {
+        System.Data.DataRow[] r = (System.Data.DataRow[]) o;
+        return r[0].Table.Columns.Count;
+    }")
+    private static function getFieldCount(o : Dynamic, reader : Bool) : Int {
+      return 0;
+    }
+
+    @:functionCode("
+      if (reader) {
+        System.Data.Common.DbDataReader r = (System.Data.Common.DbDataReader) o;
+        return r.GetName(i);
+      } else {
+        System.Data.DataRow[] r = (System.Data.DataRow[]) o;
+        return r[0].Table.Columns[i].ColumnName;
+      }
+    ")
+    private static function getColumnName(i : Int, o : Dynamic, reader : Bool) : String {
+      return null;
+    }
+
+    @:functionCode("
+      if (reader) {
+        System.Data.Common.DbDataReader r = (System.Data.Common.DbDataReader) o;
+        return r.GetFieldValue<object>(i);
+      } else {
+        System.Data.DataRow[] r = (System.Data.DataRow[]) o;
+        return r[j].ItemArray[i];
+      }
+    ")
+    private static function readColumnNumber(i : Int, j : Int, o : Dynamic, reader : Bool) : Dynamic {
+      return null;
+    }
+
+    @:functionCode("
+      if (reader) {
+        System.Data.Common.DbDataReader r = (System.Data.Common.DbDataReader) o;
+        return r.Read();
+      } else {
+        System.Data.DataRow[] r = (System.Data.DataRow[]) o;
+        return j < (r.Length - 1);
+      }
+    ")
+    private static function readNext(o : Dynamic, reader : Bool, j : Int) : Bool {
+      return false;
+    }
+  #end
+  private var _columns : Array<String>;
+
+  private function new(cur : Dynamic) {
+    super();
+    _cur = cast cur;
+    #if cs
+      _reader = checkIfReader(cur);
+      if (!_reader) {
+        _reader = getRowCollection(_reader);
+      }
+    #end
+    checkColumns();
+    finalPrep();
   }
  
   public static function read(o : Dynamic) : DatabaseReader {
-    initMappings();
-    var trail : Map<String, Dynamic> = new Map<String, Dynamic>();
-    var t : Dynamic = getTypeIfNeeded(o);
-    for (mapping in _mappings) {
-      var o2 : Dynamic = executeFunctionIfThere(o, t, mapping, trail);
-      if (o2 != null) {
-        o = o2;
-        t = getTypeIfNeeded(o);
-      }
-    }
-    for (mapping in _finalMappings.keys()) {
-      if (hasFunction(t, mapping)) {
-        return cast _finalMappings[mapping](o, t, mapping, getColumnNames(o, t, trail));
-      }
-    }
-    return null;
-  }
-
-  private static function getArrayValue(o : Dynamic, t : Dynamic, i : Int) : Dynamic {
-    #if js
-      return cast js.Syntax.code("{0}[{1}]", o, i);
+    #if JS_SNOWFLAKE
+      js.Syntax.code("if (!!({0}['execute']) { {0} = {0}['execute'](); }", o);
+      return new DatabaseReader(o);
     #elseif python
-      return cast python.Syntax.code("{0}[{1}]", o, i);
+      return new DatabaseReader(o);
     #elseif cs
+      return new DatabaseReader(o);
+    #elseif JS_WSH
+      return new DatabaseReader(o);
+    #elseif JS_NODE
       // TODO
-      return null;
     #elseif java
-      // TODO
-      return null;
-    #else
-      var r : Array<Dynamic> = cast o;
-      return o[i];
-    #end    
-  }
-
-  private static function getArrayPrep(o : Dynamic) : Dynamic {
-    #if js
-      // TODO
-      return null;
-    #elseif python
-      return cast python.Syntax.code("list({0})", o);
-    #elseif cs
-      // TODO
-      return null;
-    #elseif java
-      // TODO
-      return null;
+      return new DatabaseReader(o);
     #elseif php
-      return o;
-    #else
-      return o;
-    #end    
-  }
-
-  private static function getColumnValue(o : Dynamic, t : Dynamic, i : Int) : Dynamic {
-    #if js
-      return cast js.Syntax.code("{0}.getColumnValue({1} + 1)", o, i);
-    #elseif python
-      return cast python.Syntax.code("{0}.getColumnValue({1} + 1)", o, i);
-    #elseif cs
-      // TODO
-      return null;
-    #elseif java
-      // TODO
-      return null;
-    #else
-      // TODO
-      return null;
-    #end
-  }
-
-  private static function noPrep(o : Dynamic) : Dynamic {
-    return o;
-  }  
-
-  private static function dbIterator(o : Dynamic, t : Dynamic, mapping : String, columns : Array<String>) : DatabaseReader {
-    return new DatabaseIteratorReader(o, t, mapping, columns);
-  }
-
-  private static function getTypeIfNeeded(o : Dynamic) : Dynamic {
-    #if(python || js || php)
-      return o;
-    #elseif cs
-      // TODO
-      return null;
-    #elseif java
-      // TODO
-      return null;
-    #else
-      return o;
-    #end
-  }
-
-  private static function hasFunction(t : Dynamic, f : String) : Bool {
-    #if js
-      return cast js.Syntax.code("Object.prototype.hasOwnProperty.call({0}, {1})", t, f);
-    #elseif python
-      return cast python.Syntax.code("hasattr({0}, {1})", t, f);
-    #elseif cs
-      // TODO
-      return false;
-    #elseif java
-      // TODO
-      return false;
-    #elseif php
-      return cast php.Syntax.code("method_exists({0}, {1})", t, f);
-    #else
-      return Reflect.hasField(t, f);
-    #end
-  }
-
-  private static function executeFunction(o : Dynamic, t : Dynamic, f : String) : Dynamic {
-    #if js
-      return cast js.Syntax.code("{0}[{1}]({2})", t, f, o);
-    #elseif python
-      return cast python.Syntax.code("getattr({0}, {1})()", o, f);
-    #elseif cs
-      // TODO
-      return null;
-    #elseif java
-      // TODO
-      return null;
-    #elseif php
-      return cast php.Syntax.code("{0}->{1}", o, f);      
-    #else
-      return Reflect.callMethod(o, cast Reflect.field(t, f), null);
-    #end
-  }
-
-  private static function executeFunctionIfThere(o : Dynamic, t : Dynamic, f : String, ?trail : Null<Map<String, Dynamic>> = null) : Dynamic {
-    if (hasFunction(t, f)) {
-      if (trail != null) {
-        trail.set(f, o);
-        try {
-          return executeFunction(o, t, f);
-        } catch (msg : Any) {
-          return null;
-        }
-      } else {
-        return null;
+      var sType : String = cast php.Syntax.code("get_class({0})", o).toLowerCase();
+      var r : DatabaseReader = new DatabaseReader(o);
+      if (sType.indexOf("mysql") >= 0) {
+        r._connector = CONNECTOR_MYSQL;
+      } else if (sType.indexOf("sqlite") >= 0) {
+        r._connector = CONNECTOR_SQLITE;
+      } else if (sType.indexOf("pdo") >= 0) {
+        r._connector = CONNECTOR_SNOWFLAKE;
+      } else if (sType.indexOf("oci") >= 0) {
+        r._connector = CONNECTOR_ORACLE;
+      } else if (sType.indexOf("sqlsrv") >= 0) {
+        r._connector = CONNECTOR_SQLSERVER;
+      } else if (sType.indexOf("pg") >= 0) {
+        r._connector = CONNECTOR_POSTGRES;
       }
-    } else {
-      return null;
-    }
-  }
-
-  private static function columnDescription(o : Dynamic, t : Dynamic) : Array<String> {
-    #if python
-      // TODO - Revise?
-      var col : String = cast python.Syntax.code("','.join([col[0] for col in {0}.description])", o);
-      return col.split(",");
-    #else
-      // TODO
-      return null;
+      return r;
+    #else // HASHLINK
+      return new DatabaseReader(o);
     #end
-  }
-
-  private static function columnGetColumnName(o : Dynamic, t : Dynamic) : Array<String> {
-    #if js
-      var count : Int = cast js.Syntax.code("{0}.getColumnCount()", o);
-      var columns : Array<String> = new Array<String>();
-      var i : Int = 1;
-      while (i <= count) {
-        columns.push(cast js.Syntax.code("{0}.getColumnName({1})", o, i));
-        i++;
-      }
-      return columns;
-    #else
-      // TODO
-      return null;
-    #end
-  }
-
-  private static function getColumnNames(o : Dynamic, t : Dynamic, trail : Map<String, Dynamic>) : Array<String> {
-    for (mapping in _columnMappings.keys()) {
-      var map : Array<String> = mapping.split("-");
-      var f : String = map[map.length - 1];
-      var ref : String;
-      if (map.length == 1) {
-        ref = null;
-      } else {
-        ref = map[0];
-      }
-      if (ref == null) {
-        if (hasFunction(t, f)) {
-          return _columnMappings.get(mapping)(o, t);
-        }
-      } else {
-        var refO : Dynamic = trail.get(ref);
-        if (refO != null) {
-          var refT : Dynamic = getTypeIfNeeded(refO);
-          if (hasFunction(refT, f)) {
-            return _columnMappings.get(mapping)(refO, refT);
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  public override function reset() : Void {
-    // TODO
-  }    
-}
-
-@:nativeGen
-class DatabaseIteratorReader extends DatabaseReader {
-  private var _columns : Array<String>;
-  private var _data : Dynamic;
-  private var _dataType : Dynamic;
-  private var _mapping : String;
-  private var _retrieval : Null<Dynamic->Dynamic->Int->Dynamic> = null;
-  private var _prep : Null<Dynamic->Dynamic> = null;
-  private var _next : Dynamic;
-  private var _current : Dynamic;
-  
-  public function new(data : Dynamic, dataType : Dynamic, mapping : String, columns : Array<String>) {
-    super();
-    _columns = columns;
-    _data = data;
-    _dataType = dataType;
-    _mapping = mapping;
-    getRetrievalType();
-  }
-
-  private function doNext() : Void {
-    _next = null;
-    try {
-      _next = DatabaseReader.executeFunction(_data, _dataType, _mapping);
-    } catch (msg : Any) { }
   }
 
   public function columns() : Int {
     return _columns.length;
+  }
+
+  public function nextRow() : Bool {
+    #if java
+      return _cur.next();
+    #elseif cs
+      return readNext(_cur, _reader, _index);
+    #elseif JS_WSH
+      cast js.Syntax.code("{0}.MoveNext()", _cur);
+      return js.Syntax.code("!({0}.EOF)", _cur);
+    #elseif JS_SNOWFLAKE
+      return cast js.Syntax.code("{0}.next()", _cur);
+    #elseif python
+      _row = cast python.Syntax.code("{0}.__next__()", _cur);
+      return _row != null;
+    #elseif php
+      var rowValues : Iterable<Dynamic> = null;
+      switch (_connector) {
+        case CONNECTOR_MYSQL:
+          rowValues = cast php.Syntax.code("{0}::fetch_array()", _cur);
+        case CONNECTOR_SQLITE:
+          rowValues = cast php.Syntax.code("{0}::fetchArray()", _cur);
+        case CONNECTOR_SNOWFLAKE:
+          rowValues = cast php.Syntax.code("{0}->fetch()", _cur);
+        case CONNECTOR_ORACLE:
+          rowValues = cast php.Syntax.code("oci_fetch_array({0})", _cur);
+        case CONNECTOR_SQLSERVER:
+          rowValues = cast php.Syntax.code("sqlsrv_fetch_array({0})", _cur);
+        case CONNECTOR_POSTGRES:
+          rowValues = cast php.Syntax.code("pg_fetch_row({0})", _cur);
+      }
+      _rowValues = null;
+      if (rowValues != null) {
+        _rowValues = new Array<String>();
+        _rowValues.resize(cast php.Syntax.code("count({0})", rowValues));
+        for (v in rowValues) {
+          _rowValues.push(v);
+        }
+      }
+      return _rowValues != null;
+    #else // Hashlink
+      return _cur.next();
+    #end
+  }
+
+  private function checkColumns() : Void {
+    if (_columns == null) {
+      #if java
+        var metaData : java.sql.ResultSetMetaData = _cur.getMetaData();
+        var columns : Int = metaData.getColumnCount();
+        _columns = new Array<String>();
+        _columns.resize(columns);
+        var i : Int = 0;
+        while (i < columns) {
+          _columns[i] = metaData.getColumnName(i + 1);
+          i++;
+        }
+      #elseif cs
+        var columns : Int = getFieldCount(_cur, _reader);
+        _columns = new Array<String>();
+        _columns.resize(columns);
+        var i : Int = 0;
+        while (i < columns) {
+          _columns[i] = getColumnName(i, _cur, _reader);
+          i++;
+        }
+      #elseif JS_WSH
+        var columns : Int = cast js.Syntax.code("{0}.Fields.Count", _cur);
+        _columns = new Array<String>();
+        _columns.resize(columns);
+        var i : Int = 0;
+        while (i < columns) {
+          _columns[i] = js.Syntax.code("{0}.Fields({1}).Name", _cur, i);
+          i++;
+        }
+      #elseif JS_SNOWFLAKE
+        var columns : Int = cast js.Syntax.code("{0}.getColumnCount()", _cur);
+        _columns = new Array<String>();
+        _columns.resize(columns);
+        var i : Int = 1;
+        while (i <= columns) {
+          _columns[i - 1] = js.Syntax.code("{0}.getColumnName({1}", _cur, i);
+          i++;
+        }
+      #elseif python
+        _columns = new Array<String>();
+        var it : Iterable<Dynamic> = cast python.Syntax.code("{0}.description", _cur);
+        for (description in it) {
+          _columns.push(cast python.Syntax.code("{0}[0]", description));
+        }
+      #elseif php
+        _columns = new Array<String>();
+        var columns : Int = null;
+        var metaData : Dynamic = null;
+
+        switch (_connector) {
+          case CONNECTOR_MYSQL:
+            columns = cast php.Syntax.code("{0}->field_count", _cur);
+          case CONNECTOR_SQLITE:
+            columns = cast php.Syntax.code("{0}::numColumns()", _cur);
+          case CONNECTOR_SNOWFLAKE:
+            columns = cast php.Syntax.code("{0}->columnCount()", _cur);
+          case CONNECTOR_ORACLE:
+            columns = cast php.Syntax.code("oci_num_fields({0})", _cur);
+          case CONNECTOR_SQLSERVER:
+            columns = cast php.Syntax.code("sqlsrv_num_fields({0})", _cur);
+            metaData = cast php.Syntax.code("sqlsrv_field_metadata({0})", _cur);
+          case CONNECTOR_POSTGRES:
+            columns = cast php.Syntax.code("pg_num_fields({0})", _cur);
+        }
+
+        _columns.resize(columns);
+        var i : Int = 0;
+        while (i < columns) {
+          var column : String = null;
+          switch (_connector) {
+            case CONNECTOR_MYSQL:
+              column = cast php.Syntax.code("{0}::fetch_field_direct({1})", _cur, i);
+            case CONNECTOR_SQLITE:
+              column = cast php.Syntax.code("{0}::columnName({1})", _cur, i);
+            case CONNECTOR_SNOWFLAKE:
+              column = cast php.Syntax.code("{0}->getColumnMeta({1})[\"name\"]", _cur, i);
+            case CONNECTOR_ORACLE:
+              column = cast php.Syntax.code("oci_field_name({0}, {1})", _cur, i + 1);
+            case CONNECTOR_SQLSERVER:
+              column = cast php.Syntax.code("{0}[{1}][\"Name\"]", metaData, i);
+            case CONNECTOR_POSTGRES:
+              column = cast php.Syntax.code("pg_field_name ({0}, {1})", _cur, i);
+          }
+          _columns[i] = column;
+          i++;
+        }
+      #else // Hashlink
+        _columns = _cur.getFieldsNames();
+      #end
+    }
+  }
+
+  private function finalPrep() : Void {
+    #if python
+      _cur = cast python.Syntax.code("{0}.__iter__()", _cur);
+    #elseif JS_WSH
+      js.Syntax.code("{0}.MoveFirst()", _cur);
+    #end
   }
 
   public function columnName(i : Int) : String {
@@ -311,53 +342,40 @@ class DatabaseIteratorReader extends DatabaseReader {
   }
 
   public function readColumn(i : Int) : Dynamic {
-    return _retrieval(_current, _dataType, i);
-  }
-
-  private function getRetrievalType() : Void {
-    doNext();
-    if (_next != null) {
-      for (mapping in DatabaseReader._retrievalTypes.keys()) {
-        if (mapping != "") {
-          if (DatabaseReader.hasFunction(_dataType, mapping)) {
-            _retrieval = DatabaseReader._retrievalTypes.get(mapping);
-            _prep = DatabaseReader._retrievalPrepTypes.get(mapping);
-          }
-        }
-      }
-      if (_retrieval == null) {
-        _retrieval = DatabaseReader._retrievalTypes.get("");
-        _prep = DatabaseReader._retrievalPrepTypes.get("");
-      }
-    }
-  }
-
-  #if cs
-    @:native('Dispose')
-  #elseif java
-    @:native('close')
-  #end
-  public override function dispose() : Void {
-    if (!_done) {
-      DatabaseReader.executeFunctionIfThere(_data, _dataType, "close");
-      DatabaseReader.executeFunctionIfThere(_data, _dataType, "dispose");
-      _columns = null;
-      _data = null;
-      _dataType = null;
-    }
+    _reading = false;
+    #if java
+      return _cur.getObject(i + 1);
+    #elseif cs
+      return readColumnNumber(i, _index, _cur, _reader);
+    #elseif JS_WSH
+      return js.Syntax.code("{0}.Fields({1}).Value", _cur, i);
+    #elseif JS_SNOWFLAKE
+      return js.Syntax.code("{0}.getColumnValue({1})", _cur, i + 1);
+    #elseif python
+      return python.Syntax.code("{0}[{1}]", _row, i);
+    #elseif php
+      return _rowValues[i];
+    #else // Hashlink
+      return _cur.getResult(i);
+    #end
   }
 
   public override function hasNext() : Bool {
-    return _next != null;
+    if (!_reading) {
+      if (nextRow()) {
+        _reading = true;
+      } else {
+        _reading = false;
+      }
+    }
+    return _reading;
   }
 
   public override function nextReuse(rowReader : Null<DataTableRowReader>) : Dynamic {
-    _current = _prep(_next);
-    doNext();
     if (rowReader == null) {
-      return new DatabaseIteratorRowReader(this);
+      return new DatabaseRowReader(this);
     } else {
-      var rr : DatabaseIteratorRowReader = cast rowReader;
+      var rr : DatabaseRowReader = cast rowReader;
       rr.reuse(this);
       return rr;
     }
@@ -366,33 +384,10 @@ class DatabaseIteratorReader extends DatabaseReader {
   public override function next() : Dynamic {
     return nextReuse(null);
   }
-}
 
-@:nativeGen
-class DatabaseIteratorRowReader extends DataTableRowReader {
-  private var _reader : Null<DatabaseIteratorReader>;
-
-  public function new(reader : DatabaseIteratorReader) {
-    super();
-    reuse(reader);
-  }
-
-  public function reuse(reader : DatabaseIteratorReader) {
-    _reader = reader;
-    _index = -1;
-  }
-
-  public override function hasNext() : Bool {
-    return index() < _reader.columns();
-  }
-
-  private override function startI() : Void {
-  }
-
-  public override function next() : Dynamic {
-    incrementTo(_reader.columnName(index() + 1), _reader.readColumn(index() + 1), -1);
-    return value();
-  }
+  public override function reset() : Void {
+    // TODO
+  }    
 
   #if cs
     @:native('Dispose')
@@ -400,7 +395,20 @@ class DatabaseIteratorRowReader extends DataTableRowReader {
     @:native('close')
   #end
   public override function dispose() : Void {
-    _reader = null;
+    super.dispose();
+    _hold = null;
+    #if java
+      var cur : java.sql.ResultSet = cast _cur;
+      cur.close();
+    #elseif JS_WSH
+      js.Syntax.code("{0}.Close()", _cur);
+    #elseif cs
+
+    #end
+  }  
+
+  public function hold(o : Dynamic) : Void {
+    _hold = o;
   }
 }
-
+#end

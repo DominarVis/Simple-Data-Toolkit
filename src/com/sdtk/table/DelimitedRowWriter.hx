@@ -120,8 +120,14 @@ class DelimitedRowWriter extends DataTableRowWriter {
           buf.add(Std.string(data));
           buf.add(_info.floatEnd());
         case other:
+          var s : String = Std.string(data);
+          #if python
+            if (s.indexOf("datetime.datetime(") == 0) {
+              s = python.Syntax.code("{0}.strftime(\"%m/%d/%Y %H:%M:%S\")", data);
+            }
+          #end          
           buf.add(_info.stringStart());
-          buf.add(replacement(Std.string(data)));
+          buf.add(replacement(s));
           buf.add(_info.stringEnd());
       }
     }

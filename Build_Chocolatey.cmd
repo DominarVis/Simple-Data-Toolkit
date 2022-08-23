@@ -76,6 +76,8 @@ echo %PROJECT_VERIFICATION% >> tmp\tools\VERIFICATION.txt
 echo: >> tmp\tools\VERIFICATION.txt
 echo To verify the binaries: >> tmp\tools\VERIFICATION.txt
 echo: >> tmp\tools\VERIFICATION.txt
+echo You can pull the EXEs from here: https://sourceforge.net/projects/simple-data-toolkit/files/ >> tmp\tools\VERIFICATION.txt
+echo or you can build them from the source like so: >> tmp\tools\VERIFICATION.txt
 echo * Ensure you have Git installed. >> tmp\tools\VERIFICATION.txt
 echo * Run `git clone https://github.com/Vis-LLC/Simple-Data-Toolkit.git` >> tmp\tools\VERIFICATION.txt
 REM * Switch to the tag of the released version. For instance: 
@@ -85,6 +87,8 @@ echo * Once that is successfully completed, head into out >> tmp\tools\VERIFICAT
 echo    folder where you will find stc.exe. >> tmp\tools\VERIFICATION.txt
 echo * Verify the checksum you find there with the checksum shown on the package  >> tmp\tools\VERIFICATION.txt
 echo    page of the community repository. >> tmp\tools\VERIFICATION.txt
+echo: >> tmp\tools\VERIFICATION.txt
+echo This project falls under the LGPL 3.0 license.  This can be found here: https://www.gnu.org/licenses/lgpl-3.0.en.html >> tmp\tools\VERIFICATION.txt
 
 
 pushd tmp

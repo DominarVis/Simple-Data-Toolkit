@@ -82,7 +82,6 @@ class ArrayWriter<A> extends DataTableWriter {
   #end
   public override function dispose() : Void {
     if (_info != null) {
-      trace(_info._arr);
       _info = null;
     }
   }

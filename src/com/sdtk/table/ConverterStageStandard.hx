@@ -303,7 +303,7 @@ class ConverterStageStandard implements ConverterStage {
               default:
                 if (sString.indexOf("\n") >= 0 || sString.indexOf("\t") >= 0 || sString.indexOf(",") >= 0 || sString.indexOf("|") >= 0) {
                   oSource = new StringReader(sString);
-                } else {
+                } else if (fSource != DB) {
                   oSource = (new FileReader(sString)).convertToStringReader().switchToDroppingCharacters();
                 }
               #end
@@ -365,7 +365,14 @@ class ConverterStageStandard implements ConverterStage {
           case CSharp:
             ciSource = CSharpInfoArrayOfMaps.instance;    
           case DB:
-            reader = DatabaseReader.read(oSource);
+            #if(!JS_BROWSER)
+              if (Std.isOfType(oSource, String)) {
+                var sb : StringBuf = new StringBuf();
+                reader = DatabaseReaderOptions.parse(cast oSource, sb).queryForReader(sb.toString());
+              } else {
+                reader = DatabaseReader.read(oSource);
+              }
+            #end
           case ARRAY:
             {
               reader = Array2DReader.readWholeArrayI(cast oSource);
