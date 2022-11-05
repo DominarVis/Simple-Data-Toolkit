@@ -66,74 +66,108 @@ class GrapherOptions {
     }
 
     /**
-        Plots data on a graph.
-    **/    
-    public function plotDataByColumnNameForY(r : com.sdtk.table.DataTableRowReader, x : String, y : String) : GrapherOptions {
-        return cast _plotDataByColumnNameForY(setOnceI, this, r, x, y);
+        Plots a function that defines X for a given Y.
+    **/
+    public function plotFunctionsForX(f : Array<Float->Float>) : GrapherOptions {
+        return cast _plotFunctionsForX(setOnceI, this, f);
+    }
+
+    /**
+        Plots a function that defines X for a given Y.
+    **/
+    public static function _plotFunctionsForX(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, f : Array<Float->Float>) : Dynamic{
+        setOnce(options, "plotFunctions", f);
+        return cast setOnce(options, "plotType", 1);
+    }
+
+    /**
+        Plots a function that defines Y for a given X.
+    **/
+    public function plotFunctionsForY(f : Array<Float->Float>) : GrapherOptions {
+        return cast _plotFunctionsForY(setOnceI, this, f);
+    }
+
+    /**
+        Plots a function that defines Y for a given X.
+    **/
+    public static function _plotFunctionsForY(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, f : Array<Float->Float>) : Dynamic {
+        setOnce(options, "plotFunctions", f);
+        return cast setOnce(options, "plotType", 2);
     }
 
     /**
         Plots data on a graph.
     **/    
-    public static function _plotDataByColumnNameForY(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String) : Dynamic {
+    public function plotDataByColumnNameForY(r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : GrapherOptions {
+        return cast _plotDataByColumnNameForY(setOnceI, this, r, x, y, group);
+    }
+
+    /**
+        Plots data on a graph.
+    **/    
+    public static function _plotDataByColumnNameForY(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : Dynamic {
         setOnce(options, "plotType", 2);
         setOnce(options, "reader", r);
         setOnce(options, "dataX", x);
         setOnce(options, "dataY", y);
+        setOnce(options, "dataGroup", group);
         return cast setOnce(options, "dataByIndex", false);
     }
 
     /**
         Plots data on a graph.
     **/    
-    public function plotDataByColumnNameForX(r : com.sdtk.table.DataTableRowReader, x : String, y : String) : GrapherOptions {
-        return cast _plotDataByColumnNameForX(setOnceI, this, r, x, y);
+    public function plotDataByColumnNameForX(r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : GrapherOptions {
+        return cast _plotDataByColumnNameForX(setOnceI, this, r, x, y, group);
     }
 
     /**
         Plots data on a graph.
     **/    
-    public static function _plotDataByColumnNameForX(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String) : Dynamic {
+    public static function _plotDataByColumnNameForX(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : Dynamic {
         setOnce(options, "plotType", 1);
         setOnce(options, "reader", r);
         setOnce(options, "dataX", x);
         setOnce(options, "dataY", y);
+        setOnce(options, "dataGroup", group);
         return cast setOnce(options, "dataByIndex", false);
     }    
 
     /**
         Plots data on a graph.
     **/    
-    public function plotDataByColumnIndexForY(r : com.sdtk.table.DataTableRowReader, x : String, y : String) : GrapherOptions {
-        return cast _plotDataByColumnIndexForY(setOnceI, this, r, x, y);
+    public function plotDataByColumnIndexForY(r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : GrapherOptions {
+        return cast _plotDataByColumnIndexForY(setOnceI, this, r, x, y, group);
     }
 
     /**
         Plots data on a graph.
     **/    
-    public static function _plotDataByColumnIndexForY(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String) : Dynamic {
+    public static function _plotDataByColumnIndexForY(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : Dynamic {
         setOnce(options, "plotType", 2);
         setOnce(options, "reader", r);
         setOnce(options, "dataX", x);
         setOnce(options, "dataY", y);
+        setOnce(options, "dataGroup", group);
         return cast setOnce(options, "dataByIndex", true);
     }
 
     /**
         Plots data on a graph.
     **/    
-    public function plotDataByColumnIndexForX(r : com.sdtk.table.DataTableRowReader, x : String, y : String) : GrapherOptions {
-        return cast _plotDataByColumnIndexForX(setOnceI, this, r, x, y);
+    public function plotDataByColumnIndexForX(r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : GrapherOptions {
+        return cast _plotDataByColumnIndexForX(setOnceI, this, r, x, y, group);
     }
 
     /**
         Plots data on a graph.
     **/    
-    public static function _plotDataByColumnIndexForX(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String) : Dynamic {
+    public static function _plotDataByColumnIndexForX(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, r : com.sdtk.table.DataTableRowReader, x : String, y : String, ?group : String = null) : Dynamic {
         setOnce(options, "plotType", 1);
         setOnce(options, "reader", r);
         setOnce(options, "dataX", x);
         setOnce(options, "dataY", y);
+        setOnce(options, "dataGroup", group);
         return cast setOnce(options, "dataByIndex", true);
     }    
 
@@ -220,6 +254,70 @@ class GrapherOptions {
     public static function _positiveAndNegativeX(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic) : Dynamic  {
         return cast setOnce(options, "centerOfX", 0);
     }
+
+    /**
+        Set width to match the data
+    **/
+    public function matchWidth() : GrapherOptions {
+        return cast _matchWidth(setOnceI, this);
+    }
+
+    /**
+        Set height to match the data
+    **/
+    public function matchHeight() : GrapherOptions {
+        return cast _matchHeight(setOnceI, this);
+    }
+
+    /**
+        Set width of plot
+    **/
+    public function width(w : Float) : GrapherOptions {
+        return cast _width(setOnceI, this, w);
+    }
+
+    /**
+        Set height of plot
+    **/
+    public function height(h : Float) : GrapherOptions {
+        return cast _height(setOnceI, this, h);
+    }    
+
+    /**
+        Set width to match the data
+    **/
+    public static function _matchWidth(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic) : Dynamic {
+        return cast setOnce(options, "width", -1);
+    }
+
+    /**
+        Set height to match the data
+    **/
+    public static function _matchHeight(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic) : Dynamic {
+        return cast setOnce(options, "height", -1);
+    }
+
+    /**
+        Set width of plot
+    **/
+    public static function _width(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, w : Float) : Dynamic {
+        return cast setOnce(options, "width", w);
+    }
+
+    /**
+        Set height of plot
+    **/
+    public static function _height(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, h : Float) : Dynamic {
+        return cast setOnce(options, "height", h);
+    }
+
+    public function colors(colors : Array<String>) : GrapherOptions {
+        return _colors(setOnceI, this, colors);
+    }
+
+    public static function _colors(setOnce : Dynamic->String->Any->Dynamic, options : Dynamic, colors : Array<String>) : GrapherOptions {
+        return setOnce(options, "colors", colors);
+    }    
 
     /**
         Set a value exactly once.

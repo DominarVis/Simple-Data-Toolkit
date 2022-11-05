@@ -54,7 +54,6 @@ class DelimitedReader extends DataTableReader {
   public override function dispose() : Void {
     if (!_done) {
       _done = true;
-      _header = null;
       _reader.dispose();
     }
   }
@@ -138,5 +137,9 @@ class DelimitedReader extends DataTableReader {
     _reader.reset();
     _header = null;
     _done = false;
-  }    
+  }
+
+  public override function getColumns() : Array<String> { 
+    return _header;
+  }
 }

@@ -30,6 +30,7 @@ import com.sdtk.std.*;
 class ConverterStageStandard implements ConverterStage {
   private var _writer : Null<DataTableWriter> = null;
   private var _reader : Null<DataTableReader> = null;
+  private var _columns : Array<String> = null;
 
   private static function isString(o : Dynamic) : Bool {
     #if (haxe_ver < 3.2)
@@ -524,6 +525,12 @@ class ConverterStageStandard implements ConverterStage {
   
   public function convert() : Void {
     _reader.convertTo(_writer);
+    _columns = _reader.getColumns();
+  }
+
+  public function setColumns(columns : Array<String>) : Void { }
+  public function getColumns() : Array<String> {
+    return _columns;
   }
 
   #if cs
@@ -537,6 +544,7 @@ class ConverterStageStandard implements ConverterStage {
       _writer = null;
       _reader.dispose();
       _reader = null;
+      _columns = null;
     }
   }
 }

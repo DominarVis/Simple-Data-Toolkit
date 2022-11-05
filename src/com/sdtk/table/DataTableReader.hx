@@ -343,6 +343,11 @@ class DataTableReader extends DataEntryReader {
     });
   }
 
+  // TODO - Make sure this is everywhere
+  public function getColumns() : Array<String> {
+    return null;
+  }
+
   /* TODO
   public function flipColumnRows() : DataTableReader {
 

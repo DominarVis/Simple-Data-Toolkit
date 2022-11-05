@@ -123,15 +123,25 @@ class ColumnFilterDataTableReader extends DataTableReader {
             super.dispose();
             _reader.dispose();
             _reader = null;
-            _remove = null;
             _current = null;
             _columnHeaderFilter = null;
-            _header = null;
             _prev = null;
         }
     }
 
     public override function reset() : Void {
         _reader.reset();
+    }    
+
+    public override function getColumns() : Array<String> { 
+        var header : Array<String> = new Array<String>();
+        var i : Int = 0;
+        while (i < _header.length) {
+            if (!_remove[i]) {
+                header.push(_header[i]);
+            }
+            i++;
+        }
+        return header;
     }    
 }

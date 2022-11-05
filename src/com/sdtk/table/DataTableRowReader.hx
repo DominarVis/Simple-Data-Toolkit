@@ -51,6 +51,7 @@ class DataTableRowReader extends DataEntryReader {
       var isHex : Bool = true;
       var isFloat : Bool = true;
       var foundPoint : Bool = false;
+      var foundComma : Bool = false;
       var foundX : Bool = false;
       var i : Int = 0;
   
@@ -66,7 +67,7 @@ class DataTableRowReader extends DataEntryReader {
               case "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f":
                 isInt = false;
                 isFloat = false;
-              case ".", ",":
+              case ".":
                 if (foundPoint) {
                   isFloat = false;
                   break;
@@ -75,6 +76,8 @@ class DataTableRowReader extends DataEntryReader {
                 }
                 isHex = false;
                 isInt = false;
+              case ",":
+                foundComma = true;
               case "X", "x":
                 if (foundX) {
                   isHex = false;
@@ -92,7 +95,11 @@ class DataTableRowReader extends DataEntryReader {
             }
             i++;
           }
-      
+
+          if (foundComma) {
+            str = StringTools.replace(str, ",", "");
+          }
+
           if (isFloat) {
             result = Std.parseFloat(str);
           } else if (isHex) {

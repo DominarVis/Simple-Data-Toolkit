@@ -513,10 +513,10 @@ class DatabaseReaderLoginOptions {
       //TODO
     #else // HASHLINK
       switch (connector) {
-        /* TODO
         case "mysql":
-          con = sys.db.Mysql.connect({user: _values["user"], port: _values["port"], pass: _values["password"], host: _values["host"], database: _values["database"]});
-          */
+          var c : Dynamic = Type.resolveClass("sys.db.Mysql");
+          con = Reflect.callMethod(c, cast Reflect.field(c, "connect"), [{user: _values["user"], port: _values["port"], pass: _values["password"], host: _values["host"], database: _values["database"]}]); 
+          //con = sys.db.Mysql.connect({user: _values["user"], port: _values["port"], pass: _values["password"], host: _values["host"], database: _values["database"]});
         case "sqlite":
           con = sys.db.Sqlite.open(_values["file"]); 
       }

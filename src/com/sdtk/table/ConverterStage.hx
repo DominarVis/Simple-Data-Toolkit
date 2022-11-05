@@ -27,6 +27,8 @@ import com.sdtk.std.*;
 @:nativeGen
 interface ConverterStage extends Disposable {
   function convert() : Void;
+  function setColumns(columns : Array<String>) : Void;
+  function getColumns() : Array<String>;
   #if cs
     @:native('Dispose')
   #elseif java

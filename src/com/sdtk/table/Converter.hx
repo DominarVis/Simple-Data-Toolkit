@@ -98,6 +98,7 @@ class Converter {
           awWriter = Array2DWriter.writeToExpandableArray(null);
         }             
         aStages.push(new ConverterStageStandard(oSource, fSource, awWriter, Format.ARRAY, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions, null));
+
         if (isString(sSortRowsBy)) {
           aStages.push(ConverterStageSort.createWithArrayAndColumnsString(awWriter.getArray(), cast sSortRowsBy));
         } else {
@@ -111,8 +112,11 @@ class Converter {
         aStages.push(new ConverterStageStandard(oSource, fSource, oTarget, fTarget, sFilterColumnsExclude, sFilterColumnsInclude, sFilterRowsExclude, sFilterRowsInclude, leftTrim, rightTrim, inputOptions, outputOptions));
       }
 
+      var columns : Array<String> = null;
       for (csStage in aStages) {
+        csStage.setColumns(columns);
         csStage.convert();
+        columns = csStage.getColumns();
       }
     } catch (message : Dynamic) {
       error = message;

@@ -98,5 +98,9 @@ class DataTableReaderDecorator extends DataTableReader {
 
     public override function reset() : Void {
         _reader.reset();
-    }      
+    }
+
+    public override function getColumns() : Array<String> {
+        return _reader.getColumns();
+    }
 }

@@ -28,8 +28,10 @@ import com.sdtk.std.*;
 class ConverterStageSort implements ConverterStage implements Disposable {
   private var _array : Null<Array<Array<Dynamic>>>;
   private var _columns : Null<Array<Int>>;
+  private var _foundColumns : Null<Array<String>>;
   private var _reverse : Null<Array<Bool>>;
   private var _names : Null<Array<String>>;
+  private var _firstRowIsHeader : Bool = true;
   private static var _watch : Stopwatch = Stopwatch.getStopwatch("ConverterStageSort");
 
   private function new() {
@@ -77,16 +79,20 @@ class ConverterStageSort implements ConverterStage implements Disposable {
   	_columns = new Array<Int>();
   	if (_names.length == 1) {
       for (sName in _names) {
-        _columns.push(oFirstRow.indexOf(sName));
+        _columns.push(_foundColumns.indexOf(sName));
       }
     } else {
+      _firstRowIsHeader = true;
       var i : Int = 0;
-      var mFirstRow : Map<String, Int> = new Map<String, Int>();
-      for (o in oFirstRow) {
-        mFirstRow.set(o, i++);
+      var foundColumns : Map<String, Int> = new Map<String, Int>();
+      for (o in _foundColumns) {
+        if (o != oFirstRow[i]) {
+          _firstRowIsHeader = false;
+        }
+        foundColumns.set(o, i++);
       }
       for (sName in _names) {
-        _columns.push(mFirstRow[sName]);
+        _columns.push(foundColumns[sName]);
       }
     }
   }
@@ -99,11 +105,14 @@ class ConverterStageSort implements ConverterStage implements Disposable {
   	  oFirstRow = _array[0];
     }
     _array.sort(function (a, b) {
-      if (a == oFirstRow) {
-        return -1;
-      } else if (b == oFirstRow) {
-        return 1;
+      if (_firstRowIsHeader) {
+        if (a == oFirstRow) {
+          return -1;
+        } else if (b == oFirstRow) {
+          return 1;
+        }
       }
+
       var i : Int = 0;
       for (iColumn in _columns) {
         var bReverse : Bool = _reverse[i];
@@ -122,6 +131,14 @@ class ConverterStageSort implements ConverterStage implements Disposable {
     _watch.end();
   }
 
+  public function setColumns(columns : Array<String>) : Void {
+    _foundColumns = columns;
+  }
+
+  public function getColumns() : Array<String> {
+    return _foundColumns;
+  }
+
   #if cs
     @:native('Dispose')
   #elseif java
@@ -131,6 +148,7 @@ class ConverterStageSort implements ConverterStage implements Disposable {
     if (_array != null) {
       _array = null;
       _columns = null;
+      _foundColumns = null;
       _reverse = null;
       _names = null;
     }
