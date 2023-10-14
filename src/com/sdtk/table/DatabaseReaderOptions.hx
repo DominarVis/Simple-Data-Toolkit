@@ -22,7 +22,7 @@
 
 package com.sdtk.table;
 
-#if(!JS_BROWSER)
+#if(!EXCLUDE_DATABASE)
 @:expose
 @:nativeGen
 class DatabaseReaderOptions {
@@ -60,8 +60,30 @@ class DatabaseReaderOptions {
 
   public function dataset() : DatabaseReaderLoginOptions {
     return database("dataset");
-  }  
+  }
 
+  #if JS_BROWSER
+    public function jsstore() : DatabaseReaderLoginOptions {
+        return database("jsstore");
+    }
+
+    public function websql() : DatabaseReaderLoginOptions {
+        return database("websql");
+    }
+
+    public function alasql() : DatabaseReaderLoginOptions {
+        return database("alasql");
+    }
+
+    public function indexeddb() : DatabaseReaderLoginOptions {
+        return database("indexeddb");
+    }
+
+    public function proxy() : DatabaseReaderLoginOptions {
+        return database("proxy");
+    }
+  #end
+  
   public function database(s : String) : DatabaseReaderLoginOptions {
     _values["connector"] = s;
     return new DatabaseReaderLoginOptions(_values);
@@ -95,6 +117,10 @@ class DatabaseReaderOptions {
                         o2 = o1.postgres();
                     case "dataset":
                         o2 = o1.dataset();
+                    #if JS_BROWSER
+                        case "jsstore":
+                            o2 = o1.jsstore();
+                    #end
                 }
         }
     }

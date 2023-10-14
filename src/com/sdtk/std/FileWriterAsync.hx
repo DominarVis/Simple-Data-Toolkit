@@ -22,6 +22,8 @@
 
 package com.sdtk.std;
 
+#if(!EXCLUDE_FILES)
+
 #if JS_BROWSER
 @:expose
 @:nativeGen
@@ -110,4 +112,5 @@ class FileWriterAsync implements WriterAsync {
 }
 #elseif python
 // TODO
+#end
 #end

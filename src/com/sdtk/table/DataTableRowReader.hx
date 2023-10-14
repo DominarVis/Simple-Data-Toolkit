@@ -137,6 +137,27 @@ class DataTableRowReader extends DataEntryReader {
     return result;
   }
 
+  #if(cs || java)
+    public function toHaxeMap(map : Map<String, Dynamic>) : Map<String, Dynamic> {
+  #else
+    public function toHaxeMap<A>(map : Map<String, A>) : Map<String, A> {
+  #end
+    convertTo(MapRowWriter.continueWrite(cast map, true, null, null));
+    return map;
+  }
+
+  public function toNativeMap<A>(map : Dynamic, keyField : String, valueField : String) : Map<String, A> {
+    if (map != null) {
+      map = com.sdtk.std.Normalize.nativeToHaxe(map);
+    }
+    return com.sdtk.std.Normalize.haxeToNative(cast toHaxeMap(map));
+  }
+
+  public function toObject<A>(map : A, keyField : String, valueField : String) : A {
+    // TODO
+    return null;
+  }
+
   /**
     Convert a row from one data structure to multiple target data structures.
   **/

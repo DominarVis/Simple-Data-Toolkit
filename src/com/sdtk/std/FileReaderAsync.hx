@@ -22,6 +22,8 @@
 
 package com.sdtk.std;
 
+#if(!EXCLUDE_FILES)
+
 #if JS_BROWSER
 @:expose
 @:nativeGen
@@ -148,3 +150,4 @@ class FileReaderAsync extends com.sdtk.std.JAVA.AbstractReaderAsync {
 // TODO
 #end
 // TODO
+#end

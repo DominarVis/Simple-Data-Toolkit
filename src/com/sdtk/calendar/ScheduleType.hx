@@ -17,30 +17,18 @@
 
 /*
     Simple Data Toolkit
-    
+    Simple Calendar - Source code can be found on SourceForge.net
 */
 
-package com.sdtk.plugin;
+package com.sdtk.calendar;
 
-public class GenericPlugin
-#if java
-    extends JEditPlugin
-#end
-{
-    #if java
-        public static var NAME : String = "quicknotepad";
-        public static var OPTION_PREFIX : String = "options.quicknotepad.";    
-
-        public override function createBrowserMenuItems() : JEditMenuItem {
-
-        }
-
-        public override function createMenuItems() : JEditMenuItem {
-
-        }
-    #end
-
-    private function getMenuItems() : Map<String, Void->Void> {
-        
-    }
+@:expose
+@:nativeGen
+enum ScheduleType {
+    NONE;
+    HOURLY;
+    DAILY;
+    WEEKLY;
+    MONTHLY;
+    YEARLY;
 }

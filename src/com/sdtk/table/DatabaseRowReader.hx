@@ -22,7 +22,7 @@
 
 package com.sdtk.table;
 
-#if(!JS_BROWSER)
+#if(!EXCLUDE_DATABASE)
 @:nativeGen
 class DatabaseRowReader extends DataTableRowReader {
   private var _reader : Null<DatabaseReader>;
@@ -38,7 +38,7 @@ class DatabaseRowReader extends DataTableRowReader {
   }
 
   public override function hasNext() : Bool {
-    return index() < _reader.columns();
+    return index() < (_reader.columns() - 1);
   }
 
   private override function startI() : Void {

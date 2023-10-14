@@ -22,7 +22,7 @@ MKDIR out\packaging
 MKDIR out\packaging\src
 MKDIR out\packaging\src\sdtk
 MKDIR out\packaging\tests
-ECHO. > out\packaging\src\sdtk\__init__.py
+ECHO from .sdtk import * > out\packaging\src\sdtk\__init__.py
 COPY out\sdtk.py out\packaging\src\sdtk
 COPY lgpl-3.0.txt out\packaging\LICENSE
 COPY README.md out\packaging
@@ -64,7 +64,7 @@ ECHO where = src >> out\packaging\setup.cfg
 pushd out\packaging
 python -m build
 REM py -m twine upload --repository testpypi dist\*.*
-REM py -m twine upload --repository pypi dist\*.*
+py -m twine upload --repository pypi dist\*.*
 CD ..
 COPY packaging\dist\*.* .
 RMDIR /s /q packaging

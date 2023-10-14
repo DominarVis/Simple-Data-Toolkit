@@ -113,7 +113,13 @@ class StdinReader extends FileReader {
 #elseif JS_SNOWFLAKE
 
 #elseif JS_BROWSER
-
+@:expose
+@:nativeGen
+class StdinReader extends StringReader {
+    public function new() {
+        super("");
+    }
+}
 #else
 @:expose
 @:nativeGen

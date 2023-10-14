@@ -37,4 +37,12 @@ TYPE Append_To_Beginning.py > out\calendar.py
 TYPE out\calendar.tmp >> out\calendar.py
 DEL out\calendar.tmp
 
+ECHO Building Simple Puller
+DEL out\puller.py
+haxe --python out/puller.py -main com.sdtk.puller.Puller -cp src -D %* $*
+MOVE out\puller.py out\puller.tmp
+TYPE Append_To_Beginning.py > out\puller.py
+TYPE out\puller.tmp >> out\puller.py
+DEL out\puller.tmp
+
 popd

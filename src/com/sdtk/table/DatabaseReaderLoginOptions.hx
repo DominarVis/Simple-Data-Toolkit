@@ -22,7 +22,12 @@
 
 package com.sdtk.table;
 
-#if(!JS_BROWSER)
+#if(!EXCLUDE_DATABASE)
+
+#if JS_BROWSER
+  import jsasync.JSAsync.jsasync;
+#end
+
 @:expose
 @:nativeGen
 class DatabaseReaderLoginOptions {
@@ -82,6 +87,23 @@ class DatabaseReaderLoginOptions {
     _values["driver"] = v;
     return this;
   }
+
+  public function size(v : Int) : DatabaseReaderLoginOptions {
+    _values["size"] = v;
+    return this;
+  }
+
+  #if JS_BROWSER
+    public function useworkers(v : Bool) : DatabaseReaderLoginOptions {
+      _values["useworkers"] = v;
+      return this;
+    }
+
+    public function key(v : Dynamic) : DatabaseReaderLoginOptions {
+      _values["key"] = v;
+      return this;
+    }    
+  #end
 
   #if(JS_WSH || cs)
     #if cs
@@ -240,7 +262,7 @@ class DatabaseReaderLoginOptions {
     }
   #end
 
-  public function connect(?callback : Dynamic->Void) : Dynamic {
+  #if JS_BROWSER @:jsasync #end public function connect(?callback : Dynamic->Void) : Dynamic {
     var connector : String = StringTools.trim(_values["connector"]).toLowerCase();
     var con : Dynamic = null;
     #if python
@@ -460,6 +482,49 @@ class DatabaseReaderLoginOptions {
       } else {
         return con;
       }
+    #elseif JS_BROWSER
+      switch (connector) {
+        case "sqlite":
+          // TODO - Add additional options?
+          con = js.Syntax.code("await initSqlJs({0})", null);
+          con = js.Syntax.code("await fetch({0})", _values["file"]);
+          con = js.Syntax.code("await {0}.arrayBuffer()", con);
+          con = js.Syntax.code("new SQL.Database(new Uint8Array({0}))", con);
+        case "websql":
+          con = js.Syntax.code("openDatabase({0}, {1}, {2}, {3})", _values["database"], "1.0", "", _values["size"]);
+        case "alasql":
+          con = null; // Intentionally set to null, since AlaSQL doesn't need this.
+        case "indexeddb":
+          con = js.Syntax.code("await (new Promise(resolve => { var request = window.indexedDB.open({0}); request.onsuccess = function() { resolve(request.result); }; request.onerror = function() { resolve(null); }; }))", _values["database"]);
+        case "jsstore":
+          {
+            var useworkers : Null<Bool> = cast _values["useworkers"];
+            if (useworkers == null || useworkers == false) {
+              con = js.Syntax.code("new JsStore.Connection();");
+            } else {
+              con = js.Syntax.code("new JsStore.Connection(new Worker('jsstore.worker.js'));");
+            }
+          }
+          case "snowflake":
+            con = js.Syntax.code("{ jwt: await databases.snowflake.login({0}.h.account, {0}.h.user, {0}.h.key), account: {0}.h.account, timeout: 60, database: {0}.h.database, schema: null, warehouse: null, role: null, }", _values);
+          case "proxy":
+            con = js.Syntax.code("{ user: {0}.h.user, password: {0}.h.password, account: {0}.h.account, warehouse: {0}.h.warehouse, role: {0}.h.role, database: {0}.h.connector, schema: {0}.h.schema, house: {0}.h.host, file: {0}.h.file, driver: {0}.h.driver, size: {0}.h.size, }", _values);
+      }
+
+      if (callback != null) {
+        try {
+          callback(con);
+        } catch (ex : Any) {}
+        if (!_cancelClose) {
+          switch (connector) {
+            case "sqlite":
+              js.Syntax.code("{0}.close()", con);
+          }
+        }
+        return con;
+      } else {
+        return con;
+      }      
     #elseif JS_WSH
       switch (connector) {
         case "mysql":
@@ -550,7 +615,7 @@ class DatabaseReaderLoginOptions {
     _cancelClose = true;
   }
 
-  public function query(query : String, ?params : Map<String, Dynamic>, ?callback : Dynamic->Void) : Dynamic {
+  #if JS_BROWSER @:jsasync #end public function query(query : String, ?params : Map<String, Dynamic>, ?callback : Dynamic->Void) : Dynamic {
     var connector : String = StringTools.trim(_values["connector"]).toLowerCase();
     var r : Dynamic;
     if (params != null) {
@@ -580,7 +645,7 @@ class DatabaseReaderLoginOptions {
           }
       }
     }
-    connect(function (cur : Dynamic) : Void {
+    connect(#if JS_BROWSER @:jsasync #end function (cur : Dynamic) : Void {
       #if python
         python.Syntax.code("{0}.execute({1})", cur, query);
         r = cur;
@@ -649,6 +714,31 @@ class DatabaseReaderLoginOptions {
         } else {
           cancelClose();
         }
+      #elseif JS_BROWSER
+        r = null;
+        switch (connector) {
+          case "sqlite":
+            r = js.Syntax.code("{0}.exec({1})", cur, query);
+          case "websql":
+            r = js.Syntax.code("await (new Promise(resolve => { {0}.transaction(function (tx) { tx.executeSql({1}, [], function (tx, results) { resolve(result); }, null); }); }))", cur, query);
+          case "alasql":
+            r = js.Syntax.code("alasql({0})", query);
+          case "indexeddb":
+            // TODO
+          case "jsstore":
+            r = js.Syntax.code("{0}.select({1})", cur, query);
+          case "snowflake":
+            r = js.Syntax.code("await databases.snowflake.execute({0}.jwt, {0}.account, {1}, {0}.timeout, {0}.database, {0}.schema, {0}.warehouse, {0}.role, {2}, {3})", cur, query, params, callback);
+          case "proxy":
+            r = js.Syntax.code("await databases.proxy.execute({0}, {1}, {2}, {3})", cur, query, params, callback);
+          default:
+            r = null;
+        }
+        if (callback != null) {
+          callback(r);
+        } else {
+          cancelClose();
+        }
       #elseif JS_NODE
         //TODO
       #elseif JS_WSH
@@ -685,7 +775,7 @@ class DatabaseReaderLoginOptions {
     }
   }
 
-  public function queryForReader(query : String, ?params : Map<String, Dynamic>, ?callback : DataTableReader->Void) : DataTableReader {
+  #if JS_BROWSER @:jsasync #end public function queryForReader(query : String, ?params : Map<String, Dynamic>, ?callback : DataTableReader->Void) : DataTableReader {
     var r : DatabaseReader;
     this.query(query, params, function (cur : Dynamic) : Void {
       r = DatabaseReader.read(cur);

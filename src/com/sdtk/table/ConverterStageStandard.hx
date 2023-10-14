@@ -366,7 +366,7 @@ class ConverterStageStandard implements ConverterStage {
           case CSharp:
             ciSource = CSharpInfoArrayOfMaps.instance;    
           case DB:
-            #if(!JS_BROWSER)
+            #if(!JS_BROWSER && !LUA_TI)
               if (Std.isOfType(oSource, String)) {
                 var sb : StringBuf = new StringBuf();
                 reader = DatabaseReaderOptions.parse(cast oSource, sb).queryForReader(sb.toString());

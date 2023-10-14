@@ -33,7 +33,7 @@ class Reader
     extends com.sdtk.std.JAVA.ReaderI
 #end
 #if cpp
-    // TODO
+    implements DataIterator<String>
 #else
     implements Disposable
     implements DataIterator<String>

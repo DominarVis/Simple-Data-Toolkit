@@ -17,6 +17,7 @@ popd
 REM haxe -php out -main com.sdtk.log.Transfer -cp src -D %* $*
 REM haxe -php out -main com.sdtk.table.Converter -cp src -D %* $*
 REM haxe -php out -main com.sdtk.calendar.Create -cp src -D %* $*
+REM haxe -php out -main com.sdtk.proxy.Proxy -cp src -D %* $*
 REM sh ./Build_Docs
 REM cmd /c .\Build_Docs
 popd

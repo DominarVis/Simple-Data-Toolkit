@@ -1,0 +1,55 @@
+package com.sdtk.puller;
+
+@:expose
+@:nativeGen
+class Output {
+    private function new() { }
+
+    public static function fromInputAPI(api : com.sdtk.api.InputAPI) : Source {
+        return new SourceInputAPI(api);
+    }
+
+    public static function fromDataTableReader(reader : com.sdtk.table.DataTableReader) : Source {
+        return new Source();
+    }
+
+    public function put(callback : Map<String, Dynamic> -> Void) { }
+}
+
+@:nativeGen
+class SourceInputAPI extends Source {
+    private var _api : com.sdtk.api.InputAPI;
+    private var _key : String;
+    private var _value : String;
+
+    private function new(api : com.sdtk.api.InputAPI) {
+        super();
+        _api = api;
+        _key = api.externalKey();
+        _value = api.externalValue();
+    }
+
+    public override function pull(callback : Map<String, Dynamic> -> Void) : Void {
+        _api.retrieveData(null, function (s : String, r : com.sdtk.table.DataTableReader) : Void {
+            var result : Map<String, Dynamic> = new Map<String, Dynamic>();
+            r.toMap(result, function (r : com.sdtk.table.DataTableRowReader, m2 : Map<Dynamic, Dynamic>) : Void {
+                var key : String = null;
+                var value : Dynamic = null;
+                while (r.hasNext()) {
+                    var v : Dynamic = r.next();
+                    var n : String = r.name();
+                    var i : Int = r.index();
+                    if (n == _key) {
+                        key = cast v;
+                    } else if (n == _value) {
+                        value = v;
+                    }
+                }
+                if (key != null) {
+                    result.set(key, value);
+                }
+            });
+            callback(result);
+        });
+    }
+}

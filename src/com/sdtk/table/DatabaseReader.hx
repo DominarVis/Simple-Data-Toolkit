@@ -22,7 +22,7 @@
 
 package com.sdtk.table;
 
-#if(!JS_BROWSER)
+#if(!EXCLUDE_DATABASE)
 import com.sdtk.std.*;
 
 /**
@@ -44,13 +44,20 @@ class DatabaseReader extends DataTableReader {
     Dynamic
   #elseif php
     Dynamic
+  #elseif JS_BROWSER
+    Dynamic
   #else // Hashlink
     sys.db.ResultSet
   #end;
   #if python
     private var _row : Dynamic;
   #end
-  #if php
+  #if JS_BROWSER
+    private static inline var CONNECTOR_WEBSQL : Int = 10;
+    private static inline var CONNECTOR_INDEXEDDB : Int = 11;
+    private static inline var CONNECTOR_SQL_ARRAY : Int = 12;
+  #end
+  #if(php || JS_BROWSER)
     private var _connector : Int;
     private var _rowValues : Array<Dynamic>;
     private static inline var CONNECTOR_MYSQL : Int = 0;
@@ -62,6 +69,7 @@ class DatabaseReader extends DataTableReader {
   #end
   private var _reading : Bool = false;
   private var _hold : Dynamic = null;
+  private var _replaceNextRow : Bool = false;
 
   #if cs
     private var _reader : Bool;
@@ -148,6 +156,36 @@ class DatabaseReader extends DataTableReader {
       if (!_reader) {
         _reader = getRowCollection(_reader);
       }
+    #elseif JS_BROWSER
+      try {
+        if (js.Syntax.code("!!({0}.db.filename)", cur) && js.Syntax.code("!!({0}.step)", cur) && js.Syntax.code("!!({0}.getAsObject)", cur)) {
+          this._connector = CONNECTOR_SQLITE;
+        }
+      } catch (ex : Any) { }
+
+      if (this._connector == null) {
+        try {
+          if (js.Syntax.code("!!({0}.rows.length)", cur) && js.Syntax.code("!!({0}.rows.item)", cur)) {
+            this._connector = CONNECTOR_WEBSQL;
+          }
+        } catch (ex : Any) { }
+      }
+
+      if (this._connector == null) {
+        try {
+          if (js.Syntax.code("!!({0}.data)", cur)) {
+            this._connector = CONNECTOR_SNOWFLAKE;
+          }
+        } catch (ex : Any) { }
+      }
+
+      if (this._connector == null) {
+        try {
+          if (js.Syntax.code("!!({0}.length)", cur)) {
+            this._connector = CONNECTOR_SQL_ARRAY;
+          }
+        } catch (ex : Any) { }
+      }
     #end
     checkColumns();
     finalPrep();
@@ -184,6 +222,8 @@ class DatabaseReader extends DataTableReader {
         r._connector = CONNECTOR_POSTGRES;
       }
       return r;
+    #elseif JS_BROWSER
+      return new DatabaseReader(o);
     #else // HASHLINK
       return new DatabaseReader(o);
     #end
@@ -194,6 +234,12 @@ class DatabaseReader extends DataTableReader {
   }
 
   public function nextRow() : Bool {
+    #if(php || JS_BROWSER)
+      if (_replaceNextRow) {
+        _replaceNextRow = false;
+        return _rowValues != null;
+      }    
+    #end
     #if java
       return _cur.next();
     #elseif cs
@@ -228,6 +274,54 @@ class DatabaseReader extends DataTableReader {
         _rowValues.resize(cast php.Syntax.code("count({0})", rowValues));
         for (v in rowValues) {
           _rowValues.push(v);
+        }
+      }
+      return _rowValues != null;
+    #elseif JS_BROWSER
+      var rowValues : Dynamic = null;
+      switch (_connector) {
+        case CONNECTOR_SQLITE:
+          if (cast js.Syntax.code("{0}.step()", _cur)) {
+            rowValues = cast js.Syntax.code("{0}.getAsObject()", _cur);
+          }
+        case CONNECTOR_WEBSQL:
+          rowValues = cast js.Syntax.code("{0}.rows.item({1})", _cur, _index);
+        case CONNECTOR_SQL_ARRAY:
+          rowValues = cast js.Syntax.code("{0}[{1}]", _cur, _index);
+        case CONNECTOR_SNOWFLAKE:
+          rowValues = cast js.Syntax.code("databases.snowflake.nextRow({0})", _cur);
+      }
+      _rowValues = null;
+      if (rowValues != null) {
+        _rowValues = new Array<Dynamic>();
+        switch (_connector) {
+          case CONNECTOR_SQLITE, CONNECTOR_WEBSQL:
+            var entries = js.lib.Object.entries(rowValues);
+            var rowColumns : Array<String> = null;
+            var rowColumn : Int = 0;
+            _rowValues.resize(entries.length);
+            if (_columns == null) {
+              rowColumns = new Array<String>();
+              rowColumns.resize(entries.length);
+              _columns = rowColumns;
+            }
+            for (e in entries) {
+              _rowValues[rowColumn](e.value);
+              if (rowColumns != null) {
+                rowColumns[rowColumn] = e.key;
+              }
+              rowColumn++;
+            }
+          case CONNECTOR_SNOWFLAKE:
+            _rowValues = rowValues;
+            if (_columns == null) {
+              var columns : Array<Dynamic> = cast js.Syntax.code("{0}.columns", _cur);
+              _columns = new Array();
+
+              for (column in columns) {
+                this._columns.push(column.name);
+              }
+            }
         }
       }
       return _rowValues != null;
@@ -323,6 +417,9 @@ class DatabaseReader extends DataTableReader {
           _columns[i] = column;
           i++;
         }
+      #elseif JS_BROWSER
+        nextRow();
+        _replaceNextRow = true;
       #else // Hashlink
         _columns = _cur.getFieldsNames();
       #end
@@ -354,6 +451,8 @@ class DatabaseReader extends DataTableReader {
     #elseif python
       return python.Syntax.code("{0}[{1}]", _row, i);
     #elseif php
+      return _rowValues[i];
+    #elseif JS_BROWSER
       return _rowValues[i];
     #else // Hashlink
       return _cur.getResult(i);

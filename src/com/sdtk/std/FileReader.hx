@@ -22,6 +22,8 @@
 
 package com.sdtk.std;
 
+#if(!EXCLUDE_FILES)
+
 #if JS_BROWSER
 @:expose
 @:nativeGen
@@ -477,3 +479,5 @@ class FileReader extends com.sdtk.std.HAXE.AbstractReader {
 }
 #end
 // TODO
+
+#end

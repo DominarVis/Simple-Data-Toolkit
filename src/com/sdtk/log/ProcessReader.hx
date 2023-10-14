@@ -22,6 +22,8 @@
 
 package com.sdtk.log;
 
+#if(!EXCLUDE_PROCESS)
+
 import com.sdtk.std.JS_WSH;
 
 #if !EXCLUDE_PROCESS_STDOUT
@@ -81,4 +83,6 @@ class ProcessReader extends com.sdtk.std.Reader {
     #end
   }
 }
+#end
+
 #end

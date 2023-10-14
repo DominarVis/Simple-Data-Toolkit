@@ -219,6 +219,74 @@ class DataTableReader extends DataEntryReader {
     convertToAll(aSingle);
   }
 
+  public function toArray() : Void {
+    // TODO
+  }
+
+  #if(cs || java)
+    public function toHaxeMap(map : Map<String, Dynamic>, keyField : String, valueField : String) : Map<String, Dynamic> {
+  #else
+    public function toHaxeMap<A>(map : Map<String, A>, keyField : String, valueField : String) : Map<String, A> {
+  #end
+    convertTo(MapWriter.writeToExpandableMap(map, keyField, valueField));
+    return map;
+  }
+
+  public function toNativeMap<A>(map : Dynamic, keyField : String, valueField : String) : Map<String, A> {
+    if (map != null) {
+      map = com.sdtk.std.Normalize.nativeToHaxe(map);
+    }
+    return com.sdtk.std.Normalize.haxeToNative(cast toHaxeMap(map, keyField, valueField));
+  }
+
+  public function toObject<A>(map : A, keyField : String, valueField : String) : A {
+    // TODO
+    return null;
+  }
+
+  public function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+    if (arr == null) {
+      arr = new Array<Map<String, A>>();
+    }
+    convertTo(ArrayOfMapsWriter.writeToExpandableArray(arr));
+    return arr;
+  }
+
+  public function toArrayOfNativeMaps<A>(arr : Array<Dynamic>) : Array<Dynamic> {
+    if (arr != null) {
+      var i : Int = 0;
+      while (i < arr.length) {
+        arr[i] = com.sdtk.std.Normalize.nativeToHaxe(arr[i]);
+        i++;
+      }
+    }
+    arr = cast toArrayOfHaxeMaps(cast arr);
+    var i : Int = 0;
+    while (i < arr.length) {
+      arr[i] = com.sdtk.std.Normalize.haxeToNative(cast arr[i]);
+      i++;
+    }
+    return arr;
+  }
+
+  public function toArrayOfArrays<A>(arr : Array<Array<A>>) : Array<Array<A>> {
+    if (arr == null) {
+      arr = new Array<Array<A>>();
+    }
+    convertTo(Array2DWriter.writeToExpandableArray(arr));
+    return arr;
+  }
+
+  public function toArrayOfObjects<A>(map : A) : A {
+    // TODO
+    return null;
+  }
+
+  public function to(o : Dynamic) : Dynamic {
+    // TODO
+    return null;
+  }
+
   /**
     Convert a table from one data structure to multiple target data structures.
   **/

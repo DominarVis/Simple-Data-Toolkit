@@ -33,6 +33,10 @@ class CalendarInvite {
     public var end : Null<Date>;
     public var summary : Null<String>;
     public var uid : Null<String>;
+    public var schedulingType : ScheduleType;
+    public var actionExecute : Null<String>;
+    public var actionExecuteIn : Null<String>;
+    public var actionExecuteParameters: Null<Array<String>>;   
 
     public function new() { }
 }

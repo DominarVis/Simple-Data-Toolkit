@@ -62,7 +62,6 @@ class AbstractCalendarInviteFormat implements CalendarInviteFormat<Reader, Write
         _limit = iLimit;
     }
 
-
     public function convertDateTime(dDateTime : Date) : String {
         return DateTools.format(dDateTime, sDateTimeFormat);
     }

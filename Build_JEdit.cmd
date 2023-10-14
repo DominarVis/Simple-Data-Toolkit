@@ -6,7 +6,7 @@ cd $(dirname "$0")
 mkdir out 2> NUL
 
 pushd plugin-jedit-src
-#haxe -java ..\out -main SDTKJEditPlugIn --java-lib "C:\Program Files\jEdit\jedit.jar"
+REM haxe -java ..\out -main SDTKJEditPlugIn --java-lib "C:\Program Files\jEdit\jedit.jar"
 javac *.java -cp "C:\Program Files\jEdit\jedit.jar;..\out\sdtk.jar"
 mkdir out
 move *.class out
