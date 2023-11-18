@@ -35,10 +35,16 @@ import com.sdtk.std.Writer;
 @:expose
 @:nativeGen
 class StandardTableInfo implements TableInfo {
-  public static var instance : StandardTableInfo = new StandardTableInfo();
+  private static var _instance : StandardTableInfo;
 
-  private function new() {
+  public static function instance() : StandardTableInfo {
+    if (_instance == null) {
+        _instance = new StandardTableInfo();
+    }
+    return _instance;
   }
+
+  private function new() { }
 
   public function Tag() : Array<String> {
     return [ "table" ];

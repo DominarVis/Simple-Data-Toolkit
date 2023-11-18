@@ -38,7 +38,7 @@ class FileSystemWriter extends DataTableWriter {
   }
 
   public static function createCMDDirWriter(wWriter : Writer) {
-    return new FileSystemWriter(CMDDirHandler.instance, wWriter);
+    return new FileSystemWriter(CMDDirHandler.instance(), wWriter);
   }
 
   /**

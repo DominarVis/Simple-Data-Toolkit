@@ -31,6 +31,30 @@ class Filter {
         return sValue;
     }
 
+    public static function list(sValue : Array<String>, bBlock : Bool) : Null<Filter> {
+        if (bBlock) {
+            var fFilter : Filter = null;
+            for (s in sValue) {
+                if (fFilter == null) {
+                    fFilter = new FilterBlockWithString(s);
+                } else {
+                    fFilter = fFilter.and(new FilterBlockWithString(s));
+                }
+            }
+            return fFilter;            
+        } else {
+            var fFilter : Filter = null;
+            for (s in sValue) {
+                if (fFilter == null) {
+                    fFilter = new FilterAllowEqualString(s);
+                } else {
+                    fFilter = fFilter.or(new FilterAllowEqualString(s));
+                }
+            }
+            return fFilter;
+        }
+    }
+
     public static function parse(sValue : Null<String>, bBlock : Bool) : Null<Filter> {
         if (sValue == null) {
             return null;

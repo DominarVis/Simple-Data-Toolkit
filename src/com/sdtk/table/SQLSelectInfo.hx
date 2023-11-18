@@ -28,10 +28,16 @@ package com.sdtk.table;
 @:expose
 @:nativeGen
 class SQLSelectInfo implements CodeInfo {
-  private function new() {
-  }
+  private function new() { }
 
-  public static var instance : CodeInfo = new SQLSelectInfo();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new SQLSelectInfo();
+    }
+    return _instance;
+  }
 
   private var _appendBeginning : String = "";
   private var _appendEnd : String = "";

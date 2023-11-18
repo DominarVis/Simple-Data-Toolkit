@@ -66,7 +66,7 @@ class TableReader extends DataTableReader {
   }
 
   public static function createStandardTableReader(oElement : Dynamic) {
-    return new TableReader(StandardTableInfo.instance, oElement);
+    return new TableReader(StandardTableInfo.instance(), oElement);
   }
 
   #if cs

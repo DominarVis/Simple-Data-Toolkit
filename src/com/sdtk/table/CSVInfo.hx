@@ -31,7 +31,14 @@ class CSVInfo implements DelimitedInfo {
   private function new() {
   }
 
-  public static var instance : DelimitedInfo = new CSVInfo();
+  private static var _instance : DelimitedInfo;
+
+  public static function instance() : DelimitedInfo {
+    if (_instance == null) {
+        _instance = new CSVInfo();
+    }
+    return _instance;
+  }
 
   public function fileStart() : String {
     return "";

@@ -31,8 +31,15 @@ class PythonInfoMapOfMaps extends PythonInfoAbstract {
   private function new() {
     super();
   }
+  
+  private static var _instance : CodeInfo;
 
-  public static var instance : CodeInfo = new PythonInfoMapOfMaps();
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new PythonInfoMapOfMaps();
+    }
+    return _instance;
+  }
 
   public override function start() : String {
     return mapStart();

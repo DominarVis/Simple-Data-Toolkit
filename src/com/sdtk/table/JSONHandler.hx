@@ -28,7 +28,14 @@ import com.sdtk.std.*;
 class JSONHandler implements KeyValueHandler {
   private function new() { }
 
-  public static var instance : KeyValueHandler = new JSONHandler();
+  private static var _instance : KeyValueHandler;
+
+  public static function instance() : KeyValueHandler {
+    if (_instance == null) {
+        _instance = new JSONHandler();
+    }
+    return _instance;
+  }
 
   public function favorReadAll() : Bool {
     return true;
@@ -63,21 +70,48 @@ class JSONHandler implements KeyValueHandler {
     return buildMap(haxe.Json.parse(readValue(rReader)));
   }
 
-  public function write(wWriter : Writer, mMap : Map<String, Dynamic>) : Void {
+  public function write(wWriter : Writer, mMap : Map<String, Dynamic>, name : String, index : Int) : Void {
+    if (index > 0) {
+      wWriter.write(",");
+    } else if (index == 0 && name == null) {
+      wWriter.write("[");
+    } else if (index == 0) {
+      wWriter.write("{");
+    }
+    if (name != null) {
+      wWriter.write("\"");
+      wWriter.write(name);
+      wWriter.write("\":");
+    }
     wWriter.write(haxe.Json.stringify(mMap));
+  }
+
+  public function writeEnd(wWriter : Writer, lastName : String, lastIndex : Int) : Void {
+    if (lastName != null) {
+      wWriter.write("}");
+    } else {
+      wWriter.write("]");
+    }
   }
 
   public function readAll(rReader : Reader, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void {
     var dData : haxe.DynamicAccess<Dynamic> = haxe.Json.parse(readValue(rReader));
-    
-    #if (hax_ver >= 4)
-    for (keyRow => valueRow in dData) {
-    #else
-    for (keyRow in dData.keys()) {
-      var valueRow : Dynamic = dData[keyRow];
-    #end
-      aMaps.push(buildMap(valueRow));
-      aNames.push(keyRow);
+    if (Std.isOfType(dData, Array)) {
+      var aValues : Array<Dynamic> = cast dData;
+      for (value in aValues) {
+        aMaps.push(buildMap(value));
+        aNames.push(aMaps.length - 1);
+      }
+    } else {
+      #if (hax_ver >= 4)
+      for (keyRow => valueRow in dData) {
+      #else
+      for (keyRow in dData.keys()) {
+        var valueRow : Dynamic = dData[keyRow];
+      #end
+        aMaps.push(buildMap(valueRow));
+        aNames.push(keyRow);
+      }
     }
   }
 
@@ -105,7 +139,7 @@ class JSONHandler implements KeyValueHandler {
         }
 
         wWriter.write(":");
-        write(wWriter, mValue);
+        write(wWriter, mValue, null, -1);
         wWriter.write(",\n");
         i++;
       }

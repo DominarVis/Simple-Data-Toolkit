@@ -90,7 +90,7 @@ class BTCAPI extends API {
         }
     }
 
-    public function transactionsAPI() : InputAPI {
+    public static function transactionsAPI() : InputAPI {
         return BTCAPITransactions.instance();
     }
 }

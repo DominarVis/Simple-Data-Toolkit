@@ -28,7 +28,14 @@ import com.sdtk.std.*;
 class INIHandler implements KeyValueHandler {
   private function new() { }
 
-  public static var instance : KeyValueHandler = new INIHandler();
+  private static var _instance : KeyValueHandler;
+
+  public static function instance() : KeyValueHandler {
+    if (_instance == null) {
+        _instance = new INIHandler();
+    }
+    return _instance;
+  }
 
   public function favorReadAll() : Bool {
     return true;
@@ -96,7 +103,7 @@ class INIHandler implements KeyValueHandler {
     return mMap;
   }
 
-  public function write(wWriter : Writer, mMap : Map<String, Dynamic>) : Void {
+  public function write(wWriter : Writer, mMap : Map<String, Dynamic>, name : String, index : Int) : Void {
     wWriter = wWriter.switchToLineWriter();
     
     {
@@ -118,6 +125,8 @@ class INIHandler implements KeyValueHandler {
       }
     }
   }
+
+  public function writeEnd(wWriter : Writer, lastName : String, lastIndex : Int) : Void { }
 
   public function readAll(rReader : Reader, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void {
     rReader = rReader.switchToLineReader();
@@ -150,7 +159,7 @@ class INIHandler implements KeyValueHandler {
     wWriter = wWriter.switchToLineWriter();
     while (i < aMaps.length) {
       wWriter.write("[" + convertTo(aNames[i]) + "]");
-      write(wWriter, aMaps[i++]);
+      write(wWriter, aMaps[i++], null, 0);
     }
   }
 }

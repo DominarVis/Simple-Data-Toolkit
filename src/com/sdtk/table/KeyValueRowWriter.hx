@@ -61,7 +61,7 @@ class KeyValueRowWriter extends DataTableRowWriter {
   #end
   public override function dispose() : Void {
     if (_writer != null) {
-      _handler.write(_writer, _map);
+      _handler.write(_writer, _map, _name, _rowIndex);
       _writer = null;
       _handler = null;
       _name = null;

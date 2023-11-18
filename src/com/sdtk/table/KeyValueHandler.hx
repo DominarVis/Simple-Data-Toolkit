@@ -30,7 +30,8 @@ interface KeyValueHandler {
   function oneRowPerFile() : Bool;
 
   function read(rReader : Reader) : Map<String, Dynamic>;
-  function write(wWriter : Writer, mMap : Map<String, Dynamic>) : Void;
+  function write(wWriter : Writer, mMap : Map<String, Dynamic>, name : String, index : Int) : Void;
+  function writeEnd(wWriter : Writer, lastName : String, lastIndex : Int) : Void;
   function readAll(rReader : Reader, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void;
   function writeAll(wWriter : Writer, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void;
 }

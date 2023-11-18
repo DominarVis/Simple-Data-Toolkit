@@ -34,4 +34,7 @@ interface CalendarInviteFormat<R, W> {
     public function convert(ciInvite : CalendarInvite, wWriter : W) : Void;
     public function convertToString(ciInvite : CalendarInvite) : String;
     public function read(rReader : R) : CalendarInvite;
+    public function arrayToReader(aArray : Array<CalendarInvite>) : com.sdtk.table.DataTableReader;
+    public function mapToReader(aArray : Map<String, CalendarInvite>) : com.sdtk.table.DataTableReader;
+    public function validColumns() : Array<String>;
 }

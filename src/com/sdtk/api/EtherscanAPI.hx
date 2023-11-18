@@ -102,7 +102,7 @@ class EtherscanAPI extends API {
         // {"total":,"rangeTotal":,"data":[{"block":,"hash":,"timestamp":,"ownerAddress":,"toAddress":,"contractType":,"confirmed":,"revert":,"SmartCalls":,"Events":,"id":,"data":,"fee":,"contractRet":,"result":,"amount":,"cost":}],"wholeChainTxCount":,"contractMap":{"0x":false,},"contractInfo":{}}
     }
 
-    public function transactionsAPI() : InputAPI {
+    public static function transactionsAPI() : InputAPI {
         return EtherscanAPITransactions.instance();
     }
 }

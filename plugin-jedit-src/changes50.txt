@@ -1,0 +1,9 @@
+Changes for the jEdit 5.0 API
+
+Now that jEdit supports localization, we have a
+lang_fr.properties file for the French language.
+
+lang_XX.properties files can be added to each plugin
+for other support in other languages.
+
+

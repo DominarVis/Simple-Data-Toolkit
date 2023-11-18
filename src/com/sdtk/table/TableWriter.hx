@@ -120,11 +120,11 @@ class TableWriter extends DataTableWriter {
   }
 
   public static function createStandardTableWriterForElement(oElement : Dynamic) {
-    return new TableWriterElement(StandardTableInfo.instance, oElement);
+    return new TableWriterElement(StandardTableInfo.instance(), oElement);
   }
 
   public static function createStandardTableWriterForWriter(wWriter : Writer) {
-    return new TableWriterString(StandardTableInfo.instance, wWriter);
+    return new TableWriterString(StandardTableInfo.instance(), wWriter);
   }
 }
 

@@ -129,6 +129,7 @@ class AbstractCalendarInviteFormat implements CalendarInviteFormat<Reader, Write
 
     public function read(rReader : Reader) : CalendarInvite {
         var ciInvite : CalendarInvite = new CalendarInvite();
+        ciInvite.format = this;        
         var sbBuffer : StringBuf = new StringBuf();
         var sCurrentLabel : String = "";
 
@@ -161,7 +162,21 @@ class AbstractCalendarInviteFormat implements CalendarInviteFormat<Reader, Write
                 }
             }
         }
-
+        
         return ciInvite;
     }
+
+    public function arrayToReader(aArray : Array<CalendarInvite>) : com.sdtk.table.DataTableReader {
+        // TODO - return com.sdtk.table.ArrayOfObjectsReader.readWholeArrayForFields(aArray, validColumns);
+        return null;
+    }
+
+    public function mapToReader(aArray : Map<String, CalendarInvite>) : com.sdtk.table.DataTableReader {
+        // TODO - return com.sdtk.table.MapOfObjectsReader.readWholeMapForFields(aArray, validColumns);
+        return null;
+    }
+
+    public function validColumns() : Array<String> {
+        return ["created", "start", "end", "uid"];
+    }   
 }

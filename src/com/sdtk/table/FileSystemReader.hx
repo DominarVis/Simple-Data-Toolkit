@@ -39,7 +39,7 @@ class FileSystemReader extends DataTableReader {
   }
 
   public static function createCMDDirReader(rReader : Reader) {
-    return new FileSystemReader(CMDDirHandler.instance, rReader);
+    return new FileSystemReader(CMDDirHandler.instance(), rReader);
   }
 
   private function check(reuse : Bool) : Void {

@@ -32,10 +32,16 @@ import com.sdtk.table.*;
 class TableFormat implements CalendarInviteFormat<DataTableReader, DataTableWriter> {
     public var sDateTimeFormat : String;
 
-    public static var instance : CalendarInviteFormat<DataTableReader, DataTableWriter> = new TableFormat();     
+    private static var _instance : CalendarInviteFormat<DataTableReader, DataTableWriter>;
 
-    private function new() {
+    public static function instance() : CalendarInviteFormat<DataTableReader, DataTableWriter> {
+        if (_instance == null) {
+            _instance = new TableFormat();
+        }
+        return _instance;
     }
+
+    private function new() { }
 
     public function convertDateTime(dDateTime : Date) : String {
         // TODO
@@ -66,4 +72,16 @@ class TableFormat implements CalendarInviteFormat<DataTableReader, DataTableWrit
         var ciInvite : CalendarInvite = new CalendarInvite();
         return ciInvite;
     }
+
+    public function arrayToReader(aArray : Array<CalendarInvite>) : com.sdtk.table.DataTableReader {
+        return null;
+    }
+
+    public function mapToReader(aArray : Map<String, CalendarInvite>) : com.sdtk.table.DataTableReader {
+        return null;
+    }
+
+    public function validColumns() : Array<String> {
+        return null;
+    }       
 }

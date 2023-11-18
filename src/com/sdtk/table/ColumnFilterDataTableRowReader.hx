@@ -50,13 +50,16 @@ class ColumnFilterDataTableRowReader extends DataTableRowReader {
 
     public function check() {
         if (_reader != null) {
-            _current = _reader.next();
+            var current : Dynamic = null;
+            current = _reader.next();
             while (_remove[_reader.index()]) {
-                _current = _reader.next();
-                if (_current == null) {
-                    return;
+                current = null;
+                if (_reader.index() >= _remove.length - 1) {
+                    break;
                 }
+                current = _reader.next();
             }
+            _current = current;
         }
     }
 

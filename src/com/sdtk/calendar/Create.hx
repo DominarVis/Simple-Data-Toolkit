@@ -36,23 +36,23 @@ class Create {
         var pParameters : Parameters = new Parameters();
 
         if (pParameters.getNothing()) {
-            var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance;
+            var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance();
             cifOutputFormat.convert(pParameters.getInvite(), new StdoutWriter());
         } else if (pParameters.getInvalid()) {
             return;
         } else {
             if (pParameters.getInput() != null && pParameters.getOutput() != null) {
-                var cifInputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance;
-                var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance;
+                var cifInputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance();
+                var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance();
                 var ciInvite : CalendarInvite = cifInputFormat.read(new FileReader(pParameters.getInput()));
                 cifOutputFormat.convert(ciInvite, new FileWriter(pParameters.getOutput(), false));
             } else if (pParameters.getInput() != null) {
-                var cifInputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance;
+                var cifInputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance();
                 var ciInvite : CalendarInvite = cifInputFormat.read(new FileReader(pParameters.getInput()));
-                var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ConsoleFormat.instance;
+                var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ConsoleFormat.instance();
                 cifOutputFormat.convert(ciInvite, new StdoutWriter());
             } else {
-                var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance;
+                var cifOutputFormat : CalendarInviteFormat<Reader, Writer> = ICS.instance();
                 cifOutputFormat.convert(pParameters.getInvite(), new FileWriter(pParameters.getOutput(), false));
             }
         }

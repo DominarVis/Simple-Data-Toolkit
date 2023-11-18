@@ -46,7 +46,7 @@ class API {
             key = (getKey() != null);
         }
         if (accessToken == null) {
-            accessToken = (getAccessToken() != null);
+            accessToken = (getAccessToken() != null && getAuthorizationHeader() != null);
         }
         var cookieToSend : StringBuf = null;
         if (cookies != null) {
@@ -61,6 +61,7 @@ class API {
         var url : String = "https://" + root + "/" + api + query + (key ? (query == "" ? "?" : "&") + getKeyParameter() + "=" + getKey() : "");
         #if JS_BROWSER
             var xhr : js.html.XMLHttpRequest = new js.html.XMLHttpRequest("");
+            xhr.withCredentials = true;
             xhr.onreadystatechange = function () : Void {
                 if (xhr.readyState != js.html.XMLHttpRequest.DONE) {
                     return;
@@ -82,29 +83,49 @@ class API {
             if (cookieToSend != null) {
                 xhr.setRequestHeader("Cookie", cookieToSend.toString());
             }
+            if (getUser() != null && getUserHeader() == null && getAccessToken() != null) {
+                xhr.setRequestHeader('Authorization', 'Basic ' + js.Syntax.code("btoa({0})", getUser() + ':' + getAccessToken()));
+            }
             xhr.send(body);
         #elseif python
             python.Syntax.code("import urllib.request");
-            var h : haxe.DynamicAccess<Dynamic> = cast python.Syntax.code("{{}}");
-            h.set("User-Agent", "SimpleData-Toolkit");
+            python.Syntax.code("import urllib.parse");
+            python.Syntax.code("import ssl");
+            var h : Dynamic = cast python.Syntax.code("{{}}");
+            python.Syntax.code("{0}[\"User-Agent\"] = {1}", h, "SimpleData-Toolkit");
             if (accessToken) {
-                h.set(getAuthorizationHeader(), getAuthorizationHeaderBearer() + getAccessToken());
+                python.Syntax.code("{0}[{1}] = {2}", h, getAuthorizationHeader(), getAuthorizationHeaderBearer() + getAccessToken());
             }
             if (getUserHeader() != null) {
                 h.set(getUserHeader(), getUser());
             }
             if (body != null && body.indexOf("--divider--sdtk--") >= 0) {
-                h.set("Content-Type", "multipart/related; boundary=--divider--sdtk--");
+                python.Syntax.code("{0}[{1}] = {2}", h, "Content-Type", "multipart/related; boundary=--divider--sdtk--");
+            }
+            if (body != null) {
+                // TODO - Remove?
+                //body = cast python.Syntax.code("urllib.parse.urlencode({0})", body);
+                body = cast python.Syntax.code("{0}.encode('utf-8')", body);
             }
             if (headers != null) {
                 for (header in headers.keys()) {
-                    h.set(header, headers.get(header));
+                    python.Syntax.code("{0}[{1}] = {2}", h, header, headers.get(header));
                 }
             }
             if (cookieToSend != null) {
-                h.set("Cookie", cookieToSend.toString());
+                python.Syntax.code("{0}[{1}] = {2}", h, "Cookie", cookieToSend.toString());
             }
-            var r : Dynamic = python.Syntax.code("urllib.request.urlopen(urllib.request.Request({0}, method={1}, data={2}, headers={3}))", url, method, body, h);
+            var context : Dynamic = python.Syntax.code("ssl._create_unverified_context()");
+
+            if (getUser() != null && getUserHeader() == null && getAccessToken() != null) {
+                var passwordManager : Dynamic = cast python.Syntax.code("urllib.request.HTTPPasswordMgrWithDefaultRealm()");
+                python.Syntax.code("{0}.add_password(None, {1}, {2}, {3})", passwordManager, url, this.getUser(), this.getAccessToken());
+                var authHandler : Dynamic = cast python.Syntax.code("urllib.request.HTTPBasicAuthHandler({0})", passwordManager);
+                var opener : Dynamic = cast python.Syntax.code("urllib.request.build_opener(authHandler)");
+                python.Syntax.code("urllib.request.install_opener({0})", opener);
+            }
+
+            var r : Dynamic = python.Syntax.code("urllib.request.urlopen(urllib.request.Request({0}, method={1}, data={2}, headers={3}), context={4})", url, method, body, h, context);
             var d : String = python.Syntax.code("{0}.read()", r);
             var encoding : Dynamic = python.Syntax.code("{0}.info().get_content_charset('utf-8')", r);
             d = cast python.Syntax.code("{0}.decode({1})", d, encoding);
@@ -131,6 +152,9 @@ class API {
             }
             if (cookieToSend != null) {
                 js.Syntax.code("{0}.setRequestHeader({1}, {2})", xhr, "Cookie", cookieToSend.toString());
+            }
+            if (getUser() != null && getUserHeader() == null && getAccessToken() != null) {
+                js.Syntax.code("{0}.setRequestHeader('Authorization', 'Basic ' + btoa{1})", xhr, getUser() + ':' + getAccessToken());
             }
             callback(js.Syntax.code("{0}.responseText", xhr));
         #elseif php
@@ -165,7 +189,10 @@ class API {
             if (cookieToSend != null) {
                 php.Syntax.code("curl_setopt({0}, CURLOPT_COOKIE, {1})", ch, cookieToSend.toString());
             }
-
+            if (getUser() != null && getUserHeader() == null && getAccessToken() != null) {
+                php.Syntax.code("curl_setopt({0}, CURLOPT_HTTPAUTH, CURLAUTH_BASIC)", ch);
+                php.Syntax.code("curl_setopt({0}, CURLOPT_USERPWD, {1})", ch, getUser() + ":" + getAccessToken());
+            }
             php.Syntax.code("curl_setopt({0}, CURLOPT_HTTPHEADER, {1})", ch, headers);
             php.Syntax.code("curl_setopt({0}, CURLOPT_RETURNTRANSFER, true)", ch);
             php.Syntax.code("curl_setopt({0}, CURLOPT_SSL_VERIFYHOST, false)", ch);
@@ -191,6 +218,9 @@ class API {
             if (cookieToSend != null) {
                 http.setHeader("Cookie", cookieToSend.toString());
             }
+            if (getUser() != null && getUserHeader() == null && getAccessToken() != null) {
+                http.setHeader('Authorization', 'Basic ' + haxe.crypto.Base64.encode(getUser() + ':' + getAccessToken()));
+            }
             switch (method) {
                 case "GET":
                     http.request();
@@ -211,7 +241,7 @@ class API {
     }
 
     private function normalizeMapping(mapping : Map<String, String>) : Map<String, String> {
-        return cast com.sdtk.std.Normalize.nativeToHaxe(mapping);
+        return cast com.sdtk.std.Normalize.haxeMapValuesToStrings(cast com.sdtk.std.Normalize.nativeToHaxe(mapping));
     }
 
     private function getUserHeader() : String {
@@ -284,6 +314,104 @@ class API {
 
     public function parse(value : String) : InputAPI {
         return null;
+    }
+
+    private static function findEndOfTag(data : String, tag : Int) : Int {
+        var check : Array<Int> = new Array<Int>();
+        var search : String -> Void = function (c : String) : Void {
+            var r : Int = data.indexOf(c, tag);
+            if (r >= 0) {
+                check.push(r);
+            }
+        }
+        search(">");
+        search(" ");
+        search("\t");
+        search("\n");
+        search("\r");  
+
+        check.sort(function (a : Int, b : Int) : Int {
+            return a - b;
+        });
+
+        return check[0] - 1;
+    }
+
+    private function findElementsByClass(data : String, tags : Array<String>, c : String, includeTagInResults : Bool = false, includeBodyInResults : Bool = true) : Array<String> {
+        var check : Array<Int> = new Array<Int>();
+        var results : Array<String> = new Array<String>();
+
+        for (tag in tags) {
+            var i : Int = 0;
+            while (true) {
+                i = data.indexOf("<" + tag, i);
+                if (i < 0) {
+                    break;
+                }
+                check.push(i);
+                i++;
+            }
+        }
+        
+        for (tagToCheck in check) {
+            var myTag : String = data.substring(tagToCheck + 1, findEndOfTag(data, tagToCheck) + 1);
+            var endOfTag : Int = data.indexOf(">", tagToCheck);
+            if (c != null) {
+                var startOfClass : Int = data.indexOf("class=", tagToCheck);
+                if (startOfClass < 0 || startOfClass > endOfTag) {
+                    continue;
+                }
+                var endOfClass : Int = data.indexOf("\"", startOfClass + 7);
+                var endOfClass2 : Int = data.indexOf("\'", startOfClass + 7);
+                if (endOfClass2 >= 0 && endOfClass2 < endOfClass) {
+                    endOfClass = endOfClass2;
+                }
+                if (endOfClass < 0 || endOfClass > endOfTag) {
+                    continue;
+                }
+                var indexOfC : Int = data.indexOf(c, startOfClass + 7);
+                if (indexOfC < 0 || indexOfC > endOfClass) {
+                    continue;
+                }
+                var beforeClass : String = data.charAt(indexOfC - 1);
+                var afterClass : String = data.charAt(indexOfC + c.length);
+                switch (beforeClass) {
+                    case " ", "\"", "'", "\t":
+                    default:
+                        continue;
+                }
+                switch (afterClass) {
+                    case " ", "\"", "'", "\t", "=":
+                    default:
+                        continue;
+                }
+            }
+            var endOfData : Int = data.indexOf("</" + myTag + ">", endOfTag);
+            var nestedSearch : Int = endOfTag;
+            while (true) {
+                if (endOfData < 0) {
+                    break;
+                }
+                var nested : Int = data.indexOf("<" + myTag, nestedSearch);
+                if (nested > 0 && endOfData > nested) {
+                    nestedSearch = nested + myTag.length + 2;
+                    var possibleEnd : Int = data.indexOf("</" + myTag, endOfData + 1);
+                    if (possibleEnd > 0) {
+                        endOfData = possibleEnd;
+                    }
+                } else {
+                    if (includeTagInResults) {
+                        results.push(data.substring(tagToCheck, endOfTag));
+                    }
+                    if (includeBodyInResults) {
+                        results.push(data.substring(endOfTag + 1, endOfData));
+                    }
+                    break;
+                }
+            }
+        }
+
+        return results;
     }
 }
 

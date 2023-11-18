@@ -30,6 +30,9 @@ package com.sdtk.table;
 
 @:expose
 @:nativeGen
+#if JS_BROWSER
+  @:build(jsasync.JSAsync.build())
+#end
 class DatabaseReaderLoginOptions {
   private var _values : Map<String, Any>;
   private var _cancelClose : Bool = false;
@@ -262,7 +265,7 @@ class DatabaseReaderLoginOptions {
     }
   #end
 
-  #if JS_BROWSER @:jsasync #end public function connect(?callback : Dynamic->Void) : Dynamic {
+  #if JS_BROWSER @:jsasync #end public function connect(?callback : Dynamic->Void) : #if JS_BROWSER js.lib.Promise<Dynamic> #else Dynamic #end {
     var connector : String = StringTools.trim(_values["connector"]).toLowerCase();
     var con : Dynamic = null;
     #if python
@@ -615,7 +618,7 @@ class DatabaseReaderLoginOptions {
     _cancelClose = true;
   }
 
-  #if JS_BROWSER @:jsasync #end public function query(query : String, ?params : Map<String, Dynamic>, ?callback : Dynamic->Void) : Dynamic {
+  #if JS_BROWSER @:jsasync #end public function query(query : String, ?params : Map<String, Dynamic>, ?callback : Dynamic->Void) : #if JS_BROWSER js.lib.Promise<Dynamic> #else Dynamic #end {
     var connector : String = StringTools.trim(_values["connector"]).toLowerCase();
     var r : Dynamic;
     if (params != null) {
@@ -775,7 +778,7 @@ class DatabaseReaderLoginOptions {
     }
   }
 
-  #if JS_BROWSER @:jsasync #end public function queryForReader(query : String, ?params : Map<String, Dynamic>, ?callback : DataTableReader->Void) : DataTableReader {
+  #if JS_BROWSER @:jsasync #end public function queryForReader(query : String, ?params : Map<String, Dynamic>, ?callback : DataTableReader->Void) : #if JS_BROWSER js.lib.Promise<DataTableReader> #else DataTableReader #end {
     var r : DatabaseReader;
     this.query(query, params, function (cur : Dynamic) : Void {
       r = DatabaseReader.read(cur);

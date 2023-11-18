@@ -96,19 +96,19 @@ class DelimitedReader extends DataTableReader {
   }
 
   public static function createRawReader(reader : Reader) {
-    return new DelimitedReader(RAWInfo.instance, reader);
+    return new DelimitedReader(RAWInfo.instance(), reader);
   }  
 
   public static function createCSVReader(reader : Reader) {
-    return new DelimitedReader(CSVInfo.instance, reader);
+    return new DelimitedReader(CSVInfo.instance(), reader);
   }
 
   public static function createTSVReader(reader : Reader) {
-    return new DelimitedReader(TSVInfo.instance, reader);
+    return new DelimitedReader(TSVInfo.instance(), reader);
   }
 
   public static function createPSVReader(reader : Reader) {
-    return new DelimitedReader(PSVInfo.instance, reader);
+    return new DelimitedReader(PSVInfo.instance(), reader);
   }
   
   public override function headerRowNotIncluded() : Bool {

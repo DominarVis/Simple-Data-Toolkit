@@ -162,17 +162,17 @@ class ConverterStageStandard implements ConverterStage {
 
         switch (fTarget) {
           case TEX:
-            diTarget = TeXInfo.instance;
+            diTarget = TeXInfo.instance();
           case RAW:
-            diTarget = RAWInfo.instance;
+            diTarget = RAWInfo.instance();
           case CSV:
-            diTarget = CSVInfo.instance;
+            diTarget = CSVInfo.instance();
           case PSV:
-            diTarget = PSVInfo.instance;
+            diTarget = PSVInfo.instance();
           case TSV:
-            diTarget = TSVInfo.instance;
+            diTarget = TSVInfo.instance();
           case HTMLTable:
-            tiTarget = StandardTableInfo.instance;
+            tiTarget = StandardTableInfo.instance();
             if (
               #if (haxe_ver < 3.2)
                 Std.is(oTarget, Writer)
@@ -185,19 +185,19 @@ class ConverterStageStandard implements ConverterStage {
               writer = TableWriter.createStandardTableWriterForElement(oTarget);
             }
           case DIR:
-            fshTarget = CMDDirHandler.instance;
+            fshTarget = CMDDirHandler.instance();
             writer = FileSystemWriter.createCMDDirWriter(oTarget);
           case INI:
-            kvhTarget = INIHandler.instance;
+            kvhTarget = INIHandler.instance();
             writer = KeyValueWriter.createINIWriter(oTarget);
           case JSON:
-            kvhTarget = JSONHandler.instance;
+            kvhTarget = JSONHandler.instance();
             writer = KeyValueWriter.createJSONWriter(oTarget);
           case PROPERTIES:
-            kvhTarget = PropertiesHandler.instance;
+            kvhTarget = PropertiesHandler.instance();
             writer = KeyValueWriter.createPropertiesWriter(oTarget);
           case SPLUNK:
-            kvhTarget = SplunkHandler.instance;
+            kvhTarget = SplunkHandler.instance();
             writer = KeyValueWriter.createSplunkWriter(oTarget);
           case SQL:
             var sqlType : String = cast getOption(outputOptions, "sqlType");
@@ -211,19 +211,19 @@ class ConverterStageStandard implements ConverterStage {
                 case "Insert":
                   ciTarget = SQLSelectInfo.insertIntoTable(tableName);
                 default:
-                  ciTarget = SQLSelectInfo.instance;
+                  ciTarget = SQLSelectInfo.instance();
               }
             } else {
-              ciTarget = SQLSelectInfo.instance;
+              ciTarget = SQLSelectInfo.instance();
             }
           case Haxe:
-            ciTarget = HaxeInfoArrayOfMaps.instance;
+            ciTarget = HaxeInfoArrayOfMaps.instance();
           case Python:
-            ciTarget = PythonInfoArrayOfMaps.instance;
+            ciTarget = PythonInfoArrayOfMaps.instance();
           case Java:
-            ciTarget = JavaInfoArrayOfMaps.instance;
+            ciTarget = JavaInfoArrayOfMaps.instance();
           case CSharp:
-            ciTarget = CSharpInfoArrayOfMaps.instance;  
+            ciTarget = CSharpInfoArrayOfMaps.instance();
           case ARRAY:
             {
               writer = Array2DWriter.writeToExpandableArrayI(cast oTarget);
@@ -330,41 +330,41 @@ class ConverterStageStandard implements ConverterStage {
 
         switch (fSource) {
           case RAW:
-            diSource = RAWInfo.instance;          
+            diSource = RAWInfo.instance();
           case CSV:
-            diSource = CSVInfo.instance;
+            diSource = CSVInfo.instance();
           case PSV:
-            diSource = PSVInfo.instance;
+            diSource = PSVInfo.instance();
           case TSV:
-            diSource = TSVInfo.instance;
+            diSource = TSVInfo.instance();
           case HTMLTable:
-            tiSource = StandardTableInfo.instance;
+            tiSource = StandardTableInfo.instance();
             reader = TableReader.createStandardTableReader(oSource);
           case DIR:
-            fshSource = CMDDirHandler.instance;
+            fshSource = CMDDirHandler.instance();
             reader = FileSystemReader.createCMDDirReader(oSource);
           case INI:
-            kvhSource = INIHandler.instance;
+            kvhSource = INIHandler.instance();
             reader = KeyValueReader.createINIReader(oSource);
           case JSON:
-            kvhSource = JSONHandler.instance;
+            kvhSource = JSONHandler.instance();
             reader = KeyValueReader.createJSONReader(oSource);
           case PROPERTIES:
-            kvhSource = PropertiesHandler.instance;
+            kvhSource = PropertiesHandler.instance();
             reader = KeyValueReader.createPropertiesReader(oSource);
           case SPLUNK:
-            kvhSource = SplunkHandler.instance;
+            kvhSource = SplunkHandler.instance();
             reader = KeyValueReader.createSplunkReader(oSource);
           case SQL:
-            ciSource = SQLSelectInfo.instance;
+            ciSource = SQLSelectInfo.instance();
           case Haxe:
-            ciSource = HaxeInfoArrayOfMaps.instance;
+            ciSource = HaxeInfoArrayOfMaps.instance();
           case Python:
-            ciSource = PythonInfoArrayOfMaps.instance;
+            ciSource = PythonInfoArrayOfMaps.instance();
           case Java:
-            ciSource = JavaInfoArrayOfMaps.instance;
+            ciSource = JavaInfoArrayOfMaps.instance();
           case CSharp:
-            ciSource = CSharpInfoArrayOfMaps.instance;    
+            ciSource = CSharpInfoArrayOfMaps.instance();    
           case DB:
             #if(!JS_BROWSER && !LUA_TI)
               if (Std.isOfType(oSource, String)) {

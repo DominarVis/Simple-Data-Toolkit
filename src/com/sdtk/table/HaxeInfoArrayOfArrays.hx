@@ -32,7 +32,14 @@ class HaxeInfoArrayOfArrays extends HaxeInfoAbstract {
     super();
   }
 
-  public static var instance : CodeInfo = new HaxeInfoArrayOfArrays();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new HaxeInfoArrayOfArrays();
+    }
+    return _instance;
+  }
 
   public override function rowStart(name : String, index : Int) : String {
     return arrayRowStart(name, index);

@@ -37,7 +37,14 @@ import com.sdtk.std.*;
 @:expose
 @:nativeGen
 class ICS extends AbstractCalendarInviteFormat {
-    public static var instance : CalendarInviteFormat<Reader, Writer> = new ICS();
+    private static var _instance : CalendarInviteFormat<Reader, Writer>;
+
+    public static function instance() : CalendarInviteFormat<Reader, Writer> {
+        if (_instance == null) {
+            _instance = new ICS();
+        }
+        return _instance;
+    }
 
     private function new() {
         super(

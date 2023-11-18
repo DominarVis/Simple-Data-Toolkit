@@ -32,6 +32,7 @@ class ColumnFilterDataTableReader extends DataTableReader {
     private var _current : Dynamic;
     private var _columnHeaderFilter : Null<Filter>;
     private var _header : Array<String>;
+    private var _buffer : Map<String, Dynamic>;
     private var _sentHeader : Bool = false;
     private var _prev : Null<DataTableRowReader> = null;
 
@@ -46,20 +47,23 @@ class ColumnFilterDataTableReader extends DataTableReader {
         super.startI();
         if (_reader.hasNext()) {
             _header = new Array<String>();
+            _buffer = new Map<String, Dynamic>();
             _remove = new Array<Bool>();
             var dtrrHeader : DataTableRowReader = _reader.next();
             dtrrHeader.start();
             var i : Int = 0;
 
             while (dtrrHeader.hasNext()) {
-                var sValue : String = dtrrHeader.next();
-                if (_columnHeaderFilter.filter(sValue) == null) {
+                var sValue : Dynamic = dtrrHeader.next();
+                var sHeader : String = dtrrHeader.name();
+                if (_columnHeaderFilter.filter(sHeader) == null) {
                     _remove.push(true);
                 } else {
                     _remove.push(false);
                 }
 
-                _header.push(sValue);
+                _buffer.set(sHeader, sValue);
+                _header.push(sHeader);
                 i++;
             }
         }
@@ -93,7 +97,9 @@ class ColumnFilterDataTableReader extends DataTableReader {
             return _prev;
         } else {
             _sentHeader = true;
-            return ArrayRowReader.readWholeArray(_header);
+            var reader = MapRowReader.readWholeMap(_buffer);
+            _buffer = null;
+            return reader;
         }
     }
 
@@ -126,6 +132,7 @@ class ColumnFilterDataTableReader extends DataTableReader {
             _current = null;
             _columnHeaderFilter = null;
             _prev = null;
+            _buffer = null;
         }
     }
 

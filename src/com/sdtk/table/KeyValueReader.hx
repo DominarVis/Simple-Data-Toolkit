@@ -40,19 +40,19 @@ class KeyValueReader extends DataTableReader {
   }
 
   public static function createINIReader(rReader : Reader) {
-    return new KeyValueReader(INIHandler.instance, rReader);
+    return new KeyValueReader(INIHandler.instance(), rReader);
   }
 
   public static function createJSONReader(rReader : Reader) {
-    return new KeyValueReader(JSONHandler.instance, rReader);
+    return new KeyValueReader(JSONHandler.instance(), rReader);
   }
 
   public static function createPropertiesReader(rReader : Reader) {
-    return new KeyValueReader(PropertiesHandler.instance, rReader);
+    return new KeyValueReader(PropertiesHandler.instance(), rReader);
   }
 
   public static function createSplunkReader(rReader : Reader) {
-    return new KeyValueReader(SplunkHandler.instance, rReader);
+    return new KeyValueReader(SplunkHandler.instance(), rReader);
   }
 
   private function check() : Void {

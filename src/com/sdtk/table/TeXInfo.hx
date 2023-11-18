@@ -28,10 +28,16 @@ package com.sdtk.table;
 @:expose
 @:nativeGen
 class TeXInfo implements DelimitedInfo {
-  private function new() {
-  }
+  private function new() { }
 
-  public static var instance : DelimitedInfo = new TeXInfo();
+  private static var _instance : DelimitedInfo;
+
+  public static function instance() : DelimitedInfo {
+    if (_instance == null) {
+        _instance = new TeXInfo();
+    }
+    return _instance;
+  }
 
   // TODO
   // \begin{tabular}{ | c | c | }

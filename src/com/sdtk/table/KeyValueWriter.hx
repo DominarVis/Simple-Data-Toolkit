@@ -29,6 +29,8 @@ import com.sdtk.std.*;
 class KeyValueWriter extends DataTableWriter {
   private var _handler : Null<KeyValueHandler> = null;
   private var _writer : Null<Writer> = null;
+  private var _lastName : Null<String> = null;
+  private var _lastIndex : Null<Int> = null;
 
   private function new(fshHandler : KeyValueHandler, wWriter : Writer) {
     super();
@@ -37,19 +39,19 @@ class KeyValueWriter extends DataTableWriter {
   }
 
   public static function createINIWriter(wWriter : Writer) {
-    return new KeyValueWriter(INIHandler.instance, wWriter);
+    return new KeyValueWriter(INIHandler.instance(), wWriter);
   }
 
   public static function createJSONWriter(wWriter : Writer) {
-    return new KeyValueWriter(JSONHandler.instance, wWriter);
+    return new KeyValueWriter(JSONHandler.instance(), wWriter);
   }
 
   public static function createPropertiesWriter(wWriter : Writer) {
-    return new KeyValueWriter(PropertiesHandler.instance, wWriter);
+    return new KeyValueWriter(PropertiesHandler.instance(), wWriter);
   }
 
   public static function createSplunkWriter(wWriter : Writer) {
-    return new KeyValueWriter(SplunkHandler.instance, wWriter);
+    return new KeyValueWriter(SplunkHandler.instance(), wWriter);
   }
 
   public override function start() : Void {
@@ -77,9 +79,12 @@ class KeyValueWriter extends DataTableWriter {
   #end
   public override function dispose() : Void {
     if (_writer != null) {
+      _handler.writeEnd(_writer, _lastName, _lastIndex);
       _writer.dispose();
       _writer = null;
       _handler = null;
+      _lastName = null;
+      _lastIndex = null;
       super.dispose();
     }
   }

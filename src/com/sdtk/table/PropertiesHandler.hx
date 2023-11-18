@@ -28,7 +28,14 @@ import com.sdtk.std.*;
 class PropertiesHandler implements KeyValueHandler {
   private function new() { }
 
-  public static var instance : KeyValueHandler = new PropertiesHandler();
+  private static var _instance : KeyValueHandler;
+
+  public static function instance() : KeyValueHandler {
+    if (_instance == null) {
+        _instance = new PropertiesHandler();
+    }
+    return _instance;
+  }
 
   public function favorReadAll() : Bool {
     return true;
@@ -87,7 +94,7 @@ class PropertiesHandler implements KeyValueHandler {
     return mMap;
   }
 
-  public function write(wWriter : Writer, mMap : Map<String, Dynamic>) : Void {
+  public function write(wWriter : Writer, mMap : Map<String, Dynamic>, name : String, index : Int) : Void {
     wWriter = wWriter.switchToLineWriter();
       #if (hax_ver >= 4)
       for (key => value in mMap) {
@@ -99,12 +106,14 @@ class PropertiesHandler implements KeyValueHandler {
     }
   }
 
+  public function writeEnd(wWriter : Writer, lastName : String, lastIndex : Int) : Void { }  
+
   public function readAll(rReader : Reader, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void {
     aMaps.push(read(rReader));
     aNames.push("");
   }
 
   public function writeAll(wWriter : Writer, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void {
-    write(wWriter, aMaps[0]);
+    write(wWriter, aMaps[0], null, 0);
   }
 }

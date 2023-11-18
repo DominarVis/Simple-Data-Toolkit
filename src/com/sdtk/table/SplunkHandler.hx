@@ -28,7 +28,14 @@ import com.sdtk.std.*;
 class SplunkHandler implements KeyValueHandler {
   private function new() { }
 
-  public static var instance : KeyValueHandler = new SplunkHandler();
+  private static var _instance : KeyValueHandler;
+
+  public static function instance() : KeyValueHandler {
+    if (_instance == null) {
+        _instance = new SplunkHandler();
+    }
+    return _instance;
+  }
 
   public function favorReadAll() : Bool {
     return true;
@@ -66,7 +73,7 @@ class SplunkHandler implements KeyValueHandler {
     return mMap;
   }
 
-  public function write(wWriter : Writer, mMap : Map<String, Dynamic>) : Void {
+  public function write(wWriter : Writer, mMap : Map<String, Dynamic>, name : String, index : Int) : Void {
     var sbStart : StringBuf = new StringBuf();
     var sbBuffer : StringBuf = new StringBuf();
     wWriter = wWriter.switchToLineWriter();
@@ -91,6 +98,8 @@ class SplunkHandler implements KeyValueHandler {
     wWriter.write(sbStart.toString());
   }
 
+  public function writeEnd(wWriter : Writer, lastName : String, lastIndex : Int) : Void { }  
+
   public function readAll(rReader : Reader, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void {
     rReader = rReader.switchToLineReader();
     while (rReader.hasNext()) {
@@ -104,7 +113,7 @@ class SplunkHandler implements KeyValueHandler {
     wWriter = wWriter.switchToLineWriter();
 
     while (i < aMaps.length) {
-      write(wWriter, aMaps[i++]);
+      write(wWriter, aMaps[i++], null, 0);
     }
   }
 }

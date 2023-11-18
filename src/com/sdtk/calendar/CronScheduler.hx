@@ -35,13 +35,13 @@ class CronSchedulerAbstract {
         if (_exec) {
             #if sys
                 var process = new sys.io.Process(command, args);
-                var output = process.stdout.readAll().toString();
-                process.close();
                 if (send != null) {
                     process.stdin.writeString(send);
                     process.stdin.flush();
                     process.stdin.close();
                 }
+                var output = process.stdout.readAll().toString();
+                process.close();
                 return output;
             #else
                 // TODO
@@ -184,7 +184,14 @@ class CronSchedulerAbstract {
 @:expose
 @:nativeGen
 class CronSchedulerExecutor extends CronSchedulerAbstract {
-    public static var instance : CronSchedulerExecutor = new CronSchedulerExecutor();
+    private static var _instance : CronSchedulerExecutor;
+
+    public static function instance() : CronSchedulerExecutor {
+        if (_instance == null) {
+            _instance = new CronSchedulerExecutor();
+        }
+        return _instance;
+    }
 
     private function new() {
         super(true);
@@ -201,7 +208,14 @@ class CronSchedulerExecutor extends CronSchedulerAbstract {
 @:expose
 @:nativeGen
 class CronSchedulerText  extends CronSchedulerAbstract {
-    public static var instance : CronSchedulerText  = new CronSchedulerText();
+    private static var _instance : CronSchedulerText;
+
+    public static function instance() : CronSchedulerText {
+        if (_instance == null) {
+            _instance = new CronSchedulerText();
+        }
+        return _instance;
+    }
 
     private function new() {
         super(false);

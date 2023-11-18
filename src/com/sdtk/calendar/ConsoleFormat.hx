@@ -35,7 +35,14 @@ import com.sdtk.std.*;
 @:expose
 @:nativeGen
 class ConsoleFormat extends AbstractCalendarInviteFormat {
-    public static var instance : CalendarInviteFormat<Reader, Writer> = new ConsoleFormat();
+    private static var _instance : CalendarInviteFormat<Reader, Writer>;
+
+    public static function instance() : CalendarInviteFormat<Reader, Writer> {
+      if (_instance == null) {
+        _instance = new ConsoleFormat();
+      }
+      return _instance;
+    }    
 
     private function new() {
         super(

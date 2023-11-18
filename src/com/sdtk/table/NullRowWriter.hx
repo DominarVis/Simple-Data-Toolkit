@@ -28,8 +28,15 @@ package com.sdtk.table;
 @:expose
 @:nativeGen
 class NullRowWriter extends DataTableRowWriter {
-  public static var instance : DataTableRowWriter = new NullRowWriter();
-  
+  private static var _instance : DataTableRowWriter;
+
+  public static function instance() : DataTableRowWriter {
+    if (_instance == null) {
+        _instance = new NullRowWriter();
+    }
+    return _instance;
+  }
+
   private function new() {
     super();
   }

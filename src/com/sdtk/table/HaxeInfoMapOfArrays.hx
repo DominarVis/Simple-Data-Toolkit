@@ -32,7 +32,14 @@ class HaxeInfoMapOfArrays extends HaxeInfoAbstract {
     super();
   }
 
-  public static var instance : CodeInfo = new HaxeInfoMapOfArrays();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new HaxeInfoMapOfArrays();
+    }
+    return _instance;
+  }
 
   public override function rowStart(name : String, index : Int) : String {
     return mapRowStart(name, index);

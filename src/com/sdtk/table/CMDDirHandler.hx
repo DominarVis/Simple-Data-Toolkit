@@ -72,7 +72,14 @@ class CMDDirHandler implements FileSystemHandler {
   private function new() {
   }
 
-  public static var instance : FileSystemHandler = new CMDDirHandler();
+  private static var _instance : FileSystemHandler;
+
+  public static function instance() : FileSystemHandler {
+    if (_instance == null) {
+        _instance = new CMDDirHandler();
+    }
+    return _instance;
+  }  
 
   private function convertFromDateTime(dDate : Date) : String {
     var iHours : Int = dDate.getHours();

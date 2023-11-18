@@ -1,0 +1,10 @@
+Changes required to conform to jEdit 4.4 API:
+
+# Even if you don't store additional files, this is a good idea to set so you get 0 instead of unknown:
+plugin.SDTKJEditPlugin.usePluginHome=true
+
+# Added a .description property. this is the "short description":
+plugin.SDTKJEditPlugin.description=This plugin provides a dockable "scratch pad" for writing and displaying notes, to do lists or similar items as unformatted text.
+
+Provided a long description in an accompanying file "description.html"
+

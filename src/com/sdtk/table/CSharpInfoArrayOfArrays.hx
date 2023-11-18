@@ -32,7 +32,14 @@ class CSharpInfoArrayOfArrays extends CSharpInfoAbstract {
     super();
   }
 
-  public static var instance : CodeInfo = new CSharpInfoArrayOfArrays();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new CSharpInfoArrayOfArrays();
+    }
+    return _instance;
+  }
 
   public override function start() : String {
     return arrayStart();

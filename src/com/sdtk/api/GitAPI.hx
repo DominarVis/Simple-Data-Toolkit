@@ -52,7 +52,7 @@ class GitAPI extends API {
         }
     }
 
-    public function filesAPI() : InputAPI {
+    public static function filesAPI() : InputAPI {
         return GitAPIFiles.instance();
     }    
 
@@ -60,7 +60,7 @@ class GitAPI extends API {
         fetch("GET", _gitRoot, _usersAPI, null, null, "/" + owner + "/repos", null, callback);
     }
 
-    public function reposAPI() : InputAPI {
+    public static function reposAPI() : InputAPI {
         return GitAPIRepos.instance();
     }        
 
@@ -68,7 +68,7 @@ class GitAPI extends API {
         fetch("GET", _gitRoot, _reposAPI, null, null, "/" + owner + "/" + repo + "/branches", null, callback);
     }
 
-    public function branchesAPI() : InputAPI {
+    public static function branchesAPI() : InputAPI {
         return GitAPIBranches.instance();
     }            
 
@@ -89,7 +89,7 @@ class GitAPI extends API {
         }
     }    
 
-    public function commitsAPI() : InputAPI {
+    public static function commitsAPI() : InputAPI {
         return GitAPICommits.instance();
     }
 
@@ -147,12 +147,14 @@ class GitAPI extends API {
         }
     }
 
-    public function retrieveAPI() : InputAPI {
+    public static function retrieveAPI() : InputAPI {
         return GitAPIRetrieve.instance();
     } 
     
     private override function getUserHeader() : String {
         if (_user == null) {
+            return null;
+        } else if (_apiKey.indexOf("github_pat_") == 0) {
             return null;
         } else {
             return "Username";
@@ -166,8 +168,8 @@ class GitAPI extends API {
     private override function getAuthorizationHeader() : String {
         if (_apiKey == null) {
             return null;
-        } else if (_apiKey.indexOf("github_pat_") == 0) {
-            return "Password";
+        } else if (_apiKey.indexOf("github_pat_") == 0 && _user != null) {
+            return null;
         } else {
             return "Authorization";
         }
@@ -176,7 +178,7 @@ class GitAPI extends API {
     private override function getAuthorizationHeaderBearer() : String {
         if (_apiKey == null) {
             return null;
-        } else if (_apiKey.indexOf("github_pat_") == 0) {
+        } else if (_apiKey.indexOf("github_pat_") == 0 && _user != null) {
             return "";
         } else {
             return "token ";
@@ -187,12 +189,14 @@ class GitAPI extends API {
         return _apiKey;
     }
 
-    public function setKey(key : String) : Void {
+    public function setKey(key : String) : GitAPI {
         _apiKey = key;
+        return this;
     }
     
-    public function setUser(user : String) : Void {
+    public function setUser(user : String) : GitAPI {
         _user = user;
+        return this;
     }
 
     public override function parse(value : String) : InputAPI {

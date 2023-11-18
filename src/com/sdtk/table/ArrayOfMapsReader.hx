@@ -27,7 +27,7 @@ package com.sdtk.table;
 **/
 @:expose
 @:nativeGen
-class ArrayOfObjectsReader<A> extends DataTableReader {
+class ArrayOfMapsReader<A> extends DataTableReader {
   private var _i : Int;
   private var _info : ArrayInfo<A>;
 
@@ -40,16 +40,16 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
   /**
     Read the whole array.
   **/
-  public static function readWholeArray<A>(arr : Array<A>) : ArrayOfObjectsReader<A> {
-    return new ArrayOfObjectsReader<A>(new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+  public static function readWholeArray<A>(arr : Array<Map<String, A>>) : ArrayOfMapsReader<A> {
+    return new ArrayOfMapsReader<A>(new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
   }
 
-  public static function readWholeArrayI<Dynamic>(arr : Array<Dynamic>) : ArrayOfObjectsReader<Dynamic> {
-    return new ArrayOfObjectsReader<Dynamic>(new ArrayInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+  public static function readWholeArrayI<Dynamic>(arr : Array<Dynamic>) : ArrayOfMapsReader<Dynamic> {
+    return new ArrayOfMapsReader<Dynamic>(new ArrayInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1));
   }
 
-  public static function reuse<A>(info : ArrayInfo<A>) : ArrayOfObjectsReader<A> {
-    return new ArrayOfObjectsReader(info);
+  public static function reuse<A>(info : ArrayInfo<A>) : ArrayOfMapsReader<A> {
+    return new ArrayOfMapsReader(info);
   }
 
   public override function hasNext() : Bool {
@@ -58,10 +58,10 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
 
   public override function nextReuse(rowReader : Null<DataTableRowReader>) : Dynamic {
     if (rowReader == null) {
-      rowReader = ObjectRowReader.readWholeObject(_info._arr[_i]);
+      rowReader = MapRowReader.readWholeMap(cast _info._arr[_i]);
     } else {
-      var rr : ObjectRowReader<Dynamic> = cast rowReader;
-      rr.reuse(cast _info._arr[_i]);
+      var rr : MapRowReader<Dynamic> = cast rowReader;
+      rr.reuse(cast _info._arr[_i], null, null);
     }
     incrementTo(null, rowReader, _i);
     _i += _info._rowIncrement;
@@ -73,7 +73,7 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
   }
 
   public override function iterator() : Iterator<Dynamic> {
-    return new ArrayOfObjectsReader<A>(_info);
+    return new ArrayOfMapsReader<A>(_info);
   }
 
   // TODO
@@ -87,5 +87,9 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
 
   public override function reset() : Void {
     _i = _info._start;
+  }
+
+  public override function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+    return cast _info._arr.slice(_info._start, (_info._end < 0 ? _info._arr.length - 1 : _info._end));
   }
 }

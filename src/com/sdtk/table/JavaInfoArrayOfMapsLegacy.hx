@@ -32,7 +32,14 @@ class JavaInfoArrayOfMapsLegacy extends JavaInfoAbstract {
     super();
   }
 
-  public static var instance : CodeInfo = new JavaInfoArrayOfMapsLegacy();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new JavaInfoArrayOfMapsLegacy();
+    }
+    return _instance;
+  }
 
   public override function start() : String {
     return arrayStart();

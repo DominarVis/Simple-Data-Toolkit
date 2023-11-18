@@ -100,7 +100,7 @@ class DataTableReader extends DataEntryReader {
         var iNulls : Int = 0;
   	    for (writer in writers) {
   	      if (!writer.writeHeaderFirst()) {
-            rowWriters[i++] = NullRowWriter.instance;
+            rowWriters[i++] = NullRowWriter.instance();
   	        iNulls++;
   	      } else {
   	      	rowWriters[i++] = writer.writeStart(sName, iIndex);
@@ -108,7 +108,7 @@ class DataTableReader extends DataEntryReader {
   	    }
   	  
   	    if (iNulls == i) {
-  	  	  rowReader.convertTo(NullRowWriter.instance);
+  	  	  rowReader.convertTo(NullRowWriter.instance());
   	    } else {
           bWritingRowNames = writeRowName(writers, rowWriters, sName, bWritingRowNames);
   	      rowReader.convertToAll(rowWriters);
@@ -116,7 +116,7 @@ class DataTableReader extends DataEntryReader {
         i = 0;
         for (rowWriter in rowWriters) {
           if (rowWriter != null) {
-            if (rowWriter == NullRowWriter.instance) {
+            if (rowWriter == NullRowWriter.instance()) {
               rowWriters[i] = null;
             } else {
               rowWriter.dispose();
@@ -285,6 +285,14 @@ class DataTableReader extends DataEntryReader {
   public function to(o : Dynamic) : Dynamic {
     // TODO
     return null;
+  }
+
+  public function filterColumnsOnly(arr : Array<String>) : DataTableReader {
+    return new ColumnFilterDataTableReader(this, com.sdtk.std.Filter.list(arr, false));
+  }
+
+  public function filterColumnsExclude(arr : Array<String>) : DataTableReader {
+    return new ColumnFilterDataTableReader(this, com.sdtk.std.Filter.list(arr, true));
   }
 
   /**

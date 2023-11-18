@@ -24,10 +24,11 @@ package com.sdtk.api;
 #if !EXCLUDE_APIS
 @:nativeGen
 class TableauAPI extends API {
-    private static var _tableauRoot : String = "https://10ay.online.tableau.com/api/3.5/sites/";
+    private static var _tableauRoot : String = "10ay.online.tableau.com/api/3.5/sites";
+    private static var _tableauSigninRoot : String = "10ay.online.tableau.com/api/3.5";
     private static var _viewAPI : String = "/views/";
     private static var _dataAPI : String = "/data";
-    private static var _signinAPI : String = "auth/signin";
+    private static var _signinAPI : String = "/auth/signin";
 
     private static var _instance : TableauAPI;
 
@@ -56,7 +57,7 @@ class TableauAPI extends API {
         }, user, password, site);
     }
 
-    public function pullAPI() : InputAPI {
+    public static function pullAPI() : InputAPI {
         return TableauAPIPull.instance();
     }
 
@@ -74,7 +75,7 @@ class TableauAPI extends API {
                     }
                 }
             };
-            instance.fetch("POST", _tableauRoot, _signinAPI, null, null, null, haxe.Json.stringify(params), function (response : Dynamic) {
+            instance.fetch("POST", _tableauSigninRoot, _signinAPI, null, null, null, haxe.Json.stringify(params), function (response : Dynamic) {
                 instance._token = haxe.Json.parse(response).credentials.token;
                 instance._user = user;
                 instance._site = site;

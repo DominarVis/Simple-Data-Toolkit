@@ -32,7 +32,14 @@ class JavaInfoArrayOfMaps extends JavaInfoAbstract {
     super();
   }
 
-  public static var instance : CodeInfo = new JavaInfoArrayOfMaps();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new JavaInfoArrayOfMaps();
+    }
+    return _instance;
+  }
 
   public override function start() : String {
     return arrayStart();

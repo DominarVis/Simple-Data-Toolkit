@@ -32,7 +32,14 @@ class CSharpInfoMapOfMaps extends CSharpInfoAbstract {
     super();
   }
 
-  public static var instance : CodeInfo = new CSharpInfoMapOfMaps();
+  private static var _instance : CodeInfo;
+
+  public static function instance() : CodeInfo {
+    if (_instance == null) {
+        _instance = new CSharpInfoMapOfMaps();
+    }
+    return _instance;
+  }
 
   public override function start() : String {
     return mapStart();

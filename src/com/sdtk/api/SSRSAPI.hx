@@ -59,7 +59,7 @@ class SSRSAPI extends API {
         }, user, password, site);
     }
 
-    public function pullAPI() : InputAPI {
+    public static function pullAPI() : InputAPI {
         return SSRSAPIPull.instance();
     }
 

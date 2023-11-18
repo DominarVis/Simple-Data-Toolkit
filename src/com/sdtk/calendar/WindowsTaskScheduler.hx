@@ -211,8 +211,14 @@ class WindowsTaskSchedulerAbstract {
 @:expose
 @:nativeGen
 class WindowsTaskSchedulerExecutor extends WindowsTaskSchedulerAbstract {
-    public static var instance : WindowsTaskSchedulerExecutor = new WindowsTaskSchedulerExecutor();
+    private static var _instance : WindowsTaskSchedulerExecutor;
 
+    public static function instance() : WindowsTaskSchedulerExecutor {
+      if (_instance == null) {
+          _instance = new WindowsTaskSchedulerExecutor();
+      }
+      return _instance;
+    }  
 
     private function new() {
         super(true);
@@ -233,7 +239,14 @@ class WindowsTaskSchedulerExecutor extends WindowsTaskSchedulerAbstract {
 @:expose
 @:nativeGen
 class WindowsTaskSchedulerText extends WindowsTaskSchedulerAbstract {
-    public static var instance : WindowsTaskSchedulerText = new WindowsTaskSchedulerText();
+    private static var _instance : WindowsTaskSchedulerText;
+
+    public static function instance() : WindowsTaskSchedulerText {
+      if (_instance == null) {
+          _instance = new WindowsTaskSchedulerText();
+      }
+      return _instance;
+    }  
 
     private function new() {
         super(false);

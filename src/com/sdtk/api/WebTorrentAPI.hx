@@ -69,11 +69,11 @@ class WebTorrentAPI extends API {
         });
     }
 
-    public function filesAPI() : InputAPI {
+    public static function filesAPI() : InputAPI {
         return WebTorrentAPIFiles.instance();
     }
 
-    public function retrieveAPI() : InputAPI {
+    public static function retrieveAPI() : InputAPI {
         return WebTorrentAPIRetrieve.instance();
     }    
 }

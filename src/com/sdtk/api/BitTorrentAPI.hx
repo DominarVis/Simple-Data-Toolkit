@@ -146,7 +146,7 @@ class BitTorrentAPI extends API {
         // {"total":,"rangeTotal":,"data":[{"block":,"hash":,"timestamp":,"ownerAddress":,"toAddress":,"contractType":,"confirmed":,"revert":,"SmartCalls":,"Events":,"id":,"data":,"fee":,"contractRet":,"result":,"amount":,"cost":}],"wholeChainTxCount":,"contractMap":{"0x":false,},"contractInfo":{}}
     }
 
-    public function transactionsAPI() : InputAPI {
+    public static function transactionsAPI() : InputAPI {
         return BitTorrentAPITransactions.instance();
     }
 
@@ -212,7 +212,7 @@ class BitTorrentAPI extends API {
         // {"total":,"rangeTotal":,"contractInfo":{},"token_transfers":[{"transaction_id":,"block_ts":,"from_address":,"to_address":,"block":,"contract_address":,"amount_str":,"event_type":,"eventType":,"confirmed":,"contractRet":,"status":,"quant":,"approval_amount":,"contract_type":,"finalResult":,"tokenInfo":{"tokenId":,"tokenAbbr":,"tokenName":,"tokenDecimal":,"tokenCanShow":,"tokenType":,"tokenLogo":,"tokenLevel":,"vip":},"fromAddressIsContract":,"toAddressIsContract":,"revert":},]}
     }
 
-    public function transfersAPI() : InputAPI {
+    public static function transfersAPI() : InputAPI {
         return BitTorrentAPITransfers.instance();
     }
 

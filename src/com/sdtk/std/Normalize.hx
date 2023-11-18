@@ -76,6 +76,14 @@ class Normalize {
         }
     }
 
+    public static function haxeMapValuesToStrings(mapping : Map<String, Dynamic>) : Map<String, String> {
+        var map : Map<String, String> = new Map<String, String>();
+        for (field in mapping.keys()) {
+            map.set(field, Std.string(mapping.get(field)));
+        }
+        return map;
+    }
+
     public static function haxeToNative(mapping : Map<String, String>) : Dynamic {
         #if php
             return cast php.Syntax.code("{0}->data", mapping);

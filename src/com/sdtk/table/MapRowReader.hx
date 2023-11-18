@@ -49,8 +49,9 @@ class MapRowReader<A> extends DataTableRowReader {
       _whole = false;
     }
 
-    if (nextKey == null) {
+    if (nextKey != null) {
       _nextKey = nextKey;
+      _originalKey = _nextKey;
     } else {
       _nextKey = _iterator.next();
       _originalKey = _nextKey;
@@ -81,7 +82,7 @@ class MapRowReader<A> extends DataTableRowReader {
     if (_index == -1) {
       return _nextKey != null;
     } else if (_whole) {
-      return _iterator.hasNext();
+      return _iterator.hasNext() || _nextKey != null;
     } else {
      return false;
     }
@@ -93,7 +94,7 @@ class MapRowReader<A> extends DataTableRowReader {
     } else {
       _name = Std.string(_nextKey);
       _value = _map.get(_nextKey);
-      incrementTo(null, _value, _index + 1);
+      incrementTo(_name, _value, _index + 1);
       if (_whole) {
         _nextKey = _iterator.next();
       } else {

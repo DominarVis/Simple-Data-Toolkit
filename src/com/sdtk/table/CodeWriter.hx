@@ -82,7 +82,7 @@ class CodeWriter extends DataTableWriter {
   }
 
   public static function createSQLSelectWriter(writer : Writer) {
-    return new CodeWriter(SQLSelectInfo.instance, writer);
+    return new CodeWriter(SQLSelectInfo.instance(), writer);
   }
 
   public static function createSQLCreatetWriter(writer : Writer, name : String) {
@@ -98,94 +98,94 @@ class CodeWriter extends DataTableWriter {
   }    
 
   public static function createCSharpArrayOfArraysWriter(writer : Writer) {
-    return new CodeWriter(CSharpInfoArrayOfArrays.instance, writer);
+    return new CodeWriter(CSharpInfoArrayOfArrays.instance(), writer);
   }
 
   public static function createCSharpArrayOfMapsWriter(writer : Writer) {
-    return new CodeWriter(CSharpInfoArrayOfMaps.instance, writer);
+    return new CodeWriter(CSharpInfoArrayOfMaps.instance(), writer);
   }  
 
   public static function createCSharpMapOfArraysWriter(writer : Writer) {
-    return new CodeWriter(CSharpInfoMapOfArrays.instance, writer);
+    return new CodeWriter(CSharpInfoMapOfArrays.instance(), writer);
   }
 
   public static function createCSharpMapOfMapsWriter(writer : Writer) {
-    return new CodeWriter(CSharpInfoMapOfMaps.instance, writer);
+    return new CodeWriter(CSharpInfoMapOfMaps.instance(), writer);
   }
 
   public static function createPythonArrayOfArraysWriter(writer : Writer) {
-    return new CodeWriter(PythonInfoArrayOfArrays.instance, writer);
+    return new CodeWriter(PythonInfoArrayOfArrays.instance(), writer);
   }
 
   public static function createPythonArrayOfMapsWriter(writer : Writer) {
-    return new CodeWriter(PythonInfoArrayOfMaps.instance, writer);
+    return new CodeWriter(PythonInfoArrayOfMaps.instance(), writer);
   }  
 
   public static function createPythonMapOfArraysWriter(writer : Writer) {
-    return new CodeWriter(PythonInfoMapOfArrays.instance, writer);
+    return new CodeWriter(PythonInfoMapOfArrays.instance(), writer);
   }
 
   public static function createPythonMapOfMapsWriter(writer : Writer) {
-    return new CodeWriter(PythonInfoMapOfMaps.instance, writer);
+    return new CodeWriter(PythonInfoMapOfMaps.instance(), writer);
   }      
 
   public static function createHaxeArrayOfArraysWriter(writer : Writer) {
-    return new CodeWriter(HaxeInfoArrayOfArrays.instance, writer);
+    return new CodeWriter(HaxeInfoArrayOfArrays.instance(), writer);
   }
 
   public static function createHaxeArrayOfMapsWriter(writer : Writer) {
-    return new CodeWriter(HaxeInfoArrayOfMaps.instance, writer);
+    return new CodeWriter(HaxeInfoArrayOfMaps.instance(), writer);
   }  
 
   public static function createHaxeMapOfArraysWriter(writer : Writer) {
-    return new CodeWriter(HaxeInfoMapOfArrays.instance, writer);
+    return new CodeWriter(HaxeInfoMapOfArrays.instance(), writer);
   }
 
   public static function createHaxeMapOfMapsWriter(writer : Writer) {
-    return new CodeWriter(HaxeInfoMapOfMaps.instance, writer);
+    return new CodeWriter(HaxeInfoMapOfMaps.instance(), writer);
   }
 
   public static function createJavaArrayOfArraysWriter(writer : Writer) {
-    return new CodeWriter(JavaInfoArrayOfArrays.instance, writer);
+    return new CodeWriter(JavaInfoArrayOfArrays.instance(), writer);
   }
 
   public static function createJavaArrayOfMapsWriter(writer : Writer) {
-    return new CodeWriter(JavaInfoArrayOfMaps.instance, writer);
+    return new CodeWriter(JavaInfoArrayOfMaps.instance(), writer);
   }  
 
   public static function createJavaMapOfArraysWriter(writer : Writer) {
-    return new CodeWriter(JavaInfoMapOfArrays.instance, writer);
+    return new CodeWriter(JavaInfoMapOfArrays.instance(), writer);
   }
 
   public static function createJavaMapOfMapsWriter(writer : Writer) {
-    return new CodeWriter(JavaInfoMapOfMaps.instance, writer);
+    return new CodeWriter(JavaInfoMapOfMaps.instance(), writer);
   }
 
   public static function createJavaArrayOfMapsWriterLegacy(writer : Writer) {
-    return new CodeWriter(JavaInfoArrayOfMapsLegacy.instance, writer);
+    return new CodeWriter(JavaInfoArrayOfMapsLegacy.instance(), writer);
   }  
 
   public static function createJavaMapOfArraysWriterLegacy(writer : Writer) {
-    return new CodeWriter(JavaInfoMapOfArraysLegacy.instance, writer);
+    return new CodeWriter(JavaInfoMapOfArraysLegacy.instance(), writer);
   }
 
   public static function createJavaMapOfMapsWriterLegacy(writer : Writer) {
-    return new CodeWriter(JavaInfoMapOfMapsLegacy.instance, writer);
+    return new CodeWriter(JavaInfoMapOfMapsLegacy.instance(), writer);
   }
 /*
   public static function createJSONMapOfMapWriter(writer : Writer) {
-    return new CodeWriter(JSONMapOfMapInfo.instance, writer);
+    return new CodeWriter(JSONMapOfMapInfo.instance(), writer);
   }
 
   public static function createJSONMapOfArrayWriter(writer : Writer) {
-    return new CodeWriter(JSONMapOfArrayInfo.instance, writer);
+    return new CodeWriter(JSONMapOfArrayInfo.instance(), writer);
   }
 
   public static function createJSONArrayOfMapWriter(writer : Writer) {
-    return new CodeWriter(TSVInfo.instance, writer);
+    return new CodeWriter(TSVInfo.instance(), writer);
   }
 
   public static function createJSONArrayOfArrayWriter(writer : Writer) {
-    return new CodeWriter(PSVInfo.instance, writer);
+    return new CodeWriter(PSVInfo.instance(), writer);
   }*/
 }

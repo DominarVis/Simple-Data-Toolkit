@@ -44,10 +44,16 @@ interface StringReaderMethod {
 
 @:nativeGen
 class StringReaderEachChar implements StringReaderMethod {
-    private function new() {
-    }
+    private function new() { }
 
-    public static var instance : StringReaderMethod = new StringReaderEachChar();
+    private static var _instance : StringReaderMethod;
+
+    public static function instance() : StringReaderMethod {
+      if (_instance == null) {
+          _instance = new StringReaderEachChar();
+      }
+      return _instance;
+    }  
 
     public function moveToNext(index : Int, value : String) : String {
         return value.substr(index, 1);
@@ -56,10 +62,16 @@ class StringReaderEachChar implements StringReaderMethod {
 
 @:nativeGen
 class StringReaderEachLine implements StringReaderMethod {
-    private function new() {
-    }
+    private function new() { }
 
-    public static var instance : StringReaderMethod = new StringReaderEachLine();
+    private static var _instance : StringReaderMethod;
+
+    public static function instance() : StringReaderMethod {
+      if (_instance == null) {
+          _instance = new StringReaderEachLine();
+      }
+      return _instance;
+    }  
 
     public function moveToNext(index : Int, value : String) : String {
         var j = value.indexOf("\n", index);
@@ -83,7 +95,7 @@ class StringReader extends Reader {
         super();
         _value = sValue;
         _next = "";
-        _method = StringReaderEachChar.instance;
+        _method = StringReaderEachChar.instance();
         moveToNext();
     }
 
@@ -153,17 +165,17 @@ class StringReader extends Reader {
     }
 
     public override function switchToLineReader() : Reader {
-        _method = StringReaderEachLine.instance;
+        _method = StringReaderEachLine.instance();
         return this;
     }
 
     public override function unwrapOne() : Reader {
-        _method = StringReaderEachChar.instance;
+        _method = StringReaderEachChar.instance();
         return this;
     }
 
     public override function unwrapAll() : Reader {
-        _method = StringReaderEachChar.instance;
+        _method = StringReaderEachChar.instance();
         return this;
     }
 

@@ -66,15 +66,18 @@ class APIList {
     public static function inputs() : Array<InputAPI> {
         if (_inputs == null) {
             _inputs = [
-                GitAPI.instance().filesAPI(), GitAPI.instance().reposAPI(), GitAPI.instance().branchesAPI(), GitAPI.instance().commitsAPI(), GitAPI.instance().retrieveAPI(),
-                //OrtingoAPI.instance().postsAPI(),
-                BitTorrentAPI.instance().transactionsAPI(), BitTorrentAPI.instance().transfersAPI(),
-                BTCAPI.instance().transactionsAPI(),
-                EtherscanAPI.instance().transactionsAPI(),
-                #if JS_BROWSER
-                    WebTorrentAPI.instance().filesAPI(), WebTorrentAPI.instance().retrieveAPI(),
+                GitAPI.filesAPI(), GitAPI.reposAPI(), GitAPI.branchesAPI(), GitAPI.commitsAPI(), GitAPI.retrieveAPI(),
+                #if(!JS_BROWSER)
+                    OrtingoAPI.postsAPI(), OrtingoAPI.suggestionsAPI(), OrtingoAPI.commentsAPI(),
                 #end
-                TableauAPI.instance().pullAPI(), SSRSAPI.instance().pullAPI(),
+                BitTorrentAPI.transactionsAPI(), BitTorrentAPI.transfersAPI(),
+                BTCAPI.transactionsAPI(),
+                EtherscanAPI.transactionsAPI(),
+                IEEEAPI.eventsAPI(),
+                #if JS_BROWSER
+                    WebTorrentAPI.filesAPI(), WebTorrentAPI.retrieveAPI(),
+                #end
+                TableauAPI.pullAPI(), SSRSAPI.pullAPI(),
             ];
         }
         return _inputs;

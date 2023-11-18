@@ -33,10 +33,39 @@ class CalendarInvite {
     public var end : Null<Date>;
     public var summary : Null<String>;
     public var uid : Null<String>;
+    public var groupUid : Null<String>;
     public var schedulingType : ScheduleType;
     public var actionExecute : Null<String>;
     public var actionExecuteIn : Null<String>;
-    public var actionExecuteParameters: Null<Array<String>>;   
+    public var actionExecuteParameters: Null<Array<String>>; 
+    public var hosts : Array<String>;  
+    public var to : Array<String>;
+    public var from : Array<String>;
+    public var cost : Float;
+    public var location : String;
+    public var url : String;
+
+    public var format : CalendarInviteFormat<Dynamic, Dynamic>;
 
     public function new() { }
+
+    #if python
+        public function __str__() : String {
+    #else
+        public function toString() : String {
+    #end
+        var sb : StringBuf = new StringBuf();
+        if (format == null) {
+            for (field in Reflect.fields(this)) {
+                if (field != "format") {
+                    sb.add(field + ": " + Reflect.field(this, field) + "\n");
+                }
+            }
+        } else {
+            for (field in format.validColumns()) {
+                sb.add(field + ": " + Reflect.field(this, field) + "\n");
+            }
+        }
+        return sb.toString();
+    }
 }

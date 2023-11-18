@@ -82,22 +82,22 @@ class DelimitedWriter extends DataTableWriter {
   }
 
   public static function createTeXWriter(writer : Writer) {
-    return new DelimitedWriter(TeXInfo.instance, writer);
+    return new DelimitedWriter(TeXInfo.instance(), writer);
   }
 
   public static function createRawWriter(writer : Writer) {
-    return new DelimitedWriter(RAWInfo.instance, writer);
+    return new DelimitedWriter(RAWInfo.instance(), writer);
   }
 
   public static function createCSVWriter(writer : Writer) {
-    return new DelimitedWriter(CSVInfo.instance, writer);
+    return new DelimitedWriter(CSVInfo.instance(), writer);
   }
 
   public static function createTSVWriter(writer : Writer) {
-    return new DelimitedWriter(TSVInfo.instance, writer);
+    return new DelimitedWriter(TSVInfo.instance(), writer);
   }
 
   public static function createPSVWriter(writer : Writer) {
-    return new DelimitedWriter(PSVInfo.instance, writer);
+    return new DelimitedWriter(PSVInfo.instance(), writer);
   }
 }

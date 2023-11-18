@@ -28,10 +28,16 @@ package com.sdtk.table;
 @:expose
 @:nativeGen
 class RAWInfo implements DelimitedInfo {
-  private function new() {
-  }
+  private function new() { }
 
-  public static var instance : DelimitedInfo = new RAWInfo();
+  private static var _instance : DelimitedInfo;
+
+  public static function instance() : DelimitedInfo {
+    if (_instance == null) {
+        _instance = new RAWInfo();
+    }
+    return _instance;
+  }
 
   public function fileStart() : String {
     return "";
