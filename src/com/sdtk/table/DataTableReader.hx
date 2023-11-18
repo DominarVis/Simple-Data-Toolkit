@@ -244,9 +244,18 @@ class DataTableReader extends DataEntryReader {
     return null;
   }
 
-  public function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+
+  #if(cs || java)
+    public function toArrayOfHaxeMaps(arr : Array<Map<String, Dynamic>>) : Array<Map<String, Dynamic>> {
+  #else
+    public function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+  #end  
     if (arr == null) {
-      arr = new Array<Map<String, A>>();
+      #if(cs || java)
+        arr = new Array<Map<String, Dynamic>>();
+      #else
+        arr = new Array<Map<String, A>>();
+      #end
     }
     convertTo(ArrayOfMapsWriter.writeToExpandableArray(arr));
     return arr;

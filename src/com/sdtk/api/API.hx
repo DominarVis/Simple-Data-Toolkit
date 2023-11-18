@@ -182,7 +182,8 @@ class API {
                 php.Syntax.code("array_push({0}, {1})", headers, "Content-Type: multipart/related; boundary=--divider--sdtk--");
             }
             if (headers != null) {
-                for (header in headers.keys()) {
+                var headerIterable : Iterable<String> = cast php.Syntax.code("array_keys({0})", headers);
+                for (header in headerIterable) {
                     php.Syntax.code("array_push({0}, {1})", headers, "" + header + ":" + headers.get(header));
                 }
             }
@@ -219,7 +220,7 @@ class API {
                 http.setHeader("Cookie", cookieToSend.toString());
             }
             if (getUser() != null && getUserHeader() == null && getAccessToken() != null) {
-                http.setHeader('Authorization', 'Basic ' + haxe.crypto.Base64.encode(getUser() + ':' + getAccessToken()));
+                http.setHeader('Authorization', 'Basic ' + haxe.crypto.Base64.encode(haxe.io.Bytes.ofString(getUser() + ':' + getAccessToken())));
             }
             switch (method) {
                 case "GET":

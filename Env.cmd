@@ -5,7 +5,7 @@ cd "%~dp0"
 cd $(dirname "$0")
 
 SET PACKAGE_NAME=com.sdtk
-SET PACKAGE_VERSION=0.2.0
+SET PACKAGE_VERSION=0.2.1
 SET PACKAGE_AUTHORS=Franklin E. Powers, Jr.
 SET PACKAGE_AUTHORS_JSON=["Franklin E. Powers, Jr."]
 SET PACKAGE_AUTHORS_EMAIL=info@vis-software.com

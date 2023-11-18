@@ -78,11 +78,20 @@ def haxe(name, out, src, package, defines):
 		defines = [ ]
 	if languageSwitch == "--python" and "Library" not in name:
 		defines = defines + ["--main " + package]
+	elif languageSwitch == "-cs" and "Library" not in name:
+		defines = defines + ["--main " + package]
+		out = out.replace(".dll", ".exe")
 	for i in range(len(src)):
 		src[i] = "-cp " + src[i]
 	run("haxe", [languageSwitch, buildPath(["out", out])] + src + [ package, platformSwitch] + defines)
 	if languageSwitch == "-java":
 		move(["out", out, out + ".jar"], ["out", "build.tmp"])
+		rm(["out", out])
+	elif languageSwitch == "-cs":
+		if ".dll" in out:
+			move(["out", out, "bin", out + ".dll"], ["out", "build.tmp"])
+		else:
+			move(["out", out, "bin", package.split(".")[-1] + ".exe"], ["out", "build.tmp"])
 		rm(["out", out])
 	else:
 		move(["out", out], ["out", "build.tmp"])

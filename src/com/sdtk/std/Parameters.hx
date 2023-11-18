@@ -121,10 +121,13 @@ class Parameters {
         un = user;
       }
       #if cs
+        /*
         var pc : PrincipalContext = new PrincipalContext(ContextType.Machine, _ldapHost + ":" + _ldapPort);
         var r : Bool = pc.ValidateCredentials(un, password);
         pc.Dispose();
         return r;
+        */
+        return false;
       #elseif php
         var connect : Dynamic = php.Syntax.code("ldap_connect({0}, {1})", _ldapHost, _ldapPort);
         return cast php.Syntax.code("ldap_bind({0}, {1}, {2})", connect, un, password);
@@ -258,6 +261,7 @@ class Parameters {
 }
 #end
 
+/*
 #if cs
 @:native('System.DirectoryServices.AccountManagement.ContextType') extern enum ContextType {
   Machine;
@@ -271,3 +275,4 @@ class Parameters {
   public function Dispose() : Void;
 }
 #end
+*/

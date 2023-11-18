@@ -89,7 +89,11 @@ class ArrayOfMapsReader<A> extends DataTableReader {
     _i = _info._start;
   }
 
-  public override function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+  #if(cs || java)
+    public override function toArrayOfHaxeMaps(arr : Array<Map<String, Dynamic>>) : Array<Map<String, Dynamic>> {
+  #else
+    public override function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+  #end  
     return cast _info._arr.slice(_info._start, (_info._end < 0 ? _info._arr.length - 1 : _info._end));
   }
 }
