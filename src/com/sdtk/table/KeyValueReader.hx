@@ -33,11 +33,15 @@ class KeyValueReader extends DataTableReader {
   private var _names : Null<Array<Dynamic>> = null;
   private var _columns : Null<Array<Dynamic>> = null;
 
-  private function new(fshHandler : KeyValueHandler, rReader : Reader) {
+  public function new(fshHandler : KeyValueHandler, rReader : Reader) {
     super();
     _handler = fshHandler;
     _reader = rReader;
   }
+
+  public override function flip() : DataTableWriter {
+    return new KeyValueWriter(_handler, _reader.flip());
+  }  
 
   public static function createINIReader(rReader : Reader) {
     return new KeyValueReader(INIHandler.instance(), rReader);

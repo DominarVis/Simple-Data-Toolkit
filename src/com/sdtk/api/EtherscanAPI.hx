@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class EtherscanAPI extends API {
     private static var _etherscanRoot : String = "api.etherscan.io/api";

@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class TensorflowAPI extends API {
     private static var _instance : TensorflowAPI;

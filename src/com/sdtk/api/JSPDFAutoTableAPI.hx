@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if(!EXCLUDE_APIS && js)
+@:expose
 @:nativeGen
 class JSPDFAutoTableAPI extends WriterAPI {
     private static var _instance : JSPDFAutoTableAPI;

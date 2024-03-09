@@ -22,6 +22,7 @@
 
 package com.sdtk.std;
 
+import com.sdtk.std.ControlReader;
 import com.sdtk.std.JS_BROWSER;
 
 #if !EXCLUDE_CONTROLS
@@ -38,6 +39,10 @@ class ControlWriter extends Writer {
     private var _control : Dynamic;
   #end
   private var _id : String;
+
+  public override function flip() : Reader {
+    return new ControlReader(_id, false);
+  }
 
   public function new(sControl : String) {
     super();

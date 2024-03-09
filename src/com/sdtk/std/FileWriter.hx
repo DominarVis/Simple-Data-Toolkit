@@ -36,6 +36,10 @@ class FileWriter extends Writer {
       _file = name;
   }
 
+  public override function flip() : Reader {
+    return new FileReader(_file);
+  }
+
   public override function dispose() : Void {
       if (_writer != null) {
           var request : com.sdtk.std.JS_BROWSER.XMLHttpRequest = new com.sdtk.std.JS_BROWSER.XMLHttpRequest();
@@ -74,6 +78,10 @@ class FileWriter extends Writer {
         open(false);
       }
   }
+
+  public override function flip() : Reader {
+    return new FileReader(_path);
+  }  
 
   private function open(bAppend : Bool) : Void {
       var fso : com.sdtk.std.JS_WSH.ActiveXObject = new com.sdtk.std.JS_WSH.ActiveXObject("Scripting.FileSystemObject");
@@ -138,6 +146,10 @@ class FileWriter extends Writer {
       }
   }
 
+  public override function flip() : Reader {
+    return new FileReader(_name);
+  }  
+
   private function Open(bAppend : Bool) : Void {
       _out = FS.createWriteStream(_name, _options);
   }
@@ -194,6 +206,10 @@ class FileWriter extends Writer {
     } catch (msg : Dynamic) { }
   }
 
+  public override function flip() : Reader {
+    return null; // TODO
+  }
+
   @:native('close')
   public override function dispose() : Void {
     if (_writer != null) {
@@ -237,6 +253,10 @@ class FileWriter extends Writer {
         open(false);
       }
   }
+
+  public override function flip() : Reader {
+    return new FileReader(_path);
+  }  
 
   private function open(bAppend : Bool) : Void {
       _out = python.Syntax.code("open({0}, {1})", _path, bAppend ? "a" : "w");
@@ -296,6 +316,10 @@ class FileWriter extends Writer {
       }
   }
 
+  public override function flip() : Reader {
+    return new FileReader(_path);
+  }  
+
   private function open(bAppend : Bool) : Void {
       _out = php.Syntax.code("fopen({0}, {1}", _path, bAppend ? "a" : "w");
   }
@@ -347,6 +371,10 @@ class FileWriter extends com.sdtk.std.CSHARP.AbstractWriter {
         super(new com.sdtk.std.CSHARP.StreamWriter(com.sdtk.std.CSHARP.File.Open(sName, bAppend ? com.sdtk.std.CSHARP.FileMode.Append : com.sdtk.std.CSHARP.FileMode.Create)));
     }
 
+    public override function flip() : Reader {
+      return null; // TODO
+    }    
+
     public function convertToStringWriter() : StringWriter {
       var sw : StringWriter = new StringWriter(null);
       sw.endWith(this);
@@ -367,6 +395,10 @@ class FileWriter extends com.sdtk.std.HAXE.AbstractWriter {
       return File.write(sName, false);
     }
   }
+
+  public override function flip() : Reader {
+    return null; // TODO
+  }  
 
   public function new(sName : String, bAppend : Bool) {
     super(createWriter(sName, bAppend));

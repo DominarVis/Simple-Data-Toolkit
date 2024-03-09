@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if(!EXCLUDE_APIS && js)
+@:expose
 @:nativeGen
 class SQLAPI extends ExecutorAPI {
     private static var _SQL : Dynamic = null;
@@ -49,9 +50,12 @@ class SQLAPI extends ExecutorAPI {
             var finish : String = "";
             init += "CREATE TABLE dual AS SELECT 'X' AS dummy;\n";
             finish += "DROP TABLE dual;\n";
-            for (i in mapping.keys()) {
-                init += "CREATE TABLE " + i + " AS " + mapping[i] + ";\n";
-                finish += "DROP TABLE " + i + ";\n";
+            if (mapping != null) {
+                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                for (i in mapping.keys()) {
+                    init += "CREATE TABLE " + i + " AS " + mapping[i] + ";\n";
+                    finish += "DROP TABLE " + i + ";\n";
+                }
             }
             if (init.length > 0) {
                 _DB.run(init);
@@ -85,5 +89,13 @@ class SQLAPI extends ExecutorAPI {
             });
         });
     }
+
+    public override function keywords() : Array<String> {
+        return ["ADD", "ALL", "ALTER", "AND", "ANY", "AS", "ASC", "BETWEEN", "BY", "CASE", "CHECK", "COLUMN", "CONSTRAINT", "CREATE", "DATABASE", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DROP", "DUAL", "EXEC", "EXISTS", "FOREIGN", "FROM", "GROUP", "HAVING", "IN", "INDEX", "INNER", "INSERT", "INTO", "IS", "JOIN", "LEFT", "LIKE", "LIMIT", "NOT", "NULL", "OR", "ORDER", "OUTER", "PRIMARY", "PROCEDURE", "ROWNUM", "REPLACE", "SELECT", "SET", "TABLE", "TOP", "TRUNCATE", "UNION", "UNIQUE", "UPDATE", "VALUES", "VIEW", "WHERE"];
+    }    
+
+    public override function keywordsAreCaseSensitive() : Bool {
+        return false;
+    }    
 }
 #end

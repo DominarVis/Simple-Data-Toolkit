@@ -46,6 +46,10 @@ class FileReader extends Reader {
         }
     }
 
+    public override function flip() : Writer {
+      return null; // TODO
+    }
+
     public override function reset() : Void {
       _reader.reset();
     }
@@ -90,11 +94,15 @@ class FileReader extends Reader {
         }
     }
 
-    public function convertToStringReader() : StringReader {
+    public override function convertToStringReader() : StringReader {
       var sr : StringReader = _reader;
       dispose();
       return sr;
     }
+
+    public override function toString() : String {
+      return _reader.toString();
+    }    
 }
 #elseif JS_SNOWFLAKE
   // TODO
@@ -112,6 +120,10 @@ class FileReader extends Reader {
       super();
       _path = sName;
       reset();
+  }
+
+  public override function flip() : Writer {
+    return new FileWriter(_path, false);
   }
 
   public override function reset() : Void {
@@ -174,16 +186,14 @@ class FileReader extends Reader {
     }
   }
 
-  public function convertToStringReader() : StringReader {
+  public override function toString() : String {
     var s : String = "";
     if (_next != null) {
       s += _next;
     }
     s += _in.ReadAll();
-    var sr : StringReader = new StringReader(s);
-    this.dispose();
-    return sr;
-  }
+    return s;
+  }  
 }
 #elseif JS_NODE
 // TODO
@@ -199,20 +209,22 @@ class FileReader extends com.sdtk.std.CSHARP.AbstractReader {
         _path = sValue;
     }
 
+    public override function flip() : Writer {
+      return new FileWriter(_path, false);
+    }
+
     public override function reset() : Void {
       super.reset();
       _reader = com.sdtk.std.CSHARP.File.OpenText(_path);
     }
 
-    public function convertToStringReader() : StringReader {
+    public override function toString() : String {
       var s : String = "";
       if (_next != null) {
         s += _next;
       }
       s += _reader.ReadToEnd();
-      var sr : StringReader = new StringReader(s);
-      this.dispose();
-      return sr;
+      return s;
     }
 }
 #elseif java
@@ -229,12 +241,16 @@ class FileReader extends com.sdtk.std.JAVA.AbstractReader {
         }
     }
 
+    public override function flip() : Writer {
+      return new FileWriter(_path, false);
+    }
+
     public function new(sValue : String) {
         super(createReaderI(sValue));
         _path = sValue;
     }
 
-    public function convertToStringReader() : StringReader {
+    public override function toString() : String {
       var reader : JAVA.InputStreamReader = cast _reader;
       var sb : StringBuf = new StringBuf();
       if (_next != null) {
@@ -256,9 +272,7 @@ class FileReader extends com.sdtk.std.JAVA.AbstractReader {
           read = -1;
         }
       }
-      var sr : StringReader = new StringReader(sb.toString());
-      this.dispose();
-      return sr;
+      return sb.toString();
     }
 }
 #elseif python
@@ -275,6 +289,10 @@ class FileReader extends Reader {
       super();
       _path = sName;
       reset();
+  }
+
+  public override function flip() : Writer {
+    return new FileWriter(_path, false);
   }
 
   public override function reset() : Void {
@@ -349,15 +367,13 @@ class FileReader extends Reader {
     }
   }
 
-  public function convertToStringReader() : StringReader {
+  public override function toString() : String {
     var s : String = "";
     if (_next != null) {
       s += _next;
     }
     s += python.Syntax.code("{0}.read()", _in);
-    var sr : StringReader = new StringReader(s);
-    this.dispose();
-    return sr;
+    return s;
   }
 }
 #elseif php
@@ -374,6 +390,10 @@ class FileReader extends Reader {
       _path = sName;
       _nextRawIndex = 0;
   }
+
+  public override function flip() : Writer {
+    return new FileWriter(_path, false);
+  }  
 
   public override function reset() : Void {
     _nextRawIndex = 0;
@@ -427,15 +447,13 @@ class FileReader extends Reader {
     }
   }
 
-  public function convertToStringReader() : StringReader {
+  public override function toString() : String {
     var s : String = "";
     if (_next != null) {
       s += _next;
     }
     s += php.Syntax.code("file_get_contents({0}, false, null, {1}, null)", _path, _nextRawIndex);
-    var sr : StringReader = new StringReader(s);
-    this.dispose();
-    return sr;
+    return s;
   }
 }
 #else
@@ -453,12 +471,16 @@ class FileReader extends com.sdtk.std.HAXE.AbstractReader {
     _path = sName;
   }
 
+  public override function flip() : Writer {
+    return new FileWriter(_path, false);
+  }  
+
   public override function reset() : Void {
     super.reset();
     _reader = File.read(_path);
   }  
-  
-  public function convertToStringReader() : StringReader {
+
+  public override function toString() : String {
     var sb : StringBuf = new StringBuf();
     if (_next != null) {
       sb.add(_next);
@@ -472,9 +494,7 @@ class FileReader extends com.sdtk.std.HAXE.AbstractReader {
         s = null;
       }
     }
-    var sr : StringReader = new StringReader(sb.toString());
-    this.dispose();
-    return sr;
+    return sb.toString();
   }
 }
 #end

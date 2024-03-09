@@ -35,6 +35,10 @@ class StdinReader extends Reader {
         _stdin = fso.GetStandardStream(0);
     }
 
+    public override function flip() : Writer {
+        return new StdoutWriter();
+    }
+
     public override function dispose() : Void {
         if (_stdin != null) {
             _stdin.Close();
@@ -79,6 +83,10 @@ class StdinReader extends com.sdtk.std.CSHARP.AbstractReader {
     public function new() {
         super(new com.sdtk.std.CSHARP.StreamReader(com.sdtk.std.CSHARP.SystemI.OpenStandardInput()));
     }
+
+    public override function flip() : Writer {
+        return new StdoutWriter();
+    }
 }
 #elseif java
 @:expose
@@ -86,6 +94,10 @@ class StdinReader extends com.sdtk.std.CSHARP.AbstractReader {
 class StdinReader extends com.sdtk.std.JAVA.AbstractReader {
     public function new() {
         super(new com.sdtk.std.JAVA.InputStreamReader(com.sdtk.std.JAVA.SystemI.In));
+    }
+
+    public override function flip() : Writer {
+        return new StdoutWriter();
     }
 }
 #elseif python
@@ -101,6 +113,10 @@ class StdinReader extends FileReader {
     }    
 
     private override function close() : Void { }    
+
+    public override function flip() : Writer {
+        return new StdoutWriter();
+    }
 }
 #elseif php
 @:expose
@@ -108,6 +124,10 @@ class StdinReader extends FileReader {
 class StdinReader extends FileReader {
     public function new() {
         super("php://stdin");
+    }
+
+    public override function flip() : Writer {
+        return new StdoutWriter();
     }
 }
 #elseif JS_SNOWFLAKE
@@ -119,6 +139,10 @@ class StdinReader extends StringReader {
     public function new() {
         super("");
     }
+
+    public override function flip() : Writer {
+        return new StdoutWriter();
+    }
 }
 #else
 @:expose
@@ -126,6 +150,10 @@ class StdinReader extends StringReader {
 class StdinReader extends com.sdtk.std.HAXE.AbstractReader {
     public function new() {
         super(Sys.stdin());
+    }
+
+    public override function flip() : Writer {
+        return new StdoutWriter();
     }
 }
 #end

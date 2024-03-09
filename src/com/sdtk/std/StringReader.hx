@@ -99,6 +99,10 @@ class StringReader extends Reader {
         moveToNext();
     }
 
+    public override function flip() : Writer {
+        return new StringWriter(null);
+    }
+
     public override function reset() : Void {
         _index = 0;
         _next = "";
@@ -181,6 +185,14 @@ class StringReader extends Reader {
 
     public function switchToDroppingCharacters(?chars : Int = 10000) : Reader {
         _dropping = chars;
+        return this;
+    }
+
+    public override function toString() : String {
+        return _value;
+    }
+
+    public override function convertToStringReader() : StringReader {
         return this;
     }
 }

@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class SSRSAPI extends API {
     private static var _ssrsRoot1 : String = "https://";

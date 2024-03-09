@@ -77,11 +77,23 @@ class Puller {
     nextPull(0);
   }
 
+  public static function validSource(source : String) : Bool {
+    return Parameters.typeOfAccess(source) >= 0;
+  }
+
+  public static function pullAsString(source : String, callback : String -> Void) : Void {
+    return Parameters.getSourceFrom(source).pullAsString(callback);
+  }
+
+  public static function pullAsMap(source : String, callback : Map<String, Dynamic> -> Void) : Void {
+    return Parameters.getSourceFrom(source).pullAsMap(callback);
+  }
+
   private function nextPull(i : Int) : Void {
     #if sys
       Sys.println("Start");
     #end
-    _sources[i].pull(function (result : Map<String, Dynamic>) {
+    _sources[i].pullAsMap(function (result : Map<String, Dynamic>) {
       #if sys
         Sys.println("Done");
         Sys.println(haxe.Json.stringify(result));

@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if(!EXCLUDE_APIS && js)
+@:expose
 @:nativeGen
 class PythonAPI extends ExecutorAPI {
     private static var _instance : PythonAPI;
@@ -44,38 +45,34 @@ class PythonAPI extends ExecutorAPI {
     public override function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
         requireInit(function () {
             var init : String = "";
-            for (i in mapping) {
-                init += i + " = " + mapping[i] + "\n";
+            if (mapping != null) {
+                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                for (i in mapping) {
+                    init += i + " = " + haxe.Json.stringify(mappingValueToType(mapping[i])) + "\n";
+                }
             }
             var r = js.Syntax.code("pyscript.runtime.run({0} + {1})", init, script);
             init = null;
             script = null;
             mapping = null;
-            var o : Dynamic = r.toJs();
-            var arr : Array<Dynamic> = new Array<Dynamic>();
-            arr.resize(o.length);
-            var i : Int = 0;
-        
-            while (i < o.length) {
-                var o2 : Dynamic = o[i];
-                var v : Dynamic = js.Syntax.code("{ }");
-                var iterator : Dynamic = o2.keys();
-                var cur : Dynamic = iterator.next();
-                while (cur != null && cur.value != null && cur.done == false) {
-                    v[cur.value] = o2.get(cur.value);
-                    cur = iterator.next();
-                }
-                arr[i] = v;
-                i++;
-            }
-            r.destroy();
+            var o : Dynamic = null;
+            try {
+                o = r.toJs();
+            } catch (ex : Any) { }
+            exportReader(o, r, callback);
+            try {
+                r.destroy();
+            } catch (ex : Any) { }
             r = null;
-            callback(com.sdtk.table.ArrayOfObjectsReader.readWholeArray(cast arr));
         });
     }
 
     private override function startInit(callback : Void->Void) : Void {
-        load((js.Browser.document.location.protocol.toLowerCase().indexOf("file") == 0 ? "" : "/") + "pyscript.js", callback);
+        load((js.Browser.document.location.protocol.toLowerCase().indexOf("file") == 0 ? "" : "/") + "pyscript.js", callback, ["pyscript.runtime.interpreter.runPython"]);
     }
+
+    public override function keywords() : Array<String> {
+        return ["and", "as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "False", "finally", "for", "from", "global", "if", "import", "is", "in", "lambda", "None", "nonlocal", "not", "or", "pass", "raise", "return", "True", "try", "while", "with", "yield"];
+    }    
 }
 #end

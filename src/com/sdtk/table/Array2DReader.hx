@@ -76,7 +76,7 @@ class Array2DReader<A> extends DataTableReader {
     return new Array2DReader<A>(_info);
   }
 
-  public function flip() : Array2DWriter<A> {
+  public override function flip() : DataTableWriter {
     return Array2DWriter.reuse(_info);
   }
   

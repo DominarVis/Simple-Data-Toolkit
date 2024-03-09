@@ -32,11 +32,15 @@ class KeyValueWriter extends DataTableWriter {
   private var _lastName : Null<String> = null;
   private var _lastIndex : Null<Int> = null;
 
-  private function new(fshHandler : KeyValueHandler, wWriter : Writer) {
+  public function new(fshHandler : KeyValueHandler, wWriter : Writer) {
     super();
     _handler = fshHandler;
     _writer = wWriter;
   }
+
+  public override function flip() : DataTableReader {
+    return new KeyValueReader(_handler, _writer.flip());
+  }    
 
   public static function createINIWriter(wWriter : Writer) {
     return new KeyValueWriter(INIHandler.instance(), wWriter);

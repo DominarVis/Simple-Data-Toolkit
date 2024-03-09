@@ -219,10 +219,6 @@ class DataTableReader extends DataEntryReader {
     convertToAll(aSingle);
   }
 
-  public function toArray() : Void {
-    // TODO
-  }
-
   #if(cs || java)
     public function toHaxeMap(map : Map<String, Dynamic>, keyField : String, valueField : String) : Map<String, Dynamic> {
   #else
@@ -240,10 +236,9 @@ class DataTableReader extends DataEntryReader {
   }
 
   public function toObject<A>(map : A, keyField : String, valueField : String) : A {
-    // TODO
-    return null;
+    convertTo(ObjectWriter.writeToWholeObject(map, keyField, valueField));
+    return map;
   }
-
 
   #if(cs || java)
     public function toArrayOfHaxeMaps(arr : Array<Map<String, Dynamic>>) : Array<Map<String, Dynamic>> {
@@ -286,9 +281,27 @@ class DataTableReader extends DataEntryReader {
     return arr;
   }
 
-  public function toArrayOfObjects<A>(map : A) : A {
-    // TODO
-    return null;
+  #if(cs || java)
+    public function toArrayOfObjects(arr : Array<Dynamic>, constructor : Void->Dynamic) : Array<Dynamic> {
+  #else
+    public function toArrayOfObjects<A>(arr : Array<A>, constructor : Void->A) : Array<A> {
+  #end  
+    if (arr == null) {
+      #if(cs || java)
+        arr = new Array<Dynamic>();
+      #else
+        arr = new Array<A>();
+      #end
+    }
+    convertTo(ArrayOfObjectsWriter.writeToExpandableArray(arr, constructor));
+    return arr;
+  }
+
+  public function toHTMLTable() : String {
+    var sw : com.sdtk.std.StringWriter = new com.sdtk.std.StringWriter(null);
+    var writer : DataTableWriter = TableWriter.createStandardTableWriterForWriter(sw);
+    convertTo(writer);
+    return sw.toString();
   }
 
   public function to(o : Dynamic) : Dynamic {
@@ -430,6 +443,11 @@ class DataTableReader extends DataEntryReader {
 
   // TODO - Make sure this is everywhere
   public function getColumns() : Array<String> {
+    return null;
+  }
+
+  // TODO - Make sure this is everywhere
+  public function flip() : DataTableWriter {
     return null;
   }
 

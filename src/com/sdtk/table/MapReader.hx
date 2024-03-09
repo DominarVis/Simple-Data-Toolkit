@@ -69,8 +69,12 @@ class MapReader<A> extends DataTableReader {
 
   public override function reset() : Void {
     _iterator = _map.keys();
-  }  
-
+  }
+  
+  public override function flip() : DataTableWriter {
+    return MapWriter.writeToWholeMap(_map, null, null);
+  }    
+  
   #if(cs || java)
     public override function toHaxeMap(map : Map<String, Dynamic>, keyField : String, valueField : String) : Map<String, Dynamic> {
   #else

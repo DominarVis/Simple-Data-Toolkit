@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if(!EXCLUDE_APIS && JS_BROWSER)
+@:expose
 @:nativeGen
 class CodeMirrorAPI extends API {
     private static var _instance : CodeMirrorAPI;

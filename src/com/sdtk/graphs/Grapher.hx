@@ -437,7 +437,7 @@ class Grapher implements GrapherInterface {
     private static function convertData(columns : Array<Dynamic>, r : com.sdtk.table.DataTableReader) : Array<Array<Dynamic>> {
         var awWriter : com.sdtk.table.Array2DWriter<Dynamic> = com.sdtk.table.Array2DWriter.writeToExpandableArray(null);
         var arr : Array<Array<Dynamic>> = awWriter.getArray();
-        com.sdtk.table.Converter.convertWithOptions(r, null, awWriter, com.sdtk.table.Format.Formats.ARRAY(), null, columns, null, null, columns, false, false, null, null);
+        com.sdtk.table.Converter.convertWithOptions(r, null, awWriter, com.sdtk.table.Formats.ARRAY(), null, columns, null, null, columns, false, false, null, null);
         var possibleIMap : Map<Dynamic, Bool> = new Map<Dynamic, Bool>();
         var possibleIArray : Array<Dynamic> = new Array<Dynamic>();
         if (arr.length == 0 || arr[0].length == 2) {

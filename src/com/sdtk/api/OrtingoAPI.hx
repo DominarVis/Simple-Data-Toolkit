@@ -22,7 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
-// TODO
+@:expose
 @:nativeGen
 class OrtingoAPI extends API {
     private static var _ortingoRoot : String = "ortingo.com";

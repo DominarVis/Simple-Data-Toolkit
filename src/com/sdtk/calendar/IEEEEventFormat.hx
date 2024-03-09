@@ -59,6 +59,7 @@ class IEEEEventFormat implements CalendarInviteFormat<Reader, Writer> {
         mAttributes.set("end-time", ciInvite.end);
         mAttributes.set("title", ciInvite.summary);
         mAttributes.set("uid", ciInvite.uid);
+        mAttributes.set("link", ciInvite.url);
         com.sdtk.table.JSONHandler.instance().write(wWriter, mMap, null, -1);
     }
 

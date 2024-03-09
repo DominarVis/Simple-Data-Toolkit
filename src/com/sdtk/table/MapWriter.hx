@@ -68,6 +68,10 @@ class MapWriter<A> extends DataTableWriter {
     return rowWriter;
   }
 
+  public override function flip() : DataTableReader {
+    return MapReader.readWholeMap(_map);
+  }    
+
   #if cs
     @:native('Dispose')
   #elseif java

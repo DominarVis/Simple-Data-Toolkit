@@ -252,7 +252,7 @@ class DatabaseReaderLoginOptions {
       command.CommandType = System.Data.CommandType.Text;
       return command.ExecuteReader();
     ")
-    private static function selectThis(o : Dynamic, query : String) : Dynamic {
+    public static function selectThis(o : Dynamic, query : String) : Dynamic {
       return null;
     }
 
@@ -260,7 +260,7 @@ class DatabaseReaderLoginOptions {
       System.Data.DataSet ds = (System.Data.DataSet) o;
       return ds.Tables[0].Select(query);
     ")
-    private static function selectThis2(o : Dynamic, query : String) : Dynamic {
+    public static function selectThis2(o : Dynamic, query : String) : Dynamic {
       return null;
     }
   #end
@@ -620,7 +620,7 @@ class DatabaseReaderLoginOptions {
 
   #if JS_BROWSER @:jsasync #end public function query(query : String, ?params : Map<String, Dynamic>, ?callback : Dynamic->Void) : #if JS_BROWSER js.lib.Promise<Dynamic> #else Dynamic #end {
     var connector : String = StringTools.trim(_values["connector"]).toLowerCase();
-    var r : Dynamic;
+    var r : Dynamic = null;
     if (params != null) {
       // Generic parameter insertion.
       // TODO - Replace with platform/database specific ones.
@@ -648,129 +648,9 @@ class DatabaseReaderLoginOptions {
           }
       }
     }
-    connect(#if JS_BROWSER @:jsasync #end function (cur : Dynamic) : Void {
-      #if python
-        python.Syntax.code("{0}.execute({1})", cur, query);
-        r = cur;
-        if (callback != null) {
-          callback(r);
-        } else {
-          cancelClose();
-        }
-      #elseif java
-        var cur2 : java.sql.Connection = cast cur;
-        var stmt : java.sql.Statement = cur2.createStatement();
-        stmt.execute(query);
-        var results : java.sql.ResultSet = stmt.getResultSet();
-        r = results;
-        if (callback != null) {
-          try {
-            callback(r);
-          } catch (ex : Any) { }
-          if (!_cancelClose) {
-            results.close();
-            stmt.close();
-          }
-        } else {
-          cancelClose();
-        }
-      #elseif cs
-        switch (connector) {
-          case "dataset":
-            r = selectThis2(cur, query);
-            if (callback != null) {
-              callback(r);
-            } else {
-              cancelClose();
-            }
-          default:
-            r = selectThis(cur, query);
-            if (callback != null) {
-              try {
-                callback(r);
-              } catch (ex : Any) { }
-            } else {
-              cancelClose();
-            }
-        }
-      #elseif php
-        switch (connector) {
-          case "mysql", "sqlite", "snowflake":
-            r = php.Syntax.code("{0}::query({1})", cur, query);
-          case "sqlserver":
-            r = php.Syntax.code("sqlsrv_query({0}, {1})", cur, query);
-          case "oracle":
-            r = php.Syntax.code("oci_execute(oci_parse({0}, {1}))", cur, query);
-          case "postgres":
-            r = php.Syntax.code("pg_query({0}, {1})", cur, query);
-          default:
-            r = null;
-        }
-        if (callback != null) {
-          callback(r);
-          switch (connector) {
-            case "mysql", "sqlite", "snowflake", "oracle", "postgres":
-              // Intentionally left blank
-            case "sqlserver":
-              r = php.Syntax.code("sqlsrv_free_stmt({0})", r);
-          }
-        } else {
-          cancelClose();
-        }
-      #elseif JS_BROWSER
-        r = null;
-        switch (connector) {
-          case "sqlite":
-            r = js.Syntax.code("{0}.exec({1})", cur, query);
-          case "websql":
-            r = js.Syntax.code("await (new Promise(resolve => { {0}.transaction(function (tx) { tx.executeSql({1}, [], function (tx, results) { resolve(result); }, null); }); }))", cur, query);
-          case "alasql":
-            r = js.Syntax.code("alasql({0})", query);
-          case "indexeddb":
-            // TODO
-          case "jsstore":
-            r = js.Syntax.code("{0}.select({1})", cur, query);
-          case "snowflake":
-            r = js.Syntax.code("await databases.snowflake.execute({0}.jwt, {0}.account, {1}, {0}.timeout, {0}.database, {0}.schema, {0}.warehouse, {0}.role, {2}, {3})", cur, query, params, callback);
-          case "proxy":
-            r = js.Syntax.code("await databases.proxy.execute({0}, {1}, {2}, {3})", cur, query, params, callback);
-          default:
-            r = null;
-        }
-        if (callback != null) {
-          callback(r);
-        } else {
-          cancelClose();
-        }
-      #elseif JS_NODE
-        //TODO
-      #elseif JS_WSH
-        r = js.Syntax.code("new ActiveXObject(\"ADODB.Recordset\")");
-        js.Syntax.code("{0}.Open({1}, {2})", r, query, cur);
-        if (callback != null) {
-          try {
-            callback(r);
-          } catch (ex : Any) { }
-          if (!_cancelClose) {
-            js.Syntax.code("{0}.Close()", r);
-          }
-        } else {
-          cancelClose();
-        }
-      #elseif JS_SNOWFLAKE
-        r = js.Syntax.code("snowflake.createStatement({ sqlText: {0} }).execute()", query);
-      #else // HASHLINK
-        var cur2 : sys.db.Connection = cast cur;
-        r = cur2.request(query);
-        if (callback != null) {
-          try {
-            callback(r);
-          } catch (ex : Any) { }
-        } else {
-          cancelClose();
-        }
-      #end
-    });
+    var inProgress : DRLOQuery = new DRLOQuery(query, params, callback, connector, r, cancelClose, function () : Bool { return _cancelClose; });
+    connect(inProgress.query);
+    r = inProgress._r;
     if (callback != null) {
       return null;
     } else {
@@ -799,4 +679,155 @@ class DatabaseReaderLoginOptions {
     }
   }
 }
+
+#if JS_BROWSER
+  @:build(jsasync.JSAsync.build())
+#end
+@:nativeGen
+class DRLOQuery {
+  public var _query : String;
+  public var _params : Map<String, Dynamic>;
+  public var _callback : Dynamic->Void;
+  public var _connector : String;
+  public var _r : Dynamic;
+  public var _cancelClose : Void -> Void;
+  public var _isCancelClose : Void -> Bool;
+
+  public function new(query : String, params : Map<String, Dynamic>, callback : Dynamic->Void, connector : String, r : Dynamic, cancelClose : Void -> Void, isCancelClose : Void -> Bool) {
+    _query = query;
+    _params = params;
+    _callback = callback;
+    _connector = connector;
+    _r = r;
+    _cancelClose = cancelClose;
+    _isCancelClose = isCancelClose;
+  }
+
+  #if JS_BROWSER @:jsasync #end public function query(cur : Dynamic) :  #if JS_BROWSER js.lib.Promise<Dynamic> #else Void #end {
+    #if python
+      python.Syntax.code("{0}.execute({1})", cur, _query);
+      _r = cur;
+      if (_callback != null) {
+        _callback(_r);
+      } else {
+        _cancelClose();
+      }
+    #elseif java
+      var cur2 : java.sql.Connection = cast cur;
+      var stmt : java.sql.Statement = cur2.createStatement();
+      stmt.execute(_query);
+      var results : java.sql.ResultSet = stmt.getResultSet();
+      _r = results;
+      if (_callback != null) {
+        try {
+          _callback(_r);
+        } catch (ex : Any) { }
+        if (!_isCancelClose()) {
+          results.close();
+          stmt.close();
+        }
+      } else {
+        _cancelClose();
+      }
+    #elseif cs
+      switch (_connector) {
+        case "dataset":
+          _r = DatabaseReaderLoginOptions.selectThis2(cur, _query);
+          if (_callback != null) {
+            _callback(_r);
+          } else {
+            _cancelClose();
+          }
+        default:
+          _r = DatabaseReaderLoginOptions.selectThis(cur, _query);
+          if (_callback != null) {
+            try {
+              _callback(_r);
+            } catch (ex : Any) { }
+          } else {
+            _cancelClose();
+          }
+      }
+    #elseif php
+      switch (_connector) {
+        case "mysql", "sqlite", "snowflake":
+          _r = php.Syntax.code("{0}::query({1})", cur, _query);
+        case "sqlserver":
+          _r = php.Syntax.code("sqlsrv_query({0}, {1})", cur, _query);
+        case "oracle":
+          _r = php.Syntax.code("oci_execute(oci_parse({0}, {1}))", cur, _query);
+        case "postgres":
+          _r = php.Syntax.code("pg_query({0}, {1})", cur, _query);
+        default:
+          _r = null;
+      }
+      if (_callback != null) {
+        _callback(_r);
+        switch (_connector) {
+          case "mysql", "sqlite", "snowflake", "oracle", "postgres":
+            // Intentionally left blank
+          case "sqlserver":
+            _r = php.Syntax.code("sqlsrv_free_stmt({0})", _r);
+        }
+      } else {
+        _cancelClose();
+      }
+    #elseif JS_BROWSER
+      _r = null;
+      switch (_connector) {
+        case "sqlite":
+          _r = js.Syntax.code("{0}.exec({1})", cur, _query);
+        case "websql":
+          _r = js.Syntax.code("await (new Promise(resolve => { {0}.transaction(function (tx) { tx.executeSql({1}, [], function (tx, results) { resolve(result); }, null); }); }))", cur, _query);
+        case "alasql":
+          _r = js.Syntax.code("alasql({0})", _query);
+        case "indexeddb":
+          // TODO
+        case "jsstore":
+          _r = js.Syntax.code("{0}.select({1})", cur, _query);
+        case "snowflake":
+          _r = js.Syntax.code("await databases.snowflake.execute({0}.jwt, {0}.account, {1}, {0}.timeout, {0}.database, {0}.schema, {0}.warehouse, {0}.role, {2}, {3})", cur, _query, _params, _callback);
+        case "proxy":
+          _r = js.Syntax.code("await databases.proxy.execute({0}, {1}, {2}, {3})", cur, _query, _params, _callback);
+        default:
+          _r = null;
+      }
+      if (_callback != null) {
+        _callback(_r);
+      } else {
+        _cancelClose();
+      }
+
+      return null;
+    #elseif JS_NODE
+      //TODO
+    #elseif JS_WSH
+      _r = js.Syntax.code("new ActiveXObject(\"ADODB.Recordset\")");
+      js.Syntax.code("{0}.Open({1}, {2})", _r, _query, cur);
+      if (_callback != null) {
+        try {
+          _callback(_r);
+        } catch (ex : Any) { }
+        if (!_isCancelClose()) {
+          js.Syntax.code("{0}.Close()", _r);
+        }
+      } else {
+        _cancelClose();
+      }
+    #elseif JS_SNOWFLAKE
+      _r = js.Syntax.code("snowflake.createStatement({ sqlText: {0} }).execute()", _query);
+    #else // HASHLINK
+      var cur2 : sys.db.Connection = cast cur;
+      _r = cur2.request(_query);
+      if (_callback != null) {
+        try {
+          _callback(_r);
+        } catch (ex : Any) { }
+      } else {
+        _cancelClose();
+      }
+    #end
+  }      
+}
+
 #end

@@ -41,6 +41,10 @@ class DelimitedWriter extends DataTableWriter {
     _writer = wWriter;
   }
 
+  public override function flip() : DataTableReader {
+    return new DelimitedReader(_info, _writer.flip());
+  }  
+
   public override function start() : Void {
     _writer.start();
     _writer.write(_info.fileStart());

@@ -43,18 +43,23 @@ def mkdir(path):
 
 def rm(path):
 	import shutil
-	try:
-		shutil.rmtree(buildPath(path))
-	except:
-		pass
+	while True:
+		try:
+			shutil.rmtree(buildPath(path))
+		except PermissionError:
+			continue
+		except Exception:
+			pass
+		break	
+
 	import os
 	try:
 		os.remove(buildPath(path))
-	except:
+	except Exception:
 		pass
 	try:
 		os.unlink(buildPath(path))
-	except:
+	except Exception:
 		pass
 
 def move(src, to):
@@ -67,9 +72,11 @@ def append(src, to, appending):
 		with open(buildPath(src), "r") as fi:
 			fo.write(fi.read())
 def run(program, parameters):
-	import os
-	print(" ".join([program] + parameters))
-	os.system(" ".join([program] + parameters))
+	#import os
+	#print(" ".join([program] + parameters))
+	#os.system(" ".join([program] + parameters))
+	import subprocess
+	subprocess.run(" ".join([program] + parameters), shell=True)
 
 def haxe(name, out, src, package, defines):
 	global languageSwitch

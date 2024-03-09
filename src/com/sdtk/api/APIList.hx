@@ -56,7 +56,9 @@ class APIList {
                 #if js
                     JSAPI.instance(),
                     PythonAPI.instance(),
-                    SQLAPI.instance()
+                    SQLAPI.instance(),
+                    CobolAPI.instance(),
+                    BasicAPI.instance()
                 #end
             ];
         }
@@ -73,6 +75,7 @@ class APIList {
                 BitTorrentAPI.transactionsAPI(), BitTorrentAPI.transfersAPI(),
                 BTCAPI.transactionsAPI(),
                 EtherscanAPI.transactionsAPI(),
+                ACMAPI.eventsAPI(),
                 IEEEAPI.eventsAPI(),
                 #if JS_BROWSER
                     WebTorrentAPI.filesAPI(), WebTorrentAPI.retrieveAPI(),

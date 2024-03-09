@@ -29,9 +29,9 @@ package com.sdtk.table;
 @:nativeGen
 class ArrayOfObjectsReader<A> extends DataTableReader {
   private var _i : Int;
-  private var _info : ArrayInfo<A>;
+  private var _info : ArrayOfObjectsInfo<A>;
 
-  private function new(info : ArrayInfo<A>) {
+  private function new(info : ArrayOfObjectsInfo<A>) {
     super();
     _info = info;
     _i = info._start;
@@ -41,14 +41,14 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
     Read the whole array.
   **/
   public static function readWholeArray<A>(arr : Array<A>) : ArrayOfObjectsReader<A> {
-    return new ArrayOfObjectsReader<A>(new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+    return new ArrayOfObjectsReader<A>(new ArrayOfObjectsInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1, null));
   }
 
   public static function readWholeArrayI<Dynamic>(arr : Array<Dynamic>) : ArrayOfObjectsReader<Dynamic> {
-    return new ArrayOfObjectsReader<Dynamic>(new ArrayInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+    return new ArrayOfObjectsReader<Dynamic>(new ArrayOfObjectsInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1, null));
   }
 
-  public static function reuse<A>(info : ArrayInfo<A>) : ArrayOfObjectsReader<A> {
+  public static function reuse<A>(info : ArrayOfObjectsInfo<A>) : ArrayOfObjectsReader<A> {
     return new ArrayOfObjectsReader(info);
   }
 
@@ -61,7 +61,7 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
       rowReader = ObjectRowReader.readWholeObject(_info._arr[_i]);
     } else {
       var rr : ObjectRowReader<Dynamic> = cast rowReader;
-      rr.reuse(cast _info._arr[_i]);
+      rr.reuse(cast _info._arr[_i], null);
     }
     incrementTo(null, rowReader, _i);
     _i += _info._rowIncrement;
@@ -76,9 +76,8 @@ class ArrayOfObjectsReader<A> extends DataTableReader {
     return new ArrayOfObjectsReader<A>(_info);
   }
 
-  // TODO
-  public function flip() : Array2DWriter<A> {
-    return null;
+  public override function flip() : DataTableWriter {
+    return ArrayOfObjectsWriter.reuse(_info);
   }
   
   public override function headerRowNotIncluded() : Bool {

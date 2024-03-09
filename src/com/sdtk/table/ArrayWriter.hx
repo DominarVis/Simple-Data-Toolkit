@@ -63,8 +63,16 @@ class ArrayWriter<A> extends DataTableWriter {
     return new ArrayWriter<A>(new ArrayInfo<A>(arr, 0, -1, -1, 1, 0));
   }
 
+  public static function reuse<A>(info : ArrayInfo<A>) : ArrayWriter<A> {
+    return new ArrayWriter<A>(info);
+  }
+
   public override function start() : Void {
   }
+
+  public override function flip() : DataTableReader {
+    return ArrayReader.reuse(_info);
+  }  
 
   public override function writeStartI(name : String, index : Int, rowWriter : Null<DataTableRowWriter>) : DataTableRowWriter {
   	if (_info._end >= 0 && (index + _info._start) > _info._end) {

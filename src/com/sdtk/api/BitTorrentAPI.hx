@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class BitTorrentAPI extends API {
     private static var _bttRoot : String = "scanapi.bt.io/api";

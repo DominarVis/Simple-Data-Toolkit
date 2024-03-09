@@ -22,6 +22,7 @@
 
 package com.sdtk.std;
 
+import com.sdtk.std.StringReader;
 #if java
     import haxe.Int64;
 #end
@@ -43,6 +44,10 @@ class Reader
         #if java
             super();
         #end
+    }
+
+    public function flip() : Writer {
+        return null;
     }
 
     public function start() : Void {
@@ -89,6 +94,22 @@ class Reader
 
     public function unwrapAll() : Reader {
         return this;
+    }
+
+    public function toString() : String {
+        var sb : StringBuf = new StringBuf();
+
+        while (hasNext()) {
+            sb.add(next());
+        }
+
+        return sb.toString();
+    }
+
+    public function convertToStringReader() : StringReader {
+        var sr : StringReader = new StringReader(toString());
+        dispose();
+        return sr;
     }
 
     #if java

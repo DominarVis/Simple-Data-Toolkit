@@ -105,7 +105,7 @@ class Converter {
           aStages.push(ConverterStageSort.createWithArrayAndColumns(awWriter.getArray(), cast sSortRowsBy));
         }
         if (awWriter != oTarget) {
-          var arReader : Array2DReader<Dynamic> = awWriter.flip();
+          var arReader : Array2DReader<Dynamic> = cast awWriter.flip();
           aStages.push(new ConverterStageStandard(arReader, Format.ARRAY, oTarget, fTarget, null, null, null, null, false, false, null, outputOptions));
         }
       } else {

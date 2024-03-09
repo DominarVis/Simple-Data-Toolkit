@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if(!EXCLUDE_APIS && js)
+@:expose
 @:nativeGen
 class JSAPI extends ExecutorAPI {
     private static var _instance : JSAPI;
@@ -43,20 +44,25 @@ class JSAPI extends ExecutorAPI {
     
     public override function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
         requireInit(function () {
+            mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
             var init : String = "";
             for (i in mapping) {
-                init += "const " + i + mapping[i] + ";\n";
+                init += "const " + i + " = " + haxe.Json.stringify(mappingValueToType(mapping[i])) + ";\n";
             }
             var r : Dynamic = js.Lib.eval("(function () { " + init + script + "})")();
             init = null;
             script = null;
             mapping = null;
-            callback(com.sdtk.table.ArrayOfObjectsReader.readWholeArray(r));
+            exportReader(r, null, callback);
         });
     }
 
     private override function startInit(callback : Void->Void) : Void {
         callback();
     }
+
+    public override function keywords() : Array<String> {
+        return ["abstract", "arguments", "await", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", "debugger", "default", "delete", "do", "double", "else", "enum", "eval", "export", "extends", "false", "final", "finally", "float", "for", "function", "goto", "if", "implements", "import", "in", "instanceOf", "int", "interface", "let", "long", "native", "new", "null", "package", "private", "protected", "public", "return", "short", "static", "super", "switch", "synchronized", "this", "throw", "throws", "transient", "true", "try", "typeof", "var", "void", "volatile", "while", "with", "yield"];
+    }     
 }
 #end

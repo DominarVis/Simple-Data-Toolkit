@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class GoogleAPI extends API {
     private static var _clientId : String = "<GOOGLE_CLIENT_ID>";

@@ -82,7 +82,7 @@ class Array2DWriter<A> extends DataTableWriter {
     return rowWriter;
   }
 
-  public function flip() : Array2DReader<A> {
+  public override function flip() : DataTableReader {
     return Array2DReader.reuse(_info);
   }
   

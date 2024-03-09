@@ -38,6 +38,14 @@ class API {
         return _name;
     }
 
+    private function mappingValueToType(value : String) : Dynamic {
+        try {
+            return haxe.Json.parse(value);
+        } catch (ex : Dynamic) {
+            return value;
+        }
+    }
+
     public function fetch(method : String, root : String, api : String, key : Null<Bool>, accessToken : Null<Bool>, query : String, body : Null<String>, callback : Dynamic->Void, ?headers : Map<String, String> = null, ?cookies : Map<String, String> = null) : Void {
         if (query == null) {
             query = "";
@@ -273,11 +281,37 @@ class API {
         return null;
     }
 
-    private function load(file : String, callback : Void->Void) : Void {
+    private function waitForObjects(callback : Void->Void) : Void {
+        #if js
+            var allAvailable : Bool = true;
+            for (check in _progress._objects) {
+                var result : Dynamic = null;
+                try {
+                    result = js.Syntax.code("eval({0})", check);
+                } catch (ex : Any) { }
+                if (result == null) {
+                    allAvailable = false;
+                    break;
+                }
+            }
+            if (allAvailable) {
+                callback();
+            } else {
+                js.Browser.window.setTimeout(function () : Void {
+                    waitForObjects(callback);
+                }, 25);
+            }
+        #end
+    }
+
+    private function load(file : String, callback : Void->Void, waitFor : Array<String> = null) : Void {
         if (_progress == null) {
             _progress = new APILoadProgress();
         }
         _progress._files.push(file);
+        if (waitFor != null) {
+            _progress._objects = _progress._objects.concat(waitFor);
+        }
         #if JS_BROWSER
             var e : Dynamic = js.Browser.document.createElement("script");
             e.setAttribute("async", "");
@@ -286,7 +320,11 @@ class API {
             e.onload = function () : Void {
                 _progress._done++;
                 if (_progress._done >= _progress._files.length) {
-                    callback();
+                    if (_progress._objects.length <= 0) {
+                        callback();
+                    } else {
+                        waitForObjects(callback);
+                    }
                 }
             };
             js.Browser.document.head.appendChild(e);
@@ -419,10 +457,12 @@ class API {
 @:nativeGen
 class APILoadProgress {
     public var _files : Array<String>;
+    public var _objects : Array <String>;
     public var _done : Int = 0;
 
     public function new() {
         _files = new Array<String>();
+        _objects = new Array<String>();
     }
 }
 #end

@@ -32,11 +32,17 @@ class Source {
         return new SourceInputAPI(api);
     }
 
+    public static function fromCustomWebAPI(api : com.sdtk.api.CustomWebAPI) : Source {
+        return new SourceCustomWebAPI(api);
+    }
+
     public static function fromDataTableReader(reader : com.sdtk.table.DataTableReader) : Source {
         return new Source();
     }
 
-    public function pull(callback : Map<String, Dynamic> -> Void) { }
+    public function pullAsMap(callback : Map<String, Dynamic> -> Void) { }
+
+    public function pullAsString(callback : String -> Void) { }
 }
 
 @:nativeGen
@@ -52,12 +58,36 @@ class SourceInputAPI extends Source {
         _value = api.externalValue();
     }
 
-    public override function pull(callback : Map<String, Dynamic> -> Void) : Void {
+    public override function pullAsMap(callback : Map<String, Dynamic> -> Void) : Void {
         _api.retrieveData(null, function (s : String, r : com.sdtk.table.DataTableReader) : Void {
             var result : Map<String, Dynamic> = new Map<String, Dynamic>();
             r.toHaxeMap(result, _key, _value);
             callback(result);
         });
+    }
+
+    public override function pullAsString(callback : String -> Void) { 
+        _api.retrieveData(null, function (s : String, r : com.sdtk.table.DataTableReader) : Void {
+            callback(s);
+        });
+    }
+}
+
+@:nativeGen
+class SourceCustomWebAPI extends Source {
+    private var _api : com.sdtk.api.CustomWebAPI;
+
+    public function new(api : com.sdtk.api.CustomWebAPI) {
+        super();
+        _api = api;
+    }
+
+    public override function pullAsMap(callback : Map<String, Dynamic> -> Void) : Void {
+        // TODO
+    }
+
+    public override function pullAsString(callback : String -> Void) { 
+        _api.execute(callback);
     }
 }
 #end

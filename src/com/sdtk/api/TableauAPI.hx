@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class TableauAPI extends API {
     private static var _tableauRoot : String = "10ay.online.tableau.com/api/3.5/sites";

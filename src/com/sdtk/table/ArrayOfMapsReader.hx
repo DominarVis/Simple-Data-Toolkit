@@ -29,9 +29,9 @@ package com.sdtk.table;
 @:nativeGen
 class ArrayOfMapsReader<A> extends DataTableReader {
   private var _i : Int;
-  private var _info : ArrayInfo<A>;
+  private var _info : ArrayOfMapsInfo<A>;
 
-  private function new(info : ArrayInfo<A>) {
+  private function new(info : ArrayOfMapsInfo<A>) {
     super();
     _info = info;
     _i = info._start;
@@ -41,14 +41,14 @@ class ArrayOfMapsReader<A> extends DataTableReader {
     Read the whole array.
   **/
   public static function readWholeArray<A>(arr : Array<Map<String, A>>) : ArrayOfMapsReader<A> {
-    return new ArrayOfMapsReader<A>(new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+    return new ArrayOfMapsReader<A>(new ArrayOfMapsInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 1));
   }
 
   public static function readWholeArrayI<Dynamic>(arr : Array<Dynamic>) : ArrayOfMapsReader<Dynamic> {
-    return new ArrayOfMapsReader<Dynamic>(new ArrayInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1));
+    return new ArrayOfMapsReader<Dynamic>(new ArrayOfMapsInfo<Dynamic>(cast arr, 0, arr.length - 1, arr.length - 1, 1, 1));
   }
 
-  public static function reuse<A>(info : ArrayInfo<A>) : ArrayOfMapsReader<A> {
+  public static function reuse<A>(info : ArrayOfMapsInfo<A>) : ArrayOfMapsReader<A> {
     return new ArrayOfMapsReader(info);
   }
 
@@ -76,9 +76,8 @@ class ArrayOfMapsReader<A> extends DataTableReader {
     return new ArrayOfMapsReader<A>(_info);
   }
 
-  // TODO
-  public function flip() : Array2DWriter<A> {
-    return null;
+  public override function flip() : DataTableWriter {
+    return ArrayOfMapsWriter.reuse(_info);
   }
   
   public override function headerRowNotIncluded() : Bool {
@@ -91,9 +90,12 @@ class ArrayOfMapsReader<A> extends DataTableReader {
 
   #if(cs || java)
     public override function toArrayOfHaxeMaps(arr : Array<Map<String, Dynamic>>) : Array<Map<String, Dynamic>> {
+      var arr : Array<Dynamic> = cast _info._arr;
+      return cast arr.slice(_info._start, (_info._end < 0 ? arr.length - 1 : _info._end));
+    }
   #else
     public override function toArrayOfHaxeMaps<A>(arr : Array<Map<String, A>>) : Array<Map<String, A>> {
+      return cast _info._arr.slice(_info._start, (_info._end < 0 ? _info._arr.length - 1 : _info._end));
+    }
   #end  
-    return cast _info._arr.slice(_info._start, (_info._end < 0 ? _info._arr.length - 1 : _info._end));
-  }
 }

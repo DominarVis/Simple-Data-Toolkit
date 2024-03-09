@@ -46,6 +46,10 @@ class DelimitedReader extends DataTableReader {
     _reader.start();
   }
 
+  public override function flip() : DataTableWriter {
+    return new DelimitedWriter(_info, _reader.flip());
+  }
+
   #if cs
     @:native('Dispose')
   #elseif java

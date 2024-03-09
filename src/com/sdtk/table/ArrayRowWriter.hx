@@ -35,7 +35,7 @@ class ArrayRowWriter<A> extends DataTableRowWriter {
     super();
     reuse(info);
   }
-
+  
   public function reuse(info : ArrayInfo<A>) {
     _info = info;
     _i = info._start;

@@ -29,16 +29,24 @@ package com.sdtk.table;
 @:nativeGen
 class ObjectRowReader<A> extends DataTableRowReader {
   private var _i : Int;
+  private var _iterator : Iterator<String>;
   private var _fields : Array<String>;
   private var _o : Any;
 
-  private function new(o : Any) {
+  private function new(o : Any, iterator : Iterator<String>) {
     super();
-    _fields = Reflect.fields(o);
-    reuse(o);
+    reuse(o, iterator);
   }
 
-  public function reuse(o : Any) {
+  public function reuse(o : Any, iterator : Iterator<String>) {
+    if (iterator == null) {
+      if (_fields == null) {
+        _fields = Reflect.fields(o);
+      }
+      _iterator = _fields.iterator();
+    } else {
+      _iterator = iterator;
+    }
     _o = o;
     _i = 0;
     _started = false;
@@ -46,6 +54,13 @@ class ObjectRowReader<A> extends DataTableRowReader {
     _rawIndex = -1;
     _started = false;
     _value = null;
+  }
+
+  /**
+    Continue reading an object from the specified location.
+  **/
+  public static function continueRead<A>(o : Any, iterator : Iterator<Dynamic>) : ObjectRowReader<A> {
+    return new ObjectRowReader(o, iterator);
   }
 
   /**
@@ -59,26 +74,27 @@ class ObjectRowReader<A> extends DataTableRowReader {
   **/
   public static function readWholeObjectReuse<A>(o : Any, rowReader : Null<ObjectRowReader<A>>) : ObjectRowReader<A> {
     if (rowReader == null) {
-      rowReader = new ObjectRowReader(o);
+      rowReader = new ObjectRowReader(o, null);
     } else {
-      rowReader.reuse(o);
+      rowReader.reuse(o, null);
     }
     return rowReader;
   }
 
   public override function hasNext() : Bool {
-    return _i < _fields.length;
+    return _iterator.hasNext();
   }
 
   public override function next() : Dynamic {
-    _value = Reflect.field(_o, _fields[_i]);
-    incrementTo(_fields[_i], _value, _i);
+    var field : String = _iterator.next();
+    _value = Reflect.field(_o, field);
+    incrementTo(field, _value, _i);
     _i += 1;
     return _value;
   }
 
   public override function iterator() : Iterator<Dynamic> {
-    return new ObjectRowReader(_o);
+    return this;
   }
 
   public function reset() : Void {
@@ -91,8 +107,8 @@ class ObjectRowReader<A> extends DataTableRowReader {
     @:native('close')
   #end
   public override function dispose() : Void {
-    if (_fields != null) {
-      _fields = null;
+    if (_iterator != null) {
+      _iterator = null;
       _o = null;
     }
   }

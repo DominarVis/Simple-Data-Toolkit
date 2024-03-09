@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class IEEEAPI extends API {
     private static var _ieeeRoot : String = "events.vtools.ieee.org/RST";

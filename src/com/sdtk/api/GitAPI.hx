@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class GitAPI extends API {
     private static var _gitRoot : String = "api.github.com";

@@ -26,14 +26,26 @@ package com.sdtk.std;
 @:expose
 @:nativeGen
 class StdoutWriter extends Writer {
+    public function new() {
+        super();
+    }
+
     public override function write(str : String) : Void {
         com.sdtk.std.JS_BROWSER.Console.log(str);
     }
+
+    public override function flip() : Reader {
+        return new StdinReader();
+    } 
 }
 #elseif JS_SNOWFLAKE
 @:expose
 @:nativeGen
 class StdoutWriter extends Writer {
+    public function new() {
+        super();
+    }
+
     public override function write(str : String) : Void {
         com.sdtk.std.JS_SNOWFLAKE.Logger.log(str);
     }
@@ -60,12 +72,17 @@ class StdoutWriter extends Writer {
     public override function write(str : String) : Void {
         _stdout.Write(str);
     }
+
+    public override function flip() : Reader {
+        return new StdinReader();
+    } 
 }
 #elseif JS_NODE
 @:expose
 @:nativeGen
 class StdoutWriter extends Writer {
     public function new() {
+        super();
     }
 
     public override function dispose() : Void {
@@ -74,6 +91,10 @@ class StdoutWriter extends Writer {
     public override function write(str : String) : Void {
         Process.stdout.write(str);
     }
+
+    public override function flip() : Reader {
+        return new StdinReader();
+    } 
 }
 #elseif cs
 @:expose
@@ -81,6 +102,10 @@ class StdoutWriter extends Writer {
 class StdoutWriter extends com.sdtk.std.CSHARP.AbstractWriter {
     public function new() {
         super(new com.sdtk.std.CSHARP.StreamWriter(com.sdtk.std.CSHARP.SystemI.OpenStandardOutput()));
+    }
+
+    public override function flip() : Reader {
+        return new StdinReader();
     }
 }
 #elseif java
@@ -104,10 +129,13 @@ class StdoutWriter extends Writer {
 
     @:native('close') public override function dispose() : Void {
         if (_writer != null) {
-            _writer.flush();
             _writer.dispose();
             _writer = null;
         }
+    }
+
+    public override function flip() : Reader {
+        return new StdinReader();
     }
 }
 #elseif python
@@ -125,6 +153,10 @@ class StdoutWriter extends FileWriter {
     private override function close() : Void {
         _out = python.Syntax.code("{0}.flush()", _out);
     }
+
+    public override function flip() : Reader {
+        return new StdinReader();
+    }
 }
 #elseif php
 @:expose
@@ -133,6 +165,10 @@ class StdoutWriter extends FileWriter {
     public function new() {
         super("php://stdout", false);
     }
+
+    public override function flip() : Reader {
+        return new StdinReader();
+    } 
 }
 #else
 import haxe.io.Output;
@@ -143,6 +179,10 @@ class StdoutWriter extends com.sdtk.std.HAXE.AbstractWriter {
   public function new() {
     super(Sys.stdout());
   }
+
+  public override function flip() : Reader {
+    return new StdinReader();
+  } 
 }
 #end
 // TODO

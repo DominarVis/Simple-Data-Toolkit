@@ -41,21 +41,25 @@ class ArrayReader<A> extends DataTableReader {
     Converts a 1 dimensional array into a 2 dimensional table.
   **/
   public static function readSlicesOfArray<A>(arr : Array<A>, start : Int, end : Int, entriesInRow : Int, increment : Int, rowIncrement : Int) : ArrayReader<A> {
-    return new ArrayReader(new ArrayInfo<A>(arr, start, end, entriesInRow, increment, rowIncrement));   
+    return new ArrayReader<A>(new ArrayInfo<A>(arr, start, end, entriesInRow, increment, rowIncrement));   
   }
     
   /**
     Reads a section of an array.
   **/
   public static function readPartOfArray<A>(arr : Array<A>, start : Int, end : Int, increment : Int) : ArrayReader<A> {
-    return new ArrayReader(new ArrayInfo<A>(arr, start, end, arr.length - 1, increment, 1));
+    return new ArrayReader<A>(new ArrayInfo<A>(arr, start, end, arr.length - 1, increment, 1));
   }
   
   /**
     Read the whole array.
   **/
   public static function readWholeArray<A>(arr : Array<A>) : ArrayReader<A> {
-    return new ArrayReader(new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 0));
+    return new ArrayReader<A>(new ArrayInfo<A>(arr, 0, arr.length - 1, arr.length - 1, 1, 0));
+  }
+
+  public static function reuse<A>(info : ArrayInfo<A>) : ArrayReader<A> {
+    return new ArrayReader<A>(info);
   }
 
   public override function hasNext() : Bool {
@@ -81,6 +85,10 @@ class ArrayReader<A> extends DataTableReader {
   public override function iterator() : Iterator<Dynamic> {
     return new ArrayReader<A>(_info);
   }
+
+  public override function flip() : DataTableWriter {
+    return ArrayWriter.reuse(_info);
+  }  
 
   public override function reset() : Void {
     _i = _info._start;

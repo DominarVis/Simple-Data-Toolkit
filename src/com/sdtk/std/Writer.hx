@@ -40,6 +40,10 @@ class Writer
         #end
     }
 
+    public function flip() : Reader {
+        return null;
+    }
+
     public function start() : Void {
     }
 

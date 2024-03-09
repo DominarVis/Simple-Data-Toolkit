@@ -39,6 +39,10 @@ class StringWriter extends Writer {
       }
     }
 
+    public override function flip() : Reader {
+      return new StringReader(_buffer.toString());
+    }    
+
     public function endWith(writer : Writer) : Void {
       _writer = writer;
     }

@@ -306,7 +306,7 @@ class DatabaseReader extends DataTableReader {
               _columns = rowColumns;
             }
             for (e in entries) {
-              _rowValues[rowColumn](e.value);
+              _rowValues[rowColumn] = e.value;
               if (rowColumns != null) {
                 rowColumns[rowColumn] = e.key;
               }

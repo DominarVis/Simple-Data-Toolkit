@@ -71,6 +71,11 @@ class DataTableWriter implements com.sdtk.std.Disposable {
   public function canWrite() : Bool {
   	return _written <= 0 || !oneRowPerFile();
   }
+
+  // TODO - Make sure this is everywhere
+  public function flip() : DataTableReader {
+    return null;
+  }
   
   #if cs
     @:native('Dispose')

@@ -82,9 +82,8 @@ class ArrayOfMapsWriter<A> extends DataTableWriter {
     return rowWriter;
   }
 
-  public function flip() : Array2DReader<A> {
-    // TODO
-    return null;
+  public override function flip() : DataTableReader {
+    return ArrayOfMapsReader.reuse(_info);
   }
   
   public function getArray() : Array<Map<String, A>> {

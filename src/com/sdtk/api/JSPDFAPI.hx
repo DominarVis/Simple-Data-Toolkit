@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if(!EXCLUDE_APIS && js)
+@:expose
 @:nativeGen
 class JSPDFAPI extends API {
     private static var _instance : JSPDFAPI;

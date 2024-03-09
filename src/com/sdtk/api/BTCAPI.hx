@@ -22,6 +22,7 @@
 package com.sdtk.api;
 
 #if !EXCLUDE_APIS
+@:expose
 @:nativeGen
 class BTCAPI extends API {
     private static var _btcRoot : String = "chain.api.btc.com/v3/";
