@@ -30,7 +30,7 @@ class KeyValueRowWriter extends DataTableRowWriter {
   private var _writer : Null<Writer> = null;
   private var _name : Null<String> = null;
   private var _rowIndex : Int;
-  private var _map : Null<Map<String, Dynamic>> = new Map<String, Dynamic>();
+  private var _map : Null<Map<String, Dynamic>>;
 
   public function new(fshHandler : KeyValueHandler, wWriter : Writer, name : String, index : Int) {
     super();
@@ -38,10 +38,14 @@ class KeyValueRowWriter extends DataTableRowWriter {
   }
 
   public function reuse(fshHandler : KeyValueHandler, wWriter : Writer, name : String, index : Int) : Void {
+    if (_writer != null) {
+      _handler.write(_writer, _map, _name, _rowIndex);
+    }
     _handler = fshHandler;
     _writer = wWriter;
     _name = name;
     _rowIndex = index;
+    _map = new Map<String, Dynamic>();    
   }  
 
   public override function start() : Void {

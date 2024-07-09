@@ -125,7 +125,7 @@ class GitAPI extends API {
                     }
                     return null;
                 }
-                r = haxe.Json.parse(cast r);
+                r = com.sdtk.std.Normalize.parseJson(cast r);
                 callback(base64ToSomething(r.content), {
                     //r.content, {
                     name: r.name,
@@ -267,7 +267,7 @@ class GitAPIFiles extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).tree));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).tree));
     }    
 
     public override function externalKey() : String {
@@ -306,7 +306,7 @@ class GitAPIRepos extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data)));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data)));
     }    
 }
 
@@ -337,7 +337,7 @@ class GitAPIBranches extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        var arr : Array<Dynamic> = haxe.Json.parse(data);
+        var arr : Array<Dynamic> = com.sdtk.std.Normalize.parseJson(data);
         for (o in arr) {
             o.commit_url = o.commit.url;
             o.commit = o.commit.sha;
@@ -373,7 +373,7 @@ class GitAPICommits extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        var arr : Array<Dynamic> = haxe.Json.parse(data);
+        var arr : Array<Dynamic> = com.sdtk.std.Normalize.parseJson(data);
         for (o in arr) {
             o.author = o.author.login;
             o.author_email = o.commit.author.email;
@@ -455,7 +455,7 @@ class GitAPIRetrieveAll extends InputAPI {
     public override function retrieveData(mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
         mapping = normalizeMapping(mapping);
         GitAPI.instance().files(function (r : Dynamic) {
-            var arr : Array<haxe.DynamicAccess<Dynamic>> = cast haxe.Json.parse(cast r).tree;
+            var arr : Array<haxe.DynamicAccess<Dynamic>> = cast com.sdtk.std.Normalize.parseJson(cast r).tree;
             var result : Map<String, Dynamic> = new Map<String, Dynamic>();
             var next : Void->Void;
             var i : Int = -1;

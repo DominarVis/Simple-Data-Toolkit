@@ -42,18 +42,19 @@ class CobolAPI extends ExecutorAPI {
         return "Cobol";
     }
     
-    public override function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
+    public override function execute(script : String, mapping : Map<String, String>, readers : Map<String, com.sdtk.table.DataTableReader>, callback : Dynamic->Void) : Void {
         requireInit(function () {
             var program = js.Syntax.code("cobolscript.compileProgram({0})", script);
             if (mapping != null) {
-                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                mapping = cast com.sdtk.std.Normalize.nativeToHaxe(mapping);
                 for (key in mapping.keys()) {
                     mapping.set(key, mappingValueToType(mapping.get(key)));
                 }
-                mapping = com.sdtk.std.Normalize.haxeToNative(mapping);
+                mapping = cast com.sdtk.std.Normalize.haxeToNative(mapping);
                 js.Syntax.code("{0}.data = {1}", program, mapping);
                 mapping = null;
             }
+            // TODO - readers
             var o : Dynamic = js.Syntax.code("{0}.run(cobolscript.getRuntime())", program);
             exportReader(o, null, callback);
         });

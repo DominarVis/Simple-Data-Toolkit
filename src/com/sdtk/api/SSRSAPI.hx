@@ -144,7 +144,7 @@ class SSRSAPIPull extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).token_transfers));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).token_transfers));
     }    
 }
 #end

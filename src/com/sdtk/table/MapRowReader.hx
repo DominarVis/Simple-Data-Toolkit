@@ -40,7 +40,7 @@ class MapRowReader<A> extends DataTableRowReader {
   }
 
   public function reuse(map : Map<Dynamic, Dynamic>, iterator : Iterator<Dynamic>, nextKey : Dynamic) {
-    _map = map;
+    _map = com.sdtk.std.Normalize.nativeToHaxe(map);
     if (iterator == null) {
       _iterator = _map.keys();
       _whole = true;

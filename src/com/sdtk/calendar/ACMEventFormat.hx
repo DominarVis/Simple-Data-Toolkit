@@ -111,7 +111,7 @@ class ACMEventFormat implements CalendarInviteFormat<Reader, Writer> {
         } else if (Std.isOfType(rReader, Reader)) {
             mMap = com.sdtk.table.JSONHandler.instance().read(rReader);
         } else {
-            mMap = com.sdtk.std.Normalize.nativeToHaxe(rReader);
+            mMap = cast com.sdtk.std.Normalize.nativeToHaxe(rReader);
         }
         ciInvite.created = mMap.get("date");
         ciInvite.start = mMap.get("date");

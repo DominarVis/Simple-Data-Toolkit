@@ -159,7 +159,7 @@ class Proxy {
 
     data = StringTools.trim(data);
     if (data.length > 0) {
-        var obj : Dynamic = haxe.Json.parse(data);
+        var obj : Dynamic = com.sdtk.std.Normalize.parseJson(data);
         data = null;
         proxy(obj);
     }

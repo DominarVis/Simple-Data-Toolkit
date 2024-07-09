@@ -50,7 +50,7 @@ class IEEEAPI extends API {
         //if (limit <= _maxLimit) {
         if (true) {
             instance().fetch("GET", _ieeeRoot, _eventsAPI, null, null, "/list?limit=" + limit + "&sort=-start-time" + (start == null && end == null ? "" : "?span=" + (start == null ? "" : "" + start) + "~" + (end == null ? "" : "" + end)), null, function (r) {
-                var o : Dynamic = haxe.Json.parse(r);
+                var o : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                 callback(o);
             });
         }
@@ -103,7 +103,7 @@ class IEEEAPIEvents extends InputAPI {
         if (!Std.isOfType(data, String)) {
             data = haxe.Json.stringify(data);
         }
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).data));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).data));
     }    
 }
 #end

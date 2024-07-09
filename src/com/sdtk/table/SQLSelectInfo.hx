@@ -30,9 +30,9 @@ package com.sdtk.table;
 class SQLSelectInfo implements CodeInfo {
   private function new() { }
 
-  private static var _instance : CodeInfo;
+  private static var _instance : SQLSelectInfo;
 
-  public static function instance() : CodeInfo {
+  public static function instance() : SQLSelectInfo {
     if (_instance == null) {
         _instance = new SQLSelectInfo();
     }
@@ -41,6 +41,7 @@ class SQLSelectInfo implements CodeInfo {
 
   private var _appendBeginning : String = "";
   private var _appendEnd : String = "";
+  private var _nameQuote : String = "\"";
 
   public function start() : String {
     return _appendBeginning;
@@ -64,7 +65,7 @@ class SQLSelectInfo implements CodeInfo {
 
   public function intEntry(data : Int, name : String, index : Int) : String {
     if (name != null && name != "") {
-      return data + " AS \"" + name + "\"";
+      return data + " AS " + _nameQuote + name + _nameQuote;
     } else {
       return Std.string(data);
     }
@@ -72,7 +73,7 @@ class SQLSelectInfo implements CodeInfo {
 
   public function boolEntry(data : Bool, name : String, index : Int) : String {
     if (name != null && name != "") {
-      return data + " AS \"" + name + "\"";
+      return data + " AS " + _nameQuote + name + _nameQuote;
     } else {
       return Std.string(data);
     }
@@ -80,7 +81,7 @@ class SQLSelectInfo implements CodeInfo {
   
   public function floatEntry(data : Float, name : String, index : Int) : String {
     if (name != null && name != "") {
-      return data + " AS \"" + name + "\"";
+      return data + " AS " + _nameQuote + name + _nameQuote;
     } else {
       return Std.string(data);
     }
@@ -88,7 +89,7 @@ class SQLSelectInfo implements CodeInfo {
 
   public function otherEntry(data : String, name : String, index : Int) : String {
     if (name != null && name != "") {
-      return "'" + data + "' AS \"" + name + "\"";
+      return "'" + data + "' AS " + _nameQuote + name + _nameQuote;
     } else {
       return "'" + data + "'";
     }
@@ -129,5 +130,18 @@ class SQLSelectInfo implements CodeInfo {
     info._appendBeginning = "INSERT INTO " + name + "\n";
     info._appendEnd = ";";
     return info;
+  }
+
+  public function namesUseSingleQuote(value : Bool) : SQLSelectInfo {
+    var nameQuote : String = value ? "'" : "\"";
+    if (this._nameQuote == nameQuote) {
+      return this;
+    } else {
+      var info = new SQLSelectInfo();
+      info._appendBeginning = this._appendBeginning;
+      info._appendEnd = this._appendEnd;
+      info._nameQuote = nameQuote;
+      return info;
+    }
   }
 }

@@ -46,7 +46,7 @@ class ACMAPI extends API {
             start = Date.now();
         }
         instance().fetch("GET", _acmRoot, _eventsAPI, null, null, "?startDate0=" + start.toString().split(" ")[0].split("-").join("") + "&eventType0=Conferences&view0=month", null, function (r) {
-            var o : Dynamic = haxe.Json.parse(r);
+            var o : Dynamic = com.sdtk.std.Normalize.parseJson(r);
             callback(o);
         });
     }

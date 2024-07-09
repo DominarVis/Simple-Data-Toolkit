@@ -45,19 +45,6 @@ class JSONHandler implements KeyValueHandler {
     return false;
   }
 
-  private static function buildMap(dData : haxe.DynamicAccess<Dynamic>) {
-    var mMap : Map<String, Dynamic> = new Map<String, Dynamic>();
-    #if (hax_ver >= 4)
-    for (key => value in dData) {
-    #else
-    for (key in dData.keys()) {
-      var value : Dynamic = dData[key];
-    #end
-      mMap.set(key, value);
-    }
-    return mMap;
-  }
-
   private static function readValue(rReader : Reader) : String {
     var sbBuffer : StringBuf = new StringBuf();
     while (rReader.hasNext()) {
@@ -67,7 +54,7 @@ class JSONHandler implements KeyValueHandler {
   }
 
   public function read(rReader : Reader) : Map<String, Dynamic> {
-    return buildMap(haxe.Json.parse(readValue(rReader)));
+    return cast com.sdtk.std.Normalize.nativeToHaxe(com.sdtk.std.Normalize.parseJson(readValue(rReader)));
   }
 
   public function write(wWriter : Writer, mMap : Map<String, Dynamic>, name : String, index : Int) : Void {
@@ -95,21 +82,22 @@ class JSONHandler implements KeyValueHandler {
   }
 
   public function readAll(rReader : Reader, aMaps : Array<Map<String, Dynamic>>, aNames : Array<Dynamic>) : Void {
-    var dData : haxe.DynamicAccess<Dynamic> = haxe.Json.parse(readValue(rReader));
+    var dData : Any = com.sdtk.std.Normalize.parseJson(readValue(rReader));
     if (Std.isOfType(dData, Array)) {
       var aValues : Array<Dynamic> = cast dData;
       for (value in aValues) {
-        aMaps.push(buildMap(value));
+        aMaps.push(cast com.sdtk.std.Normalize.nativeToHaxe(value));
         aNames.push(aMaps.length - 1);
       }
     } else {
+      var m : Map<Dynamic, Dynamic> = com.sdtk.std.Normalize.nativeToHaxe(dData);
       #if (hax_ver >= 4)
-      for (keyRow => valueRow in dData) {
+      for (keyRow => valueRow in m) {
       #else
-      for (keyRow in dData.keys()) {
-        var valueRow : Dynamic = dData[keyRow];
+      for (keyRow in m.keys()) {
+        var valueRow : Dynamic = m[keyRow];
       #end
-        aMaps.push(buildMap(valueRow));
+        aMaps.push(cast com.sdtk.std.Normalize.nativeToHaxe(valueRow));
         aNames.push(keyRow);
       }
     }

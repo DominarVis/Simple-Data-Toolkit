@@ -44,19 +44,27 @@ class SQLAPI extends ExecutorAPI {
         return "SQL";
     }
     
-    public override function execute(script : String, mapping : Map<String, String>, callback : com.sdtk.table.DataTableReader->Void) : Void {
+    public override function execute(script : String, mapping : Map<String, String>, readers : Map<String, com.sdtk.table.DataTableReader>, callback : com.sdtk.table.DataTableReader->Void) : Void {
         requireInit(function () {
             var init : String = "";
             var finish : String = "";
             init += "CREATE TABLE dual AS SELECT 'X' AS dummy;\n";
             finish += "DROP TABLE dual;\n";
             if (mapping != null) {
-                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                mapping = cast com.sdtk.std.Normalize.nativeToHaxe(mapping);
                 for (i in mapping.keys()) {
                     init += "CREATE TABLE " + i + " AS " + mapping[i] + ";\n";
                     finish += "DROP TABLE " + i + ";\n";
                 }
             }
+            if (readers != null) {
+                for (i in readers.keys()) {
+                    var writer : com.sdtk.std.StringWriter = new com.sdtk.std.StringWriter(null);
+                    readers[i].convertTo(com.sdtk.table.CodeWriter.createSQLSelectWriter(writer));
+                    init += "CREATE TABLE " + i + " AS " + writer.toString() + ";\n";
+                    finish += "DROP TABLE " + i + ";\n";
+                }
+            }             
             if (init.length > 0) {
                 _DB.run(init);
             }

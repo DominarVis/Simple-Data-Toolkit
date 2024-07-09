@@ -42,15 +42,16 @@ class BasicAPI extends ExecutorAPI {
         return "Cobol";
     }
     
-    public override function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
+    public override function execute(script : String, mapping : Map<String, String>, readers : Map<String, com.sdtk.table.DataTableReader>, callback : Dynamic->Void) : Void {
         requireInit(function () {
             var context = js.Syntax.code("new basicscript.context()");
             if (mapping != null) {
-                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                mapping = cast com.sdtk.std.Normalize.nativeToHaxe(mapping);
                 for (key in mapping.keys()) {
                     js.Syntax.code("{0}.setValue({1}, {2})", context, key, mappingValueToType(mapping.get(key)));
                 }
             }
+            // TODO - readers
             var program = js.Syntax.code("basicscript.execute({0}, {1})", script, context);
             if (mapping != null) {
                 for (key in mapping.keys()) {

@@ -43,9 +43,9 @@ class Parameters extends com.sdtk.std.Parameters {
   private static final GET_BLOB : Int = 6;
 
   public static function typeOfAccess(s : String) : Int {
-    if (s.indexOf("https://github.com/") == 0) {
+    if (s.indexOf("https://github.com/") == 0) { // https://github.com/Vis-LLC/Simple-Data-Toolkit.git
         return GET_GIT_HTTP;
-    } else if (s.indexOf("x-github-client://") == 0) {
+    } else if (s.indexOf("x-github-client://") == 0) { // x-github-client://openRepo/https://github.com/Vis-LLC/Simple-Data-Toolkit {
         return GET_GIT_CLIENT;
     } else if (s.indexOf("http://") == 0 || s.indexOf("https://") == 0) {
         return GET_HTTP;
@@ -68,6 +68,9 @@ class Parameters extends com.sdtk.std.Parameters {
         return null;
       }
     }
+    // TODO - Remove
+    //var parameters : Array<String> = ["https://github.com/rtyley/small-test-repo", "Build_Python.cmd", "dominarvis@gmail.com"];
+    // ["https://github.com/Vis-LLC/Restricted-Roller.git", "Build_Python.cmd", "dominarvis@gmail.com"];
   }
 
   private static function endsWith(s : String, e : String) : Bool {

@@ -33,7 +33,7 @@ class ExecutorAPI extends API {
         return null;
     }
 
-    public function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
+    public function execute(script : String, mapping : Map<String, String>, readers : Map<String, com.sdtk.table.DataTableReader>, callback : Dynamic->Void) : Void {
         callback(null);
     }
 

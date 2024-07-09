@@ -78,13 +78,13 @@ class BitTorrentFormat implements CalendarInviteFormat<Reader, Writer> {
         } else if (Std.isOfType(rReader, Reader)) {
             mMap = com.sdtk.table.JSONHandler.instance().read(rReader);
         } else {
-            mMap = com.sdtk.std.Normalize.nativeToHaxe(rReader);
+            mMap = cast com.sdtk.std.Normalize.nativeToHaxe(rReader);
         }
         mCost = mMap.get("cost");
         if (mCost == null) {
             mCost = mMap;
         } else {
-            mCost = com.sdtk.std.Normalize.nativeToHaxe(mCost);
+            mCost = cast com.sdtk.std.Normalize.nativeToHaxe(mCost);
         }
         ciInvite.created = Date.fromTime(mMap.get("timestamp"));
         ciInvite.start = ciInvite.created;

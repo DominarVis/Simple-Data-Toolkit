@@ -33,7 +33,7 @@ class MapReader<A> extends DataTableReader {
 
   private function new(map : Map<Dynamic, Dynamic>) {
     super();
-    _map = map;
+    _map = com.sdtk.std.Normalize.nativeToHaxe(map);
     _iterator = _map.keys();
   }
   

@@ -105,12 +105,12 @@ class BitTorrentAPI extends API {
         }
         if (limit <= _maxLimit) {
             instance().fetch("GET", _bttRoot, _transactionAPI, null, null, "?sort=" + sort + "&count=true&limit=" + limit + "&start=" + start + "&start_timestamp=" + startTimestamp + "&end_timestamp=" + endTimestamp + (address != null ? "&address=" + address : ""), null, function (r) {
-                var o : Dynamic = haxe.Json.parse(r);
+                var o : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                 if (o.data.length == limit) {
                     callback(r);
                 } else {
                     transactions(function (r) {
-                        var o2 : Dynamic = haxe.Json.parse(r);
+                        var o2 : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                         o.data = o.data.concat(o2.data);
                         callback(haxe.Json.stringify(o));
                     }, sort, cast limit - o.data.length, cast start + o.data.length, startTimestamp, endTimestamp, address);
@@ -128,10 +128,10 @@ class BitTorrentAPI extends API {
                         arr[k] = cast r;
                         loaded++;
                         if (loaded == cnt) {
-                            r = haxe.Json.parse(arr[0]);
+                            r = com.sdtk.std.Normalize.parseJson(arr[0]);
                             r.data = [];
                             for (s in arr) {
-                                var o : Dynamic = haxe.Json.parse(s);
+                                var o : Dynamic = com.sdtk.std.Normalize.parseJson(s);
                                 r.data = r.data.concat(o.data);
                             }
                             callback(haxe.Json.stringify(r));
@@ -172,12 +172,12 @@ class BitTorrentAPI extends API {
         }
         if (limit <= _maxLimit) {
             instance().fetch("GET", _bttRoot, _transfersAPI, null, null, "?sort=" + sort + "&count=true&limit=" + limit + "&start=" + start + "&start_timestamp=" + startTimestamp + "&end_timestamp=" + endTimestamp + (address != null ? "relatedAddress=" + address : ""), null, function (r) {
-                var o : Dynamic = haxe.Json.parse(r);
+                var o : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                 if (o.token_transfers.length == limit) {
                     callback(r);
                 } else {
                     transfers(function (r) {
-                        var o2 : Dynamic = haxe.Json.parse(r);
+                        var o2 : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                         o.token_transfers = o.token_transfers.concat(o2.token_transfers);
                         callback(haxe.Json.stringify(o));
                     }, sort, cast limit - o.token_transfers.length, cast start + o.token_transfers.length, startTimestamp, endTimestamp, address);
@@ -195,10 +195,10 @@ class BitTorrentAPI extends API {
                         arr[k] = cast r;
                         loaded++;
                         if (loaded == cnt) {
-                            r = haxe.Json.parse(arr[0]);
+                            r = com.sdtk.std.Normalize.parseJson(arr[0]);
                             r.token_transfers = [];
                             for (s in arr) {
-                                var o : Dynamic = haxe.Json.parse(s);
+                                var o : Dynamic = com.sdtk.std.Normalize.parseJson(s);
                                 r.token_transfers = r.token_transfers.concat(o.token_transfers);
                             }
                             callback(haxe.Json.stringify(r));
@@ -249,7 +249,7 @@ class BitTorrentAPITransactions extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).data));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).data));
     }    
 }
 
@@ -280,7 +280,7 @@ class BitTorrentAPITransfers extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).token_transfers));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).token_transfers));
     }    
 }
 #end

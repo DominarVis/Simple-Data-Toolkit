@@ -40,7 +40,7 @@ class API {
 
     private function mappingValueToType(value : String) : Dynamic {
         try {
-            return haxe.Json.parse(value);
+            return com.sdtk.std.Normalize.parseJson(value);
         } catch (ex : Dynamic) {
             return value;
         }
@@ -247,6 +247,29 @@ class API {
                     callback(response);
             }
         #end
+    }
+
+    private function processIfNeeded(value : String) : String {
+        if (value.charAt(0) == "<" && value.charAt(value.length - 1) == ">" && value.toUpperCase() == value) {
+            var value2 = null;
+            try {
+                value2 = 
+                #if sys
+                    Sys.getEnv(value.substr(1, value.length - 2))
+                #elseif js
+                    "" // TODO
+                #end
+                ;
+            } catch (ex : Any) {
+            }
+            if (value2 == null || value2 == "") {
+                return value;
+            } else {
+                return value2;
+            }
+        } else {
+            return value;
+        }
     }
 
     private function normalizeMapping(mapping : Map<String, String>) : Map<String, String> {

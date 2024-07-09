@@ -81,20 +81,20 @@ class CodeWriter extends DataTableWriter {
   	return false;
   }
 
-  public static function createSQLSelectWriter(writer : Writer) {
-    return new CodeWriter(SQLSelectInfo.instance(), writer);
+  public static function createSQLSelectWriter(writer : Writer, ?namesUseSingleQuote : Bool = false) {
+    return new CodeWriter(SQLSelectInfo.instance().namesUseSingleQuote(namesUseSingleQuote), writer);
   }
 
-  public static function createSQLCreatetWriter(writer : Writer, name : String) {
-    return new CodeWriter(SQLSelectInfo.createTable(name), writer);
+  public static function createSQLCreatetWriter(writer : Writer, name : String, ?namesUseSingleQuote : Bool = false) {
+    return new CodeWriter(SQLSelectInfo.createTable(name).namesUseSingleQuote(namesUseSingleQuote), writer);
   }  
 
-  public static function createSQLCreatetOrReplaceWriter(writer : Writer, name : String) {
-    return new CodeWriter(SQLSelectInfo.createOrReplaceTable(name), writer);
+  public static function createSQLCreatetOrReplaceWriter(writer : Writer, name : String, ?namesUseSingleQuote : Bool = false) {
+    return new CodeWriter(SQLSelectInfo.createOrReplaceTable(name).namesUseSingleQuote(namesUseSingleQuote), writer);
   }  
 
-  public static function createSQLInsertSelectWriter(writer : Writer, name : String) {
-    return new CodeWriter(SQLSelectInfo.insertIntoTable(name), writer);
+  public static function createSQLInsertSelectWriter(writer : Writer, name : String, ?namesUseSingleQuote : Bool = false) {
+    return new CodeWriter(SQLSelectInfo.insertIntoTable(name).namesUseSingleQuote(namesUseSingleQuote), writer);
   }    
 
   public static function createCSharpArrayOfArraysWriter(writer : Writer) {

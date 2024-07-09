@@ -59,14 +59,14 @@ class EtherscanAPI extends API {
         //if (limit <= _maxLimit) {
         if (true) {
             instance().fetch("GET", _etherscanRoot, _transactionAPI, null, null, "&sort=asc&startblock=" + start + "endblock=" + (limit + start) + "&address=" + address + "&apikey=" + apikey, null, function (r) {
-                var o : Dynamic = haxe.Json.parse(r);
+                var o : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                 // TODO
                 //if (o.data.length == limit) {
                 if (true) {
                     callback(r);
                 } else {
                     transactions(function (r) {
-                        var o2 : Dynamic = haxe.Json.parse(r);
+                        var o2 : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                         o.data = o.data.concat(o2.data);
                         callback(haxe.Json.stringify(o));
                     }, cast limit - o.data.length, cast start + o.data.length, address, apikey);
@@ -84,10 +84,10 @@ class EtherscanAPI extends API {
                         arr[k] = cast r;
                         loaded++;
                         if (loaded == cnt) {
-                            r = haxe.Json.parse(arr[0]);
+                            r = com.sdtk.std.Normalize.parseJson(arr[0]);
                             r.data = [];
                             for (s in arr) {
-                                var o : Dynamic = haxe.Json.parse(s);
+                                var o : Dynamic = com.sdtk.std.Normalize.parseJson(s);
                                 r.data = r.data.concat(o.data);
                             }
                             callback(haxe.Json.stringify(r));
@@ -135,7 +135,7 @@ class EtherscanAPITransactions extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).result));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).result));
     }    
 }
 #end

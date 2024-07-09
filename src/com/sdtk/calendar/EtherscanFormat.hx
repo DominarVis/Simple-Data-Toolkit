@@ -75,7 +75,7 @@ class EtherscanFormat implements CalendarInviteFormat<Reader, Writer> {
         } else if (Std.isOfType(rReader, Reader)) {
             mMap = com.sdtk.table.JSONHandler.instance().read(rReader);
         } else {
-            mMap = com.sdtk.std.Normalize.nativeToHaxe(rReader);
+            mMap = cast com.sdtk.std.Normalize.nativeToHaxe(rReader);
         }
         ciInvite.created = Date.fromTime(Std.parseInt(mMap.get("timeStamp")) * 1000);
         ciInvite.start = ciInvite.created;

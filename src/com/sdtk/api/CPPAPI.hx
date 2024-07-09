@@ -42,11 +42,11 @@ class CPPAPI extends ExecutorAPI {
         return "C++";
     }
     
-    public override function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
+    public override function execute(script : String, mapping : Map<String, String>, readers : Map<String, com.sdtk.table.DataTableReader>, callback : Dynamic->Void) : Void {
         requireInit(function () {
             var init : String = "";
             if (mapping != null) {
-                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                mapping = cast com.sdtk.std.Normalize.nativeToHaxe(mapping);
                 for (i in mapping) {
                     var mappingValue : Dynamic = mappingValueToType(mapping[i]);
                     var vType : String = null ;
@@ -66,6 +66,7 @@ class CPPAPI extends ExecutorAPI {
                 }
                 mapping = null;
             }
+            // TODO - readers
             var output : StringBuf = new StringBuf();
             var config : Dynamic = {
                 stdio: {

@@ -48,11 +48,11 @@ class CustomWebAPI extends API {
     }
 
     public static function singleFromJSON(json : String) : CustomWebAPI {
-        return fromMap(cast haxe.Json.parse(json));
+        return fromMap(cast com.sdtk.std.Normalize.parseJson(json));
     }
 
     public static function multipleFromJSON(json : String) : Map<String, CustomWebAPI> {
-        return fromMaps(cast haxe.Json.parse(json));
+        return fromMaps(cast com.sdtk.std.Normalize.parseJson(json));
     }
 
     public function toJSON() : String {
@@ -60,7 +60,7 @@ class CustomWebAPI extends API {
     }
 
     private static function loadParam(params : Array<CustomWebAPIParam>, paramsByKey : Map<String, CustomWebAPIParam>, map : Map<String, Dynamic>) : Void {
-        map = com.sdtk.std.Normalize.nativeToHaxe(map);
+        map = cast com.sdtk.std.Normalize.nativeToHaxe(map);
         var param : CustomWebAPIParam = new CustomWebAPIParam();
         param._name = map.get("name");
         param._value = map.get("value");
@@ -71,7 +71,7 @@ class CustomWebAPI extends API {
 
     private static function loadParams(params : Array<CustomWebAPIParam>, paramsByKey : Map<String, CustomWebAPIParam>, map : Map<String, Dynamic>) : Void {
         if (map != null) {
-            map = com.sdtk.std.Normalize.nativeToHaxe(map);
+            map = cast com.sdtk.std.Normalize.nativeToHaxe(map);
             for (k in map.keys()) {
                 loadParam(params, paramsByKey, cast map.get(k));
             }
@@ -101,19 +101,19 @@ class CustomWebAPI extends API {
             api._bodyType = bodyType;
         }
         if (query != null) {
-            query = com.sdtk.std.Normalize.nativeToHaxe(query);
+            query = cast com.sdtk.std.Normalize.nativeToHaxe(query);
             for (k in query.keys()) {
                 api.addQueryParameter(k, query.get(k), "");
             }
         }
         if (headers != null) {
-            headers = com.sdtk.std.Normalize.nativeToHaxe(headers);
+            headers = cast com.sdtk.std.Normalize.nativeToHaxe(headers);
             for (k in headers.keys()) {
                 api.addHeader(k, headers.get(k), "");
             }
         }
         if (cookies != null) {
-            cookies = com.sdtk.std.Normalize.nativeToHaxe(cookies);
+            cookies = cast com.sdtk.std.Normalize.nativeToHaxe(cookies);
             for (k in cookies.keys()) {
                 api.addCookie(k, cookies.get(k), "");
             }
@@ -122,7 +122,7 @@ class CustomWebAPI extends API {
     }
 
     public static function fromMap(map : Map<String, Dynamic>) : CustomWebAPI {
-        map = com.sdtk.std.Normalize.nativeToHaxe(map);
+        map = cast com.sdtk.std.Normalize.nativeToHaxe(map);
         var api : CustomWebAPI = new CustomWebAPI(map.get("name"));
         api._url = map.get("url");
         api._method = map.get("method");
@@ -143,7 +143,7 @@ class CustomWebAPI extends API {
 
     public static function fromMaps(map : Map<String, Dynamic>) : Map<String, CustomWebAPI> {
         var apis : Map<String, CustomWebAPI> = new Map<String, CustomWebAPI>();
-        map = com.sdtk.std.Normalize.nativeToHaxe(map);
+        map = cast com.sdtk.std.Normalize.nativeToHaxe(map);
         for (k in map.keys()) {
             var api : CustomWebAPI = fromMap(cast map.get(k));
             apis.set(api._name, api);

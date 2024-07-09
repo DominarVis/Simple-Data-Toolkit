@@ -25,8 +25,26 @@ package com.sdtk.std;
 @:expose
 @:nativeGen
 class Normalize {
-    public static function nativeToHaxe(mapping : Dynamic) : Map<String, String> {
-        if (mapping is haxe.ds.StringMap) {
+    public static function parseJson(data : Dynamic) : Dynamic {
+        #if python
+            python.Syntax.code("import json");
+        #end
+        var jsonData : String = Std.string(data);
+        if (jsonData.charAt(0) == "`" && jsonData.indexOf("```json\n") == 0) {
+            jsonData = jsonData.substr(8, jsonData.length - 11);
+        }
+        return 
+        #if python
+            python.Syntax.code("json.loads({0})", jsonData);
+        #elseif js
+            js.Syntax.code("JSON.parse({0})", jsonData);
+        #else
+            haxe.Json.parse(jsonData);
+        #end
+    }
+
+    public static function nativeToHaxe(mapping : Dynamic) : Map<Dynamic, Dynamic> {
+        if (mapping is haxe.ds.StringMap || mapping is haxe.ds.IntMap || mapping is haxe.ds.WeakMap || mapping is haxe.ds.ObjectMap) {
             return mapping;
         }
         #if php
@@ -84,7 +102,7 @@ class Normalize {
         return map;
     }
 
-    public static function haxeToNative(mapping : Map<String, String>) : Dynamic {
+    public static function haxeToNative(mapping : Map<Dynamic, Dynamic>) : Dynamic {
         #if php
             return cast php.Syntax.code("{0}->data", mapping);
         #elseif js

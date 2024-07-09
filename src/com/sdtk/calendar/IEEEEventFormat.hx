@@ -116,13 +116,13 @@ class IEEEEventFormat implements CalendarInviteFormat<Reader, Writer> {
         } else if (Std.isOfType(rReader, Reader)) {
             mMap = com.sdtk.table.JSONHandler.instance().read(rReader);
         } else {
-            mMap = com.sdtk.std.Normalize.nativeToHaxe(rReader);
+            mMap = cast com.sdtk.std.Normalize.nativeToHaxe(rReader);
         }
         mAttributes = mMap.get("attributes");
         if (mAttributes == null) {
             mAttributes = mMap;
         } else {
-            mAttributes = com.sdtk.std.Normalize.nativeToHaxe(mAttributes);
+            mAttributes = cast com.sdtk.std.Normalize.nativeToHaxe(mAttributes);
         }
         ciInvite.created = mAttributes.get("created-at");
         ciInvite.start = mAttributes.get("start-time");

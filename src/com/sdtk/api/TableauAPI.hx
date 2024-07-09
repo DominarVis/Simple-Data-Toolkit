@@ -77,7 +77,7 @@ class TableauAPI extends API {
                 }
             };
             instance.fetch("POST", _tableauSigninRoot, _signinAPI, null, null, null, haxe.Json.stringify(params), function (response : Dynamic) {
-                instance._token = haxe.Json.parse(response).credentials.token;
+                instance._token = com.sdtk.std.Normalize.parseJson(response).credentials.token;
                 instance._user = user;
                 instance._site = site;
                 callback(response);
@@ -125,7 +125,7 @@ class TableauAPIPull extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).token_transfers));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).token_transfers));
     }    
 }
 #end

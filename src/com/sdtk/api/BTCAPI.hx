@@ -68,7 +68,7 @@ class BTCAPI extends API {
             var arr : Array<Dynamic> = new Array<Dynamic>();
             var progress : Dynamic->Void = null;
             progress = function (r : Dynamic) : Void {
-                r = haxe.Json.parse(r);
+                r = com.sdtk.std.Normalize.parseJson(r);
                 arr.push(r);
                 if (r.data.page < r.data.page_total) {
                     transactions(progress, block, address, r.data.page + 1);
@@ -85,7 +85,7 @@ class BTCAPI extends API {
             transactions(progress, block, address, page);
         } else {
             instance().fetch("GET", _btcRoot, api, null, null, value + _transactions + _pagesize + "&page=" + page, null, function (r) {
-                var o : Dynamic = haxe.Json.parse(r);
+                var o : Dynamic = com.sdtk.std.Normalize.parseJson(r);
                 callback(r);
             });
         }
@@ -123,7 +123,7 @@ class BTCAPITransactions extends InputAPI {
     } 
 
     public override function parseData(data : String, mapping : Map<String, String>, callback : String->com.sdtk.table.DataTableReader->Void) : Void {
-        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(haxe.Json.parse(data).data.list));
+        callback(data, com.sdtk.table.ArrayOfObjectsReader.readWholeArray(com.sdtk.std.Normalize.parseJson(data).data.list));
     }    
 }
 #end

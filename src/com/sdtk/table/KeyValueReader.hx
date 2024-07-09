@@ -110,13 +110,13 @@ class KeyValueReader extends DataTableReader {
   public override function nextReuse(rowReader : Null<DataTableRowReader>) : Dynamic {
   	if (hasNext()) {
       if (rowReader == null) {
-        rowReader = new KeyValueRowReader(_maps[index() + 1], _columns);
+        rowReader = MapRowReader.readWholeMap(cast _maps[index() + 1]);
       } else {
-        var rr : KeyValueRowReader = cast rowReader;
-        rr.reuse(_maps[index() + 1], _columns);
+        var rr : MapRowReader<Dynamic> = cast rowReader;
+        rr.reuse(cast _maps[index() + 1], null, null);
       }
-      incrementTo(_names[index() + 1], rowReader, index() + 1);
-      return value();
+      incrementTo(null, rowReader, index() + 1);
+      return rowReader;
     } else {
       return null;
     }

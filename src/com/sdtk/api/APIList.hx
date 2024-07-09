@@ -43,7 +43,12 @@ class APIList {
                 EtherscanAPI.instance(),
                 #if JS_BROWSER
                     WebTorrentAPI.instance(),
+                    SpeechSynthesisUtteranceAPI.instance(),
                 #end
+                #if python
+                    TortoiseTTSAPI.instance(),
+                #end
+                ChatGPTAPI.instance(),
                 TableauAPI.instance(),
             ];
         }
@@ -58,8 +63,9 @@ class APIList {
                     PythonAPI.instance(),
                     SQLAPI.instance(),
                     CobolAPI.instance(),
-                    BasicAPI.instance()
+                    BasicAPI.instance(),
                 #end
+                ChatGPTAPI.queryAsReaderWithDataAPI()
             ];
         }
         return _executors;
@@ -74,6 +80,7 @@ class APIList {
                 #end
                 BitTorrentAPI.transactionsAPI(), BitTorrentAPI.transfersAPI(),
                 BTCAPI.transactionsAPI(),
+                ChatGPTAPI.queryAsReaderAPI(),
                 EtherscanAPI.transactionsAPI(),
                 ACMAPI.eventsAPI(),
                 IEEEAPI.eventsAPI(),

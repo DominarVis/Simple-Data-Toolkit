@@ -42,15 +42,22 @@ class PythonAPI extends ExecutorAPI {
         return "Python";
     }
     
-    public override function execute(script : String, mapping : Map<String, String>, callback : Dynamic->Void) : Void {
+    public override function execute(script : String, mapping : Map<String, String>, readers : Map<String, com.sdtk.table.DataTableReader>, callback : Dynamic->Void) : Void {
         requireInit(function () {
             var init : String = "";
             if (mapping != null) {
-                mapping = com.sdtk.std.Normalize.nativeToHaxe(mapping);
+                mapping = cast com.sdtk.std.Normalize.nativeToHaxe(mapping);
                 for (i in mapping) {
                     init += i + " = " + haxe.Json.stringify(mappingValueToType(mapping[i])) + "\n";
                 }
             }
+            if (readers != null) {
+                for (i in readers.keys()) {
+                    var writer : com.sdtk.std.StringWriter = new com.sdtk.std.StringWriter(null);
+                    readers[i].convertTo(com.sdtk.table.CodeWriter.createPythonArrayOfMapsWriter(writer));
+                    init += i + " = " + writer.toString() + "\n";
+                }
+            }            
             var r = js.Syntax.code("pyscript.runtime.run({0} + {1})", init, script);
             init = null;
             script = null;
